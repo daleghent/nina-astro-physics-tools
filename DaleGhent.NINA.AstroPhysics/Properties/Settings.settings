@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DaleGhent.NINA.AstroPhysics.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="APPMExePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Astro-Physics\APCC Pro\ApPointMapper.exe</Value>
+    </Setting>
+    <Setting Name="APPMSettingsPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="APPMMapPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>

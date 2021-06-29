@@ -1,0 +1,127 @@
+﻿<!--
+    Copyright Dale Ghent <daleg@elemental.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/
+-->
+<ResourceDictionary
+    x:Class="DaleGhent.NINA.AstroPhysics.Options"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rules="clr-namespace:NINA.Core.Utility.ValidationRules;assembly=NINA.Core">
+    <DataTemplate x:Key="Utilities for Astro-Physics mounts_Options">
+        <StackPanel DataContext="{Binding}" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Width="100">
+                    <TextBlock.Text>APPM setings file:</TextBlock.Text>
+                    <TextBlock.ToolTip>OPTIONAL: The location of an APPM settings file if not using the default</TextBlock.ToolTip>
+                </TextBlock>
+
+                <TextBox
+                    Margin="5,0,0,0"
+                    Width="400"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center">
+                    <TextBox.Text>
+                        <Binding Path="APPMSettingsPath" UpdateSourceTrigger="LostFocus">
+                            <Binding.ValidationRules>
+                                <rules:FileExistsRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <Button
+                    Width="30"
+                    Height="30"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Command="{Binding APPMSettingsPathDialogCommand}">
+                    <Path
+                        Margin="4,17,4,4"
+                        Data="{StaticResource DotsSVG}"
+                        Fill="{StaticResource ButtonForegroundBrush}"
+                        Stretch="Uniform" />
+                </Button>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Width="100">
+                    <TextBlock.Text>APPM map file:</TextBlock.Text>
+                    <TextBlock.ToolTip>OPTIONAL: The location of an APPM map file if not using the default</TextBlock.ToolTip>
+                </TextBlock>
+
+                <TextBox
+                    Margin="5,0,0,0"
+                    Width="400"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center">
+                    <TextBox.Text>
+                        <Binding Path="APPMMapPath" UpdateSourceTrigger="LostFocus">
+                            <Binding.ValidationRules>
+                                <rules:FileExistsRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <Button
+                    Width="30"
+                    Height="30"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Command="{Binding APPMMapPathDialoggCommand}">
+                    <Path
+                        Margin="4,17,4,4"
+                        Data="{StaticResource DotsSVG}"
+                        Fill="{StaticResource ButtonForegroundBrush}"
+                        Stretch="Uniform" />
+                </Button>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Width="100">
+                    <TextBlock.Text>APPM Location:</TextBlock.Text>
+                    <TextBlock.ToolTip>The location of ApPointMapper.exe if it is somewhere other than its default location</TextBlock.ToolTip>
+                </TextBlock>
+
+                <TextBox
+                    Margin="5,0,0,0"
+                    Width="400"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center">
+                    <TextBox.Text>
+                        <Binding Path="APPMExePath" UpdateSourceTrigger="LostFocus">
+                            <Binding.ValidationRules>
+                                <rules:FileExistsRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <Button
+                    Width="30"
+                    Height="30"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Command="{Binding APPMExePathDialogCommand}">
+                    <Path
+                        Margin="4,17,4,4"
+                        Data="{StaticResource DotsSVG}"
+                        Fill="{StaticResource ButtonForegroundBrush}"
+                        Stretch="Uniform" />
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>
