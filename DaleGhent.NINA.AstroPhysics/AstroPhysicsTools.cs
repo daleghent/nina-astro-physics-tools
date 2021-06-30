@@ -27,6 +27,12 @@ namespace DaleGhent.NINA.AstroPhysics {
 
         [ImportingConstructor]
         public AstroPhysicsTools() {
+            if (Properties.Settings.Default.UpgradeSettings) {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeSettings = false;
+                Properties.Settings.Default.Save();
+            }
+
             APPMExePathDialogCommand = new RelayCommand(OpenAPPMExePathDialog);
             APPMSettingsPathDialogCommand = new RelayCommand(OpenAPPMSettingsPathDialog);
             APPMMapPathDialoggCommand = new RelayCommand(OpenAPPMMapPathDialog);
