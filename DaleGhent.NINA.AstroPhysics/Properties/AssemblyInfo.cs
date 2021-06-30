@@ -31,28 +31,33 @@ using System.Runtime.InteropServices;
 // The url to the license
 [assembly: AssemblyMetadata("LicenseURL", "https://www.mozilla.org/en-US/MPL/2.0/")]
 // The repository where your pluggin is hosted
-[assembly: AssemblyMetadata("Repository", "https://bitbucket.org/Isbeorn/nina.plugin.template/")]
+[assembly: AssemblyMetadata("Repository", "https://github.com/daleghent/nina-plugins")]
 
 
 // The following attributes are optional for the official manifest meta data
 
 //[Optional] Your plugin homepage - omit if not applicaple
-[assembly: AssemblyMetadata("Homepage", "https://daleghent.com/")]
+[assembly: AssemblyMetadata("Homepage", "https://daleghent.com/utilities-for-astro-physics-mounts")]
 
 //[Optional] Common tags that quickly describe your plugin
 [assembly: AssemblyMetadata("Tags", "appm,astro-physics,apcc,sequencer")]
 
 //[Optional] A link that will show a log of all changes in between your plugin's versions
-[assembly: AssemblyMetadata("ChangelogURL", "https://bitbucket.org/Isbeorn/nina.plugin.template/commits/branch/master")]
+[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/daleghent/nina-plugins/blob/main/DaleGhent.NINA.AstroPhysics/CHANGELOG.md")]
 
 //[Optional] The url to a featured logo that will be displayed in the plugin list next to the name
-[assembly: AssemblyMetadata("FeaturedImageURL", "")]
+[assembly: AssemblyMetadata("FeaturedImageURL", "https://daleghent.github.io/nina-plugins/assets/images/ap-logo.jpg")]
 //[Optional] A url to an example screenshot of your plugin in action
-[assembly: AssemblyMetadata("ScreenshotURL", "")]
+[assembly: AssemblyMetadata("ScreenshotURL", "https://daleghent.github.io/nina-plugins/assets/images/U4APMscreen1.png")]
 //[Optional] An additional url to an example example screenshot of your plugin in action
 [assembly: AssemblyMetadata("AltScreenshotURL", "")]
 //[Optional] An in-depth description of your plugin
-[assembly: AssemblyMetadata("LongDescription", @"Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA's Advanced Sequencer.
+[assembly: AssemblyMetadata("LongDescription", @"Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA's Advanced Sequencer. Please refer to this plugin's website for detailed documentation.
+
+Requirements:
+    - NINA 1.11 build 102, or later
+    - APCC Pro 1.9, or later
+    - Enable Server be turned on in NINA's options
 
 Provided functions:
 
@@ -61,7 +66,9 @@ Provided functions:
     
     Create APPM Model has one runtime option: Keep APPM open. Switching this to On will keep APPM open after it completes. Be aware that the sequence will not progress until APPM is closed.
 
-    To use this instruction, you must have Enable Server set to On under Options > General in NINA and have 'NINA' set as the camera in APPM.")]
+    To use this instruction, you must have Enable Server set to On under Options > General in NINA and have 'NINA' set as the camera in APPM.
+
+The Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.")]
 
 
 // Setting ComVisible to false makes the types in this assembly not visible
