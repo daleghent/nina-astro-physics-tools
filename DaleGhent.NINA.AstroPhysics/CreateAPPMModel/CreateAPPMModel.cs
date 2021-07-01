@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
 
     [ExportMetadata("Name", "Create APPM Model")]
-    [ExportMetadata("Description", "Runs Astro-Physics Point Modeler (APPM) in automatic mode for unattended model creation")]
+    [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended model creation")]
     [ExportMetadata("Icon", "APPM_SVG")]
     [ExportMetadata("Category", "Astro-Physics Utilities")]
     [Export(typeof(ISequenceItem))]
