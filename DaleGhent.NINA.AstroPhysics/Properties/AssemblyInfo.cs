@@ -52,21 +52,20 @@ using System.Runtime.InteropServices;
 //[Optional] An additional url to an example example screenshot of your plugin in action
 [assembly: AssemblyMetadata("AltScreenshotURL", "")]
 //[Optional] An in-depth description of your plugin
-[assembly: AssemblyMetadata("LongDescription", @"Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA's Advanced Sequencer. Please refer to this plugin's website for detailed documentation.
+[assembly: AssemblyMetadata("LongDescription", @"Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA's Advanced Sequencer.
+
+Please refer to this plugin's website for detailed documentation.
 
 Requirements:
-    - NINA 1.11 build 102, or later
-    - APCC Pro 1.9, or later
+    - NINA 1.11
+    - APCC Pro 1.9
     - Enable Server be turned on in NINA's options
 
 Provided functions:
 
 - Create APPM Model
     A sequence instruction that will run Astro-Physics Point Mapper (APPM) in an automated mode. When ran, APPM will use its existing default settings to run a point mapping session and will load the results into APCC Pro when complete. If the default settings and point map are not desired, an APPM settings or a point map file may be optionally specified below in this plugin's settings.
-    
-    Create APPM Model has one runtime option: Keep APPM open. Switching this to On will keep APPM open after it completes. Be aware that the sequence will not progress until APPM is closed.
 
-    To use this instruction, you must have Enable Server set to On under Options > General in NINA and have 'NINA' set as the camera in APPM.
 
 The Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.")]
 

@@ -8,7 +8,7 @@
     "Installer": {
         "ChecksumType": "SHA256",
         "URL": "",
-        "Checksum": "D3FB7E9BE292D86BB438EE3E193A1AA377652DF2C58EDDA75B3A80A7D236DC53",
+        "Checksum": "F0AA33BD9C657A2424BE1D56F3ECA42CE9D45E52378E31CAEF7188644B72D06A",
         "Type": "DLL"
     },
     "Homepage": "https://daleghent.com/utilities-for-astro-physics-mounts",
@@ -26,7 +26,7 @@
     ],
     "Descriptions": {
         "FeaturedImageURL": "https://daleghent.github.io/nina-plugins/assets/images/ap-logo.jpg",
-        "LongDescription": "Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA\u0027s Advanced Sequencer. Please refer to this plugin\u0027s website for detailed documentation.\r\n\r\nRequirements:\r\n    - NINA 1.11 build 102, or later\r\n    - APCC Pro 1.9, or later\r\n    - Enable Server be turned on in NINA\u0027s options\r\n\r\nProvided functions:\r\n\r\n- Create APPM Model\r\n    A sequence instruction that will run Astro-Physics Point Mapper (APPM) in an automated mode. When ran, APPM will use its existing default settings to run a point mapping session and will load the results into APCC Pro when complete. If the default settings and point map are not desired, an APPM settings or a point map file may be optionally specified below in this plugin\u0027s settings.\r\n    \r\n    Create APPM Model has one runtime option: Keep APPM open. Switching this to On will keep APPM open after it completes. Be aware that the sequence will not progress until APPM is closed.\r\n\r\n    To use this instruction, you must have Enable Server set to On under Options \u003e General in NINA and have \u0027NINA\u0027 set as the camera in APPM.\r\n\r\nThe Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.",
+        "LongDescription": "Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA\u0027s Advanced Sequencer.\r\n\r\nPlease refer to this plugin\u0027s website for detailed documentation.\r\n\r\nRequirements:\r\n    - NINA 1.11\r\n    - APCC Pro 1.9\r\n    - Enable Server be turned on in NINA\u0027s options\r\n\r\nProvided functions:\r\n\r\n- Create APPM Model\r\n    A sequence instruction that will run Astro-Physics Point Mapper (APPM) in an automated mode. When ran, APPM will use its existing default settings to run a point mapping session and will load the results into APCC Pro when complete. If the default settings and point map are not desired, an APPM settings or a point map file may be optionally specified below in this plugin\u0027s settings.\r\n\r\n\r\nThe Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.",
         "ScreenshotURL": "https://daleghent.github.io/nina-plugins/assets/images/U4APMscreen1.png",
         "ShortDescription": "A collection of useful Advanced Sequencer utilities for users of Astro-Physics mounts and APCC Pro",
         "AltScreenshotURL": ""
