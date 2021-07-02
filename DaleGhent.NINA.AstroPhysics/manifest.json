@@ -7,8 +7,8 @@
     },
     "Installer": {
         "ChecksumType": "SHA256",
-        "URL": "",
-        "Checksum": "F0AA33BD9C657A2424BE1D56F3ECA42CE9D45E52378E31CAEF7188644B72D06A",
+        "URL": "https://github.com/daleghent/nina-plugins/releases/download/1.0/DaleGhent.NINA.AstroPhysics.dll",
+        "Checksum": "F632A4A9C79F193F0F761A8515E10C09FCB62AE8B60D7F889171422FC90E12BA",
         "Type": "DLL"
     },
     "Homepage": "https://daleghent.com/utilities-for-astro-physics-mounts",
