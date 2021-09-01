@@ -36,6 +36,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             APPMExePathDialogCommand = new RelayCommand(OpenAPPMExePathDialog);
             APPMSettingsPathDialogCommand = new RelayCommand(OpenAPPMSettingsPathDialog);
             APPMMapPathDialoggCommand = new RelayCommand(OpenAPPMMapPathDialog);
+            ApccExePathDialogCommand = new RelayCommand(OpenApccExePathDialog);
         }
 
         public string APPMExePath {
@@ -66,6 +67,49 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
             set {
                 Properties.Settings.Default.APPMMapPath = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged();
+            }
+        }
+
+        public string ApccExePath {
+            get {
+                if (string.IsNullOrEmpty(Properties.Settings.Default.ApccExePath)) {
+
+                    // Find APCC Pro first, then look for Standard
+                    if (File.Exists(Properties.Settings.Default.ApccDefaultProPath)) {
+                        ApccExePath = Properties.Settings.Default.ApccDefaultProPath;
+                    } else if (File.Exists(Properties.Settings.Default.ApccDefaultStandardPath)) {
+                        ApccExePath = Properties.Settings.Default.ApccDefaultStandardPath;
+                    }
+                }
+
+                return Properties.Settings.Default.ApccExePath;
+            }
+            set {
+                Properties.Settings.Default.ApccExePath = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged();
+            }
+        }
+
+        public uint ApccStartupTimeout {
+            get {
+                return Properties.Settings.Default.ApccStartupTimeout;
+            }
+            set {
+                Properties.Settings.Default.ApccStartupTimeout = value;
+                Properties.Settings.Default.Save();
+                RaisePropertyChanged();
+            }
+        }
+
+        public uint ApccDriverConnectTimeout {
+            get {
+                return Properties.Settings.Default.ApccDriverConnectTimeout;
+            }
+            set {
+                Properties.Settings.Default.ApccDriverConnectTimeout = value;
                 Properties.Settings.Default.Save();
                 RaisePropertyChanged();
             }
@@ -107,9 +151,22 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
         }
 
+        private void OpenApccExePathDialog(object obj) {
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog {
+                FileName = string.Empty,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                Filter = "Any Program|*.exe"
+            };
+
+            if (dialog.ShowDialog() == true) {
+                ApccExePath = dialog.FileName;
+            }
+        }
+
         public ICommand APPMExePathDialogCommand { get; private set; }
         public ICommand APPMSettingsPathDialogCommand { get; private set; }
         public ICommand APPMMapPathDialoggCommand { get; private set; }
+        public ICommand ApccExePathDialogCommand { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

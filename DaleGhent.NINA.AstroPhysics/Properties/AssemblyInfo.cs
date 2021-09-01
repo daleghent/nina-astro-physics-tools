@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("Utilities for Astro-Physics mounts")]
@@ -59,11 +59,13 @@ Please refer to this [plugin's website](https://daleghent.com/utilities-for-astr
 # Requirements #
 
 * NINA 1.11
-* APCC Pro 1.9
-* Enable Server set to On in NINA's options
+* APCC Pro 1.9 or APCC Standard 1.8 (APCC Pro is required for the use of APPM)
+* The **Enable Server** setting is **On** in NINA's options (refer to Options > General)
 
 # Provided functions #
 
+* Start APCC
+    * Starts APCC and connects NINA to the Astro-Physics ASCOM driver. Assumes that APCC's **Auto-Connect** setting is selected in both the **Mount** and **AP V2 Driver** option areas in the Setup tab
 * Create APPM Model
     * A sequence instruction that will run Astro-Physics Point Mapper (APPM) in an automated mode. When ran, APPM will use its existing default settings to run a point mapping session and will load the results into APCC Pro when complete. If the default settings and point map are not desired, an APPM settings or a point map file may be optionally specified below in this plugin's settings.
 

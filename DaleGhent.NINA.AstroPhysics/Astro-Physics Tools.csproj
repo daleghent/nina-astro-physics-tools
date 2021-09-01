@@ -236,6 +236,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AstroPhysicsTools.cs" />
+    <Compile Include="StartStopAPCC\StopApcc.cs" />
+    <Compile Include="StartStopAPCC\StartApcc.cs" />
+    <Compile Include="StartStopAPCC\StartStopApccTemplate.xaml.cs">
+      <DependentUpon>StartStopApccTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
@@ -261,6 +266,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="StartStopAPCC\StartStopApccTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Options.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

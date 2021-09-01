@@ -70,5 +70,65 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
                 this["UpgradeSettings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ApccExePath {
+            get {
+                return ((string)(this["ApccExePath"]));
+            }
+            set {
+                this["ApccExePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public uint ApccStartupTimeout {
+            get {
+                return ((uint)(this["ApccStartupTimeout"]));
+            }
+            set {
+                this["ApccStartupTimeout"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files (x86)\\Astro-Physics\\APCC Standard\\AstroPhysicsCommandCenter.exe")]
+        public string ApccDefaultStandardPath {
+            get {
+                return ((string)(this["ApccDefaultStandardPath"]));
+            }
+            set {
+                this["ApccDefaultStandardPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files (x86)\\Astro-Physics\\APCC Pro\\AstroPhysicsCommandCenter.exe")]
+        public string ApccDefaultProPath {
+            get {
+                return ((string)(this["ApccDefaultProPath"]));
+            }
+            set {
+                this["ApccDefaultProPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public uint ApccDriverConnectTimeout {
+            get {
+                return ((uint)(this["ApccDriverConnectTimeout"]));
+            }
+            set {
+                this["ApccDriverConnectTimeout"] = value;
+            }
+        }
     }
 }
