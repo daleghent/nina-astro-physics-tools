@@ -12,6 +12,7 @@
 
 using Newtonsoft.Json;
 using NINA.Core.Model;
+using NINA.Core.Utility;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.Validations;
 using System;
@@ -117,6 +118,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
             var appm = new ProcessStartInfo(APPMExePath) {
                 Arguments = string.Join(" ", args.ToArray())
             };
+
+            Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
 
             var cmd = Process.Start(appm);
             cmd.WaitForExit();
