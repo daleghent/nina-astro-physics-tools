@@ -17,6 +17,7 @@ using NINA.Sequencer.Validations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -31,7 +32,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
     [ExportMetadata("Category", "Astro-Physics Utilities")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
-    public class CreateAPPMModel : SequenceItem, IValidatable {
+    public class CreateAPPMModel : SequenceItem, IValidatable, INotifyPropertyChanged {
         private bool doNotExit = false;
 
         [ImportingConstructor]
@@ -39,6 +40,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
             APPMExePath = Properties.Settings.Default.APPMExePath;
             APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
             APPMMapPath = Properties.Settings.Default.APPMMapPath;
+
+            Properties.Settings.Default.PropertyChanged += SettingsChanged;
         }
 
         public CreateAPPMModel(CreateAPPMModel copyMe) : this() {
@@ -119,6 +122,20 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
             cmd.WaitForExit();
 
             return cmd.ExitCode;
+        }
+
+        void SettingsChanged(object sender, PropertyChangedEventArgs e) {
+            switch (e.PropertyName) {
+                case "APPMExePath":
+                    APPMExePath = Properties.Settings.Default.APPMExePath;
+                    break;
+                case "APPMSettingsPath":
+                    APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
+                    break;
+                case "APPMMapPath":
+                    APPMMapPath = Properties.Settings.Default.APPMMapPath;
+                    break;
+            }
         }
     }
 }
