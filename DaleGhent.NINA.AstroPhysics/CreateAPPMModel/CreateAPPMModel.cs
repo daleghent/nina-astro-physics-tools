@@ -96,22 +96,23 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
         private string APPMMapPath { get; set; }
 
         private int RunAPPM() {
-            string args = "-auto";
+            List<string> args = new List<string>();
+            args.Add("-auto");
 
             if (!string.IsNullOrEmpty(APPMSettingsPath) && !string.IsNullOrWhiteSpace(APPMSettingsPath)) {
-                args += $" -s {APPMSettingsPath}";
+                args.Add($"-s {APPMSettingsPath}");
             }
 
             if (!string.IsNullOrEmpty(APPMMapPath) && !string.IsNullOrWhiteSpace(APPMMapPath)) {
-                args += $" -m {APPMMapPath}";
+                args.Add($"-m {APPMMapPath}");
             }
 
             if (DoNotExit) {
-                args += " -dontexit";
+                args.Add("-dontexit");
             }
 
             var appm = new ProcessStartInfo(APPMExePath) {
-                Arguments = args
+                Arguments = string.Join(" ", args.ToArray())
             };
 
             var cmd = Process.Start(appm);
