@@ -261,10 +261,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AstroPhysicsTools.cs" />
-    <Compile Include="PluginSettingsTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PluginSettingsTemplate.tt</DependentUpon>
+    <Compile Include="CreateDecArcModel\CreateDecArcModel.cs" />
+    <Compile Include="CreateDecArcModel\CreateDecArcModelTemplate.xaml.cs">
+      <DependentUpon>CreateDecArcModelTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="StartStopAPCC\StopApcc.cs" />
     <Compile Include="StartStopAPCC\StartApcc.cs" />
@@ -284,6 +283,7 @@
     <Compile Include="CreateAPPMModel\CreateAPPMModelTemplate.xaml.cs">
       <DependentUpon>CreateAPPMModelTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Accord.dll.config" />
@@ -296,6 +296,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CreateDecArcModel\CreateDecArcModelTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="StartStopAPCC\StartStopApccTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

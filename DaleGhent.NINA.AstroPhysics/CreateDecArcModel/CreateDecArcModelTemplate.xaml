@@ -1,0 +1,50 @@
+﻿<!--
+    Copyright Dale Ghent <daleg@elemental.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/
+-->
+<ResourceDictionary
+    x:Class="DaleGhent.NINA.AstroPhysics.CreateDecArcModel.CreateDecArcModelTemplate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:DaleGhent.NINA.AstroPhysics.CreateDecArcModel"
+    xmlns:mini="clr-namespace:NINA.View.Sequencer.MiniSequencer;assembly=NINA.Sequencer"
+    xmlns:nina="clr-namespace:NINA.View.Sequencer;assembly=NINA.Sequencer">
+    <GeometryGroup x:Key="APPM_SVG">
+        <PathGeometry Figures="M 582.86,291.233C 582.86,452.187 452.38,582.667 291.427,582.667C 130.479,582.667 2.03451e-005,452.187 2.03451e-005,291.233C 2.03451e-005,130.285 130.479,-0.193359 291.427,-0.193359C 452.38,-0.193359 582.86,130.285 582.86,291.233 Z " />
+        <PathGeometry Figures="M 532.86,291.233C 532.86,424.572 424.765,532.667 291.427,532.667C 158.093,532.667 50,424.572 50,291.233C 50,157.9 158.093,49.8066 291.427,49.8066C 424.765,49.8066 532.86,157.9 532.86,291.233 Z " />
+        <PathGeometry Figures="M 471.427,291.233C 471.427,390.645 390.839,471.233 291.427,471.233C 192.016,471.233 111.427,390.645 111.427,291.233C 111.427,191.823 192.016,111.233 291.427,111.233C 390.839,111.233 471.427,191.823 471.427,291.233 Z " />
+        <PathGeometry Figures="M 411.427,291.233C 411.427,357.509 357.703,411.233 291.427,411.233C 225.156,411.233 171.427,357.509 171.427,291.233C 171.427,224.963 225.156,171.233 291.427,171.233C 357.703,171.233 411.427,224.963 411.427,291.233 Z " />
+    </GeometryGroup>
+
+    <DataTemplate DataType="{x:Type local:CreateDecArcModel}">
+        <nina:SequenceBlockView DataContext="{Binding}">
+            <nina:SequenceBlockView.SequenceItemContent>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Text>Keep APPM open:</TextBlock.Text>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                            Keeps APPM open after it completes the modeling run. Useful for reviewing the run after its completion.
+                            <LineBreak />
+                            IMPORTANT: The sequence will be prevented from progressing until APPM is closed!
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <CheckBox
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding DoNotExit, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </nina:SequenceBlockView.SequenceItemContent>
+        </nina:SequenceBlockView>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DaleGhent.NINA.AstroPhysics.CreateDecArcModel_Mini">
+        <mini:MiniSequenceItem>
+        </mini:MiniSequenceItem>
+    </DataTemplate>
+</ResourceDictionary>
