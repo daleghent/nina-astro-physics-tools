@@ -65,7 +65,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
         }
 
         public override object Clone() {
-            return new CreateAPPMModel(this);
+            return new CreateAPPMModel(this) {
+                DoNotExit = DoNotExit,
+            };
         }
 
         public override string ToString() {
