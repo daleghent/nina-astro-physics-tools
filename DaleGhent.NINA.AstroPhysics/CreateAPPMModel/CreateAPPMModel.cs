@@ -75,24 +75,26 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
 
         public bool Validate() {
-            bool passes = true;
+            var i = new List<string>();
 
             if (string.IsNullOrEmpty(APPMExePath) || !File.Exists(APPMExePath)) {
-                Issues.Add("Invalid location for ApPointMapper.exe");
-                passes = false;
+                i.Add("Invalid location for ApPointMapper.exe");
             }
 
             if (!string.IsNullOrEmpty(APPMSettingsPath) && !File.Exists(APPMSettingsPath)) {
-                Issues.Add("Invalid location for APPM settings file");
-                passes = false;
+                i.Add("Invalid location for APPM settings file");
             }
 
             if (!string.IsNullOrEmpty(APPMMapPath) && !File.Exists(APPMMapPath)) {
-                Issues.Add("Invalid location for APPM map file");
-                passes = false;
+                i.Add("Invalid location for APPM map file");
             }
 
-            return passes;
+            if (i != Issues) {
+                Issues = i;
+                RaisePropertyChanged("Issues");
+            }
+
+            return i.Count == 0;
         }
 
         private string APPMExePath { get; set; }
