@@ -30,7 +30,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             if (Properties.Settings.Default.UpgradeSettings) {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.UpgradeSettings = false;
-                Properties.Settings.Default.Save();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
             }
 
             APPMExePathDialogCommand = new RelayCommand(OpenAPPMExePathDialog);
@@ -45,7 +45,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
             set {
                 Properties.Settings.Default.APPMExePath = value;
-                Properties.Settings.Default.Save();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
@@ -56,7 +56,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
             set {
                 Properties.Settings.Default.APPMSettingsPath = value;
-                Properties.Settings.Default.Save();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
@@ -67,7 +67,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
             set {
                 Properties.Settings.Default.APPMMapPath = value;
-                Properties.Settings.Default.Save();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
@@ -88,7 +88,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
             set {
                 Properties.Settings.Default.ApccExePath = value;
-                Properties.Settings.Default.Save();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
@@ -99,7 +99,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
             set {
                 Properties.Settings.Default.ApccStartupTimeout = value;
-                Properties.Settings.Default.Save();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
@@ -110,7 +110,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
             set {
                 Properties.Settings.Default.ApccDriverConnectTimeout = value;
-                Properties.Settings.Default.Save();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }

@@ -1,5 +1,8 @@
 ﻿# Utilities for Astro-Physics mounts
 
+## 1.3.5.0 - 2021-10-27
+* Updated the settings save routine to use the new safe multi-instance method in 1.11 build 172
+
 ## 1.3.0.0 - 2021-9-1
 * Added instruction: Start APCC
     - Starts APCC and connects NINA to the Astro-Physics ASCOM driver. Requires the following:
