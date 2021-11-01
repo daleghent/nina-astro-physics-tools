@@ -286,7 +286,6 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Accord.dll.config" />
     <None Include="app.config" />
     <None Include="manifest.json" />
     <None Include="packages.config" />
@@ -315,12 +314,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CHANGELOG.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="PluginSettingsTemplate.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>PluginSettingsTemplate.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
