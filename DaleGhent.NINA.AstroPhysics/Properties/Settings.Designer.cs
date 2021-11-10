@@ -12,7 +12,7 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -128,6 +128,66 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
             }
             set {
                 this["ApccDriverConnectTimeout"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int DecArcRaSpacing {
+            get {
+                return ((int)(this["DecArcRaSpacing"]));
+            }
+            set {
+                this["DecArcRaSpacing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int DecArcDecSpacing {
+            get {
+                return ((int)(this["DecArcDecSpacing"]));
+            }
+            set {
+                this["DecArcDecSpacing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double HourAngleLeadIn {
+            get {
+                return ((double)(this["HourAngleLeadIn"]));
+            }
+            set {
+                this["HourAngleLeadIn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int DecArcQuantity {
+            get {
+                return ((int)(this["DecArcQuantity"]));
+            }
+            set {
+                this["DecArcQuantity"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int DefaultPointOrder {
+            get {
+                return ((int)(this["DefaultPointOrder"]));
+            }
+            set {
+                this["DefaultPointOrder"] = value;
             }
         }
     }

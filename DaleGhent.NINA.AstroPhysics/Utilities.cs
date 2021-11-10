@@ -11,20 +11,9 @@
 #endregion "copyright"
 
 using NINA.Astrometry;
-using NINA.Core.Enum;
-using NINA.Core.Model;
-using NINA.Core.Utility;
 using NINA.Sequencer.Container;
-using NINA.Sequencer.SequenceItem;
-using NINA.Sequencer.Validations;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace DaleGhent.NINA.AstroPhysics {
 
@@ -47,6 +36,7 @@ namespace DaleGhent.NINA.AstroPhysics {
         }
 
         public sealed class TemporaryFile : IDisposable {
+
             public TemporaryFile() :
               this(Path.GetTempPath()) { }
 

@@ -12,203 +12,323 @@
     xmlns:ninactrl="clr-namespace:NINACustomControlLibrary;assembly=NINACustomControlLibrary"
     xmlns:rules="clr-namespace:NINA.Core.Utility.ValidationRules;assembly=NINA.Core">
     <DataTemplate x:Key="Utilities for Astro-Physics mounts_Options">
-        <StackPanel DataContext="{Binding}" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Width="140">
-                    <TextBlock.Text>APPM setings file</TextBlock.Text>
-                    <TextBlock.ToolTip>OPTIONAL: The location of an APPM settings file if not using the default</TextBlock.ToolTip>
-                </TextBlock>
+        <TabControl TabStripPlacement="Top">
 
-                <TextBox
-                    Margin="5,0,0,0"
-                    Width="500"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center">
-                    <TextBox.Text>
-                        <Binding Path="APPMSettingsPath" UpdateSourceTrigger="LostFocus">
-                            <Binding.ValidationRules>
-                                <rules:FileExistsRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+            <TabItem Header="General Settings" Name="GeneralSettings">
+                <StackPanel DataContext="{Binding}" Orientation="Vertical" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Width="140">
+                            <TextBlock.Text>APPM setings file</TextBlock.Text>
+                            <TextBlock.ToolTip>OPTIONAL: The location of an APPM settings file if not using the default</TextBlock.ToolTip>
+                        </TextBlock>
 
-                <Button
-                    Width="30"
-                    Height="30"
-                    Margin="5,0,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Command="{Binding APPMSettingsPathDialogCommand}">
-                    <Path
-                        Margin="4,17,4,4"
-                        Data="{StaticResource DotsSVG}"
-                        Fill="{StaticResource ButtonForegroundBrush}"
-                        Stretch="Uniform" />
-                </Button>
-            </StackPanel>
+                        <TextBox
+                            Margin="5,0,0,0"
+                            Width="500"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center">
+                            <TextBox.Text>
+                                <Binding Path="APPMSettingsPath" UpdateSourceTrigger="LostFocus">
+                                    <Binding.ValidationRules>
+                                        <rules:FileExistsRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Width="140">
-                    <TextBlock.Text>APPM map file</TextBlock.Text>
-                    <TextBlock.ToolTip>OPTIONAL: The location of an APPM map file if not using the default</TextBlock.ToolTip>
-                </TextBlock>
+                        <Button
+                            Width="25"
+                            Height="25"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding APPMSettingsPathDialogCommand}">
+                            <Path
+                                Margin="4,17,4,4"
+                                Data="{StaticResource DotsSVG}"
+                                Fill="{StaticResource ButtonForegroundBrush}"
+                                Stretch="Uniform" />
+                        </Button>
+                    </StackPanel>
 
-                <TextBox
-                    Margin="5,0,0,0"
-                    Width="500"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center">
-                    <TextBox.Text>
-                        <Binding Path="APPMMapPath" UpdateSourceTrigger="LostFocus">
-                            <Binding.ValidationRules>
-                                <rules:FileExistsRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Width="140">
+                            <TextBlock.Text>APPM map file</TextBlock.Text>
+                            <TextBlock.ToolTip>OPTIONAL: The location of an APPM map file if not using the default</TextBlock.ToolTip>
+                        </TextBlock>
 
-                <Button
-                    Width="30"
-                    Height="30"
-                    Margin="5,0,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Command="{Binding APPMMapPathDialoggCommand}">
-                    <Path
-                        Margin="4,17,4,4"
-                        Data="{StaticResource DotsSVG}"
-                        Fill="{StaticResource ButtonForegroundBrush}"
-                        Stretch="Uniform" />
-                </Button>
-            </StackPanel>
+                        <TextBox
+                            Margin="5,0,0,0"
+                            Width="500"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center">
+                            <TextBox.Text>
+                                <Binding Path="APPMMapPath" UpdateSourceTrigger="LostFocus">
+                                    <Binding.ValidationRules>
+                                        <rules:FileExistsRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Width="140">
-                    <TextBlock.Text>APPM location</TextBlock.Text>
-                    <TextBlock.ToolTip>The location of ApPointMapper.exe if it is somewhere other than its default location</TextBlock.ToolTip>
-                </TextBlock>
+                        <Button
+                            Width="25"
+                            Height="25"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding APPMMapPathDialoggCommand}">
+                            <Path
+                                Margin="4,17,4,4"
+                                Data="{StaticResource DotsSVG}"
+                                Fill="{StaticResource ButtonForegroundBrush}"
+                                Stretch="Uniform" />
+                        </Button>
+                    </StackPanel>
 
-                <TextBox
-                    Margin="5,0,0,0"
-                    Width="500"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center">
-                    <TextBox.Text>
-                        <Binding Path="APPMExePath" UpdateSourceTrigger="LostFocus">
-                            <Binding.ValidationRules>
-                                <rules:FileExistsRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Width="140">
+                            <TextBlock.Text>APPM location</TextBlock.Text>
+                            <TextBlock.ToolTip>The location of ApPointMapper.exe if it is somewhere other than its default location</TextBlock.ToolTip>
+                        </TextBlock>
 
-                <Button
-                    Width="30"
-                    Height="30"
-                    Margin="5,0,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Command="{Binding APPMExePathDialogCommand}">
-                    <Path
-                        Margin="4,17,4,4"
-                        Data="{StaticResource DotsSVG}"
-                        Fill="{StaticResource ButtonForegroundBrush}"
-                        Stretch="Uniform" />
-                </Button>
-            </StackPanel>
+                        <TextBox
+                            Margin="5,0,0,0"
+                            Width="500"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center">
+                            <TextBox.Text>
+                                <Binding Path="APPMExePath" UpdateSourceTrigger="LostFocus">
+                                    <Binding.ValidationRules>
+                                        <rules:FileExistsRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Width="140">
-                    <TextBlock.Text>APCC location</TextBlock.Text>
-                    <TextBlock.ToolTip>The location of AstroPhysicsCommandCenter.exe if it is somewhere other than its default location</TextBlock.ToolTip>
-                </TextBlock>
+                        <Button
+                            Width="25"
+                            Height="25"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding APPMExePathDialogCommand}">
+                            <Path
+                                Margin="4,17,4,4"
+                                Data="{StaticResource DotsSVG}"
+                                Fill="{StaticResource ButtonForegroundBrush}"
+                                Stretch="Uniform" />
+                        </Button>
+                    </StackPanel>
 
-                <TextBox
-                    Margin="5,0,0,0"
-                    Width="500"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center">
-                    <TextBox.Text>
-                        <Binding Path="ApccExePath" UpdateSourceTrigger="LostFocus">
-                            <Binding.ValidationRules>
-                                <rules:FileExistsRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Width="140">
+                            <TextBlock.Text>APCC location</TextBlock.Text>
+                            <TextBlock.ToolTip>The location of AstroPhysicsCommandCenter.exe if it is somewhere other than its default location</TextBlock.ToolTip>
+                        </TextBlock>
 
-                <Button
-                    Width="30"
-                    Height="30"
-                    Margin="5,0,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Command="{Binding ApccExePathDialogCommand}">
-                    <Path
-                        Margin="4,17,4,4"
-                        Data="{StaticResource DotsSVG}"
-                        Fill="{StaticResource ButtonForegroundBrush}"
-                        Stretch="Uniform" />
-                </Button>
-            </StackPanel>
+                        <TextBox
+                            Margin="5,0,0,0"
+                            Width="500"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center">
+                            <TextBox.Text>
+                                <Binding Path="ApccExePath" UpdateSourceTrigger="LostFocus">
+                                    <Binding.ValidationRules>
+                                        <rules:FileExistsRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Right"
-                    Width="140">
-                    <TextBlock.Text>APCC startup timeout</TextBlock.Text>
-                    <TextBlock.ToolTip>The length of time that the plugin will wait for APCC and the Astro-Physics ASCOM driver to start</TextBlock.ToolTip>
-                </TextBlock>
-                <ninactrl:UnitTextBox
-                    Width="75"
-                    Margin="5,0,0,0"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Unit="s">
-                    <TextBox.Text>
-                        <Binding Mode="TwoWay" Path="ApccStartupTimeout">
-                            <Binding.ValidationRules>
-                                <rules:GreaterThanZeroRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </ninactrl:UnitTextBox>
-            </StackPanel>
+                        <Button
+                            Width="25"
+                            Height="25"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding ApccExePathDialogCommand}">
+                            <Path
+                                Margin="4,17,4,4"
+                                Data="{StaticResource DotsSVG}"
+                                Fill="{StaticResource ButtonForegroundBrush}"
+                                Stretch="Uniform" />
+                        </Button>
+                    </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <TextBlock
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Right"
-                    Width="140">
-                    <TextBlock.Text>ASCOM connect timeout</TextBlock.Text>
-                    <TextBlock.ToolTip>The length of time that the plugin will wait for NINA and the Astro-Physics ASCOM driver to be in a connected and ready state</TextBlock.ToolTip>
-                </TextBlock>
-                <ninactrl:UnitTextBox
-                    Width="75"
-                    Margin="5,0,0,0"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Unit="s">
-                    <TextBox.Text>
-                        <Binding Mode="TwoWay" Path="ApccDriverConnectTimeout">
-                            <Binding.ValidationRules>
-                                <rules:GreaterThanZeroRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </ninactrl:UnitTextBox>
-            </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,5">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Width="140">
+                            <TextBlock.Text>APCC startup timeout</TextBlock.Text>
+                            <TextBlock.ToolTip>The length of time that the plugin will wait for APCC and the Astro-Physics ASCOM driver to start</TextBlock.ToolTip>
+                        </TextBlock>
+                        <ninactrl:UnitTextBox
+                            Width="75"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Unit="s">
+                            <TextBox.Text>
+                                <Binding Mode="TwoWay" Path="ApccStartupTimeout">
+                                    <Binding.ValidationRules>
+                                        <rules:GreaterThanZeroRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </ninactrl:UnitTextBox>
+                    </StackPanel>
 
-        </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Width="140">
+                            <TextBlock.Text>ASCOM connect timeout</TextBlock.Text>
+                            <TextBlock.ToolTip>The length of time that the plugin will wait for NINA and the Astro-Physics ASCOM driver to be in a connected and ready state</TextBlock.ToolTip>
+                        </TextBlock>
+                        <ninactrl:UnitTextBox
+                            Width="75"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Unit="s">
+                            <TextBox.Text>
+                                <Binding Mode="TwoWay" Path="ApccDriverConnectTimeout">
+                                    <Binding.ValidationRules>
+                                        <rules:GreaterThanZeroRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </ninactrl:UnitTextBox>
+                    </StackPanel>
+
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Dec Arc Parameters" Name="DecArcParams">
+                <StackPanel DataContext="{Binding}" Orientation="Vertical" Margin="0,10,0,0">
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Width="140">
+                                <TextBlock.Text>Declination arc quantity</TextBlock.Text>
+                                <TextBlock.ToolTip>The number of declincation arcs to model</TextBlock.ToolTip>
+                            </TextBlock>
+                            <ninactrl:IntStepperControl
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                MaxValue="10"
+                                MinValue="1"
+                                StepSize="1"
+                                Value="{Binding DecArcQuantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Width="140">
+                                <TextBlock.Text>Declination arc separation</TextBlock.Text>
+                                <TextBlock.ToolTip>The distance between each of the three decinlation arcs</TextBlock.ToolTip>
+                            </TextBlock>
+                            <ninactrl:IntStepperControl
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                MaxValue="30"
+                                MinValue="1"
+                                StepSize="1"
+                                Unit="°"
+                                Value="{Binding DecArcDecSpacing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Width="140">
+                                    <TextBlock.Text>RA point spacing</TextBlock.Text>
+                                    <TextBlock.ToolTip>The distance between points in Right Ascension</TextBlock.ToolTip>
+                            </TextBlock>
+                            <ninactrl:IntStepperControl
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                MaxValue="30"
+                                MinValue="1"
+                                StepSize="1"
+                                Unit="°"
+                                Value="{Binding DecArcRaSpacing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Width="140">
+                                    <TextBlock.Text>Hour angle lead-in</TextBlock.Text>
+                                    <TextBlock.ToolTip>Begin dec-arc the specified hour or fractional hour prior to the target's hour angle at the time of execution</TextBlock.ToolTip>
+                            </TextBlock>
+                            <ninactrl:PrecisionStepperControl
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                MaxValue="12"
+                                MinValue="0"
+                                StepSize="0.25"
+                                Precision="2"
+                                Unit="hours"
+                                Value="{Binding HourAngleLeadIn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
+                        </Grid>
+                    </StackPanel>
+                    
+                </StackPanel>
+            </TabItem>
+
+        </TabControl>
     </DataTemplate>
 </ResourceDictionary>

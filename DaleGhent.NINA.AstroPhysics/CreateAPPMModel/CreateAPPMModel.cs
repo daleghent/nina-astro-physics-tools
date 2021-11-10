@@ -131,14 +131,16 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
             return cmd.ExitCode;
         }
 
-        void SettingsChanged(object sender, PropertyChangedEventArgs e) {
+        private void SettingsChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case "APPMExePath":
                     APPMExePath = Properties.Settings.Default.APPMExePath;
                     break;
+
                 case "APPMSettingsPath":
                     APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
                     break;
+
                 case "APPMMapPath":
                     APPMMapPath = Properties.Settings.Default.APPMMapPath;
                     break;

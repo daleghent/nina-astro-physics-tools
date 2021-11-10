@@ -10,7 +10,6 @@
 
 #endregion "copyright"
 
-using Newtonsoft.Json;
 using NINA.Core.Model;
 using NINA.Core.Utility;
 using NINA.Equipment.Equipment;
@@ -26,7 +25,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace DaleGhent.NINA.AstroPhysics {
-
     /*
      * Disabled for now. There's no way for us to know if we can safely kill APCC
      * Perhaps there will be a way in the future.
@@ -40,6 +38,7 @@ namespace DaleGhent.NINA.AstroPhysics {
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     */
+
     public class StopApcc : SequenceItem, IValidatable {
         private ITelescopeMediator telescopeMediator;
 

@@ -25,7 +25,37 @@
                 <StackPanel Orientation="Horizontal">
 
                     <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
-                        <TextBlock.Text>Keep APPM open:</TextBlock.Text>
+                        <TextBlock.Text>Do full arcs</TextBlock.Text>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                            Forces a model to be made that spans the entire target's declination arc from horizon to horizon. By default, the model will start at the target's current hour angle along its declination arc.
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <CheckBox
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding DoFullArc, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
+
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Text>Manual start</TextBlock.Text>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                            If on, this instruction will launch APPM but not automatically start the modeling run. This will allow you to review the model before it is ran. Because this does not run APPM in automatic mode, you will also need to manually connect APPM to the mount, camera, and any dome devices prior to starting the run.
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <CheckBox
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding ManualStart, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
+
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Text>Keep APPM open</TextBlock.Text>
                         <TextBlock.ToolTip>
                             <TextBlock>
                             Keeps APPM open after it completes the modeling run. Useful for reviewing the run after its completion.

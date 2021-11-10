@@ -29,5 +29,20 @@
     <Setting Name="ApccDriverConnectTimeout" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">5</Value>
     </Setting>
+    <Setting Name="DecArcRaSpacing" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">4</Value>
+    </Setting>
+    <Setting Name="DecArcDecSpacing" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="HourAngleLeadIn" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="DecArcQuantity" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="DefaultPointOrder" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

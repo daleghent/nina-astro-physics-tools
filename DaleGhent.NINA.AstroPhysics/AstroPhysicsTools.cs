@@ -15,13 +15,14 @@ using NINA.Plugin;
 using NINA.Plugin.Interfaces;
 using NINA.Profile.Interfaces;
 using System;
-using System.IO;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace DaleGhent.NINA.AstroPhysics {
+
     [Export(typeof(IPluginManifest))]
     public class AstroPhysicsTools : PluginBase, ISettings, INotifyPropertyChanged {
 
@@ -40,9 +41,7 @@ namespace DaleGhent.NINA.AstroPhysics {
         }
 
         public string APPMExePath {
-            get {
-                return Properties.Settings.Default.APPMExePath;
-            }
+            get => Properties.Settings.Default.APPMExePath;
             set {
                 Properties.Settings.Default.APPMExePath = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
@@ -51,9 +50,7 @@ namespace DaleGhent.NINA.AstroPhysics {
         }
 
         public string APPMSettingsPath {
-            get {
-                return Properties.Settings.Default.APPMSettingsPath;
-            }
+            get => Properties.Settings.Default.APPMSettingsPath;
             set {
                 Properties.Settings.Default.APPMSettingsPath = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
@@ -62,9 +59,7 @@ namespace DaleGhent.NINA.AstroPhysics {
         }
 
         public string APPMMapPath {
-            get {
-                return Properties.Settings.Default.APPMMapPath;
-            }
+            get => Properties.Settings.Default.APPMMapPath;
             set {
                 Properties.Settings.Default.APPMMapPath = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
@@ -75,7 +70,6 @@ namespace DaleGhent.NINA.AstroPhysics {
         public string ApccExePath {
             get {
                 if (string.IsNullOrEmpty(Properties.Settings.Default.ApccExePath)) {
-
                     // Find APCC Pro first, then look for Standard
                     if (File.Exists(Properties.Settings.Default.ApccDefaultProPath)) {
                         ApccExePath = Properties.Settings.Default.ApccDefaultProPath;
@@ -94,9 +88,7 @@ namespace DaleGhent.NINA.AstroPhysics {
         }
 
         public uint ApccStartupTimeout {
-            get {
-                return Properties.Settings.Default.ApccStartupTimeout;
-            }
+            get => Properties.Settings.Default.ApccStartupTimeout;
             set {
                 Properties.Settings.Default.ApccStartupTimeout = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
@@ -105,11 +97,45 @@ namespace DaleGhent.NINA.AstroPhysics {
         }
 
         public uint ApccDriverConnectTimeout {
-            get {
-                return Properties.Settings.Default.ApccDriverConnectTimeout;
-            }
+            get => Properties.Settings.Default.ApccDriverConnectTimeout;
             set {
                 Properties.Settings.Default.ApccDriverConnectTimeout = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int DecArcRaSpacing {
+            get => Properties.Settings.Default.DecArcRaSpacing;
+            set {
+                Properties.Settings.Default.DecArcRaSpacing = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int DecArcDecSpacing {
+            get => Properties.Settings.Default.DecArcDecSpacing;
+            set {
+                Properties.Settings.Default.DecArcDecSpacing = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int DecArcQuantity {
+            get => Properties.Settings.Default.DecArcQuantity;
+            set {
+                Properties.Settings.Default.DecArcQuantity = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public double HourAngleLeadIn {
+            get => Properties.Settings.Default.HourAngleLeadIn;
+            set {
+                Properties.Settings.Default.HourAngleLeadIn = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
