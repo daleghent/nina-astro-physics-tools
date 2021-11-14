@@ -14,7 +14,6 @@ using System.Runtime.InteropServices;
 // [MANDATORY] A short description of your plugin
 [assembly: AssemblyDescription("A collection of useful Advanced Sequencer utilities for users of Astro-Physics mounts and APCC Pro")]
 
-
 // The following attributes are not required for the plugin per se, but are required by the official manifest meta data
 
 // Your name
@@ -31,8 +30,7 @@ using System.Runtime.InteropServices;
 // The url to the license
 [assembly: AssemblyMetadata("LicenseURL", "https://www.mozilla.org/en-US/MPL/2.0/")]
 // The repository where your pluggin is hosted
-[assembly: AssemblyMetadata("Repository", "https://github.com/daleghent/nina-plugins")]
-
+[assembly: AssemblyMetadata("Repository", "https://github.com/daleghent/nina-astro-physics-tools")]
 
 // The following attributes are optional for the official manifest meta data
 
@@ -43,7 +41,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyMetadata("Tags", "appm,astro-physics,apcc,sequencer")]
 
 //[Optional] A link that will show a log of all changes in between your plugin's versions
-[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/daleghent/nina-plugins/blob/main/DaleGhent.NINA.AstroPhysics/CHANGELOG.md")]
+[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/daleghent/nina-astro-physics-tools/blob/main/CHANGELOG.md")]
 
 //[Optional] The url to a featured logo that will be displayed in the plugin list next to the name
 [assembly: AssemblyMetadata("FeaturedImageURL", "https://daleghent.github.io/nina-plugins/assets/images/ap-logo.jpg")]
@@ -73,11 +71,10 @@ Please refer to this [plugin's website](https://daleghent.com/utilities-for-astr
 
 Help for this plugin may be found in the **#plugin-discussions** channel on the NINA project [Discord chat server](https://discord.com/invite/rWRbVbw), Astro-Physics' [AP-GTO forum](https://ap-gto.groups.io/g/main), or by filing an issue report at this plugin's [Github repository](https://github.com/daleghent/nina-plugins/issues).
 
-* Utilities for Astro-Physics mounts is provided 'as is' under the terms of the [Mozilla Public License 2.0](https://github.com/daleghent/nina-plugins/blob/main/LICENSE.txt)
-* Source code for this plugin is available in my NINA plugins [source code repository](https://github.com/daleghent/nina-plugins)
+* Utilities for Astro-Physics mounts is provided 'as is' under the terms of the [Mozilla Public License 2.0](https://github.com/daleghent/nina-astro-physics-tools/blob/main/LICENSE.txt)
+* Source code for this plugin is available at this plugin's [source code repository](https://github.com/daleghent/nina-astro-physics-tools)
 
 The Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.")]
-
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -88,4 +85,4 @@ The Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.
 // [Unused]
 [assembly: AssemblyTrademark("")]
 // [Unused]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCulture("")] 
