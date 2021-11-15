@@ -91,11 +91,12 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             var measurementSettings = measurementConfig;
 
             var target = Utilities.FindDsoInfo(this.Parent);
-            target.Coordinates = target.Coordinates.Transform(Epoch.JNOW);
 
             if (target == null) {
                 throw new SequenceEntityFailedException("No DSO has been defined");
             }
+
+            target.Coordinates = target.Coordinates.Transform(Epoch.JNOW);
 
             if (target.Coordinates.Dec > 85d || target.Coordinates.Dec < -85d) {
                 Logger.Info($"The target's declination of {target.Coordinates.DecString} is too close to the pole to create a meaningful model. Skipping model creation.");
