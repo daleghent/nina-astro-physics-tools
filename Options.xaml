@@ -329,7 +329,7 @@
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
-                                Text="{Binding HoursToDegrees, StringFormat={}{0:0.0}° farther eastward}" />
+                                Text="{Binding HoursToDegrees, StringFormat={}Starts the arcs {0:0.0}° east of the target}" />
                         </Grid>
                     </StackPanel>
                 </StackPanel>
