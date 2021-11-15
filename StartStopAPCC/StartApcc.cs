@@ -31,7 +31,7 @@ namespace DaleGhent.NINA.AstroPhysics {
     [ExportMetadata("Name", "Start APCC")]
     [ExportMetadata("Description", "Starts APCC and connects NINA to the ASCOM driver")]
     [ExportMetadata("Icon", "APCC_SVG")]
-    [ExportMetadata("Category", "Astro-Physics Utilities")]
+    [ExportMetadata("Category", "Astro-Physics Tools")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class StartApcc : SequenceItem, IValidatable {

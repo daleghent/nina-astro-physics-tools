@@ -30,7 +30,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
     [ExportMetadata("Name", "Create APPM Model")]
     [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended model creation")]
     [ExportMetadata("Icon", "APPM_SVG")]
-    [ExportMetadata("Category", "Astro-Physics Utilities")]
+    [ExportMetadata("Category", "Astro-Physics Tools")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateAPPMModel : SequenceItem, IValidatable, INotifyPropertyChanged {

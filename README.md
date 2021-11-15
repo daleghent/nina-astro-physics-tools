@@ -1,6 +1,6 @@
-﻿# Utilities for Astro-Physics mounts
+﻿# Astro-Physics Tools
 
-Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA's Advanced Sequencer.
+Astro-Physics Tools is a collection of Instructions and other things for running from within NINA's Advanced Sequencer.
 
 Please refer to this [plugin's website](https://daleghent.com/utilities-for-astro-physics-mounts) for detailed documentation. I also maintain a [website with tips](https://daleghent.com/nina-and-astro-physics-mounts) on using NINA with Astro-Physics mounts.
 
@@ -21,5 +21,5 @@ Please refer to this [plugin's website](https://daleghent.com/utilities-for-astr
 
 Help for this plugin may be found in the **#plugin-discussions** channel on the NINA project [Discord chat server](https://discord.com/invite/rWRbVbw), Astro-Physics' [AP-GTO forum](https://ap-gto.groups.io/g/main), or by filing an issue report at this plugin's [Github repository](https://github.com/daleghent/nina-plugins/issues).
 
-* Utilities for Astro-Physics mounts is provided 'as is' under the terms of the [Mozilla Public License 2.0](https://github.com/daleghent/nina-plugins/blob/main/LICENSE.txt)
-* Source code for this plugin is available in my NINA plugins [source code repository](https://github.com/daleghent/nina-plugins)
+* Astro-Physics Tools is provided 'as is' under the terms of the [Mozilla Public License 2.0](https://github.com/daleghent/nina-astro-physics-tools/blob/main/LICENSE.txt)
+* Source code for this plugin is available at this plugin's [source code repository](https://github.com/daleghent/nina-astro-physics-tools)

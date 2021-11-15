@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("1.3.5.0")]
-[assembly: AssemblyFileVersion("1.3.5.0")]
+[assembly: AssemblyVersion("1.4.0.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
 
 // [MANDATORY] The name of your plugin
-[assembly: AssemblyTitle("Utilities for Astro-Physics mounts")]
+[assembly: AssemblyTitle("Astro-Physics Tools")]
 // [MANDATORY] A short description of your plugin
 [assembly: AssemblyDescription("A collection of useful Advanced Sequencer utilities for users of Astro-Physics mounts and APCC Pro")]
 
@@ -19,11 +19,11 @@ using System.Runtime.InteropServices;
 // Your name
 [assembly: AssemblyCompany("Dale Ghent")]
 // The product name that this plugin is part of
-[assembly: AssemblyProduct("Utilities for Astro-Physics mounts")]
+[assembly: AssemblyProduct("Astro-Physics Tools")]
 [assembly: AssemblyCopyright("Copyright © 2021 Dale Ghent")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
-[assembly: AssemblyMetadata("MinimumApplicationVersion", "1.11.0.1172")]
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "2.0.0.2001")]
 
 // The license your plugin code is using
 [assembly: AssemblyMetadata("License", "MPL-2.0")]
@@ -50,7 +50,7 @@ using System.Runtime.InteropServices;
 //[Optional] An additional url to an example example screenshot of your plugin in action
 [assembly: AssemblyMetadata("AltScreenshotURL", "")]
 //[Optional] An in-depth description of your plugin
-[assembly: AssemblyMetadata("LongDescription", @"Utilities for Astro-Physics mounts is a (probably) growing collection of Instructions and other things for running from within NINA's Advanced Sequencer.
+[assembly: AssemblyMetadata("LongDescription", @"Astro-Physics Tools is a collection of Instructions and other things for running from within NINA's Advanced Sequencer.
 
 Please refer to this [plugin's website](https://daleghent.com/utilities-for-astro-physics-mounts) for detailed documentation. I also maintain a [website with tips](https://daleghent.com/nina-and-astro-physics-mounts) on using NINA with Astro-Physics mounts.
 
@@ -71,7 +71,7 @@ Please refer to this [plugin's website](https://daleghent.com/utilities-for-astr
 
 Help for this plugin may be found in the **#plugin-discussions** channel on the NINA project [Discord chat server](https://discord.com/invite/rWRbVbw), Astro-Physics' [AP-GTO forum](https://ap-gto.groups.io/g/main), or by filing an issue report at this plugin's [Github repository](https://github.com/daleghent/nina-plugins/issues).
 
-* Utilities for Astro-Physics mounts is provided 'as is' under the terms of the [Mozilla Public License 2.0](https://github.com/daleghent/nina-astro-physics-tools/blob/main/LICENSE.txt)
+* Astro-Physics Tools is provided 'as is' under the terms of the [Mozilla Public License 2.0](https://github.com/daleghent/nina-astro-physics-tools/blob/main/LICENSE.txt)
 * Source code for this plugin is available at this plugin's [source code repository](https://github.com/daleghent/nina-astro-physics-tools)
 
 The Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.")]
@@ -85,4 +85,4 @@ The Astro-Physics logo is copyright © Astro-Physics, Inc. Used with permission.
 // [Unused]
 [assembly: AssemblyTrademark("")]
 // [Unused]
-[assembly: AssemblyCulture("")] 
+[assembly: AssemblyCulture("")]

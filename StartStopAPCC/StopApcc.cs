@@ -34,7 +34,7 @@ namespace DaleGhent.NINA.AstroPhysics {
     [ExportMetadata("Name", "Stop APCC")]
     [ExportMetadata("Description", "Stops Astro-Physics Command Center")]
     [ExportMetadata("Icon", "APCC_SVG")]
-    [ExportMetadata("Category", "Astro-Physics Utilities")]
+    [ExportMetadata("Category", "Astro-Physics Tools")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     */

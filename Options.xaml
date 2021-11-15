@@ -11,7 +11,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ninactrl="clr-namespace:NINACustomControlLibrary;assembly=NINACustomControlLibrary"
     xmlns:rules="clr-namespace:NINA.Core.Utility.ValidationRules;assembly=NINA.Core">
-    <DataTemplate x:Key="Utilities for Astro-Physics mounts_Options">
+    <DataTemplate x:Key="Astro-Physics Tools_Options">
         <TabControl TabStripPlacement="Top">
 
             <TabItem Header="General Settings" Name="GeneralSettings">
@@ -211,7 +211,6 @@
                             </TextBox.Text>
                         </ninactrl:UnitTextBox>
                     </StackPanel>
-
                 </StackPanel>
             </TabItem>
 
@@ -284,8 +283,8 @@
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
                                 Width="140">
-                                    <TextBlock.Text>RA point spacing</TextBlock.Text>
-                                    <TextBlock.ToolTip>The distance between points in Right Ascension</TextBlock.ToolTip>
+                                <TextBlock.Text>RA point spacing</TextBlock.Text>
+                                <TextBlock.ToolTip>The distance between points in Right Ascension</TextBlock.ToolTip>
                             </TextBlock>
                             <ninactrl:IntStepperControl
                                 Grid.Column="1"
@@ -311,8 +310,8 @@
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
                                 Width="140">
-                                    <TextBlock.Text>Hour angle lead-in</TextBlock.Text>
-                                    <TextBlock.ToolTip>Begin dec-arc the specified hour or fractional hour prior to the target's hour angle at the time of execution</TextBlock.ToolTip>
+                                <TextBlock.Text>Hour angle lead-in</TextBlock.Text>
+                                <TextBlock.ToolTip>Begin dec-arc the specified hour or fractional hour prior to the target's hour angle at the time of execution</TextBlock.ToolTip>
                             </TextBlock>
                             <ninactrl:PrecisionStepperControl
                                 Grid.Column="1"
@@ -325,10 +324,8 @@
                                 Value="{Binding HourAngleLeadIn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
                         </Grid>
                     </StackPanel>
-                    
                 </StackPanel>
             </TabItem>
-
         </TabControl>
     </DataTemplate>
 </ResourceDictionary>
