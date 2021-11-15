@@ -139,7 +139,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc: {DoFullArc}, ManualStart: {ManualStart}, DotNotExit: {DoNotExit}, Exe Path: {APPMExePath}, Settings: {APPMSettingsPath}]";
+            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualStart={ManualStart}, DotNotExit={DoNotExit}, ExePath={APPMExePath}, Settings={APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
