@@ -105,11 +105,12 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             var decArcParams = CalculateDecArcParameters(target);
 
             Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={(decArcParams.WestHaLimit - Math.Abs(decArcParams.EastHaLimit)):0.00}");
-            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={DecArcDecSpacing}");
+            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
 
             measurementSettings["DeclinationSpacing"] = decArcParams.DecSpacing;
             measurementSettings["MaxDeclination"] = decArcParams.NorthDecLimit;
             measurementSettings["MinDeclination"] = decArcParams.SouthDecLimit;
+            measurementSettings["DeclinationOffset"] = decArcParams.DecOffset;
             measurementSettings["RightAscensionSpacing"] = decArcParams.RaSpacing;
             measurementSettings["MinHourAngleEast"] = decArcParams.EastHaLimit;
 
@@ -292,57 +293,18 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             };
 
             decArcParams.TargetHa = CurrentHourAngle(target);
-
             decArcParams.EastHaLimit = DoFullArc ? -12d : Math.Round(Math.Max(decArcParams.TargetHa - decArcParams.HaLeadIn, -12), 2);
+
+            decArcParams.TargetDec = (int)Math.Round(target.Coordinates.Dec);
 
             if (decArcParams.ArcQuantity == 1) {
                 decArcParams.DecSpacing = 1;
-                decArcParams.TargetDec = (int)Math.Round(target.Coordinates.Dec);
                 decArcParams.NorthDecLimit = decArcParams.SouthDecLimit = decArcParams.TargetDec;
-            } else if (decArcParams.ArcQuantity == 2) {
-                if (profileService.ActiveProfile.AstrometrySettings.Latitude >= 0) {
-                    decArcParams.TargetDec = (int)Math.Ceiling(target.Coordinates.Dec);
-                    decArcParams.NorthDecLimit = decArcParams.TargetDec;
-                    decArcParams.SouthDecLimit = decArcParams.NorthDecLimit - decArcParams.DecSpacing;
-                } else {
-                    decArcParams.TargetDec = (int)Math.Floor(target.Coordinates.Dec);
-                    decArcParams.SouthDecLimit = decArcParams.TargetDec;
-                    decArcParams.NorthDecLimit = decArcParams.SouthDecLimit + decArcParams.DecSpacing;
-                }
             } else {
-                decArcParams.TargetDec = (int)Math.Round(target.Coordinates.Dec);
-                var totalSpread = decArcParams.ArcQuantity * decArcParams.DecSpacing;
-
-                decArcParams.NorthDecLimit = (int)Math.Round(decArcParams.TargetDec + (totalSpread / 2d));
-                decArcParams.SouthDecLimit = decArcParams.NorthDecLimit - totalSpread + 1;
-            }
-
-            // Some sanity checks
-            // We do need to tune the arcs a bit for polar declinations so that APPM can plot them
-            if (decArcParams.NorthDecLimit > 85) {
-                decArcParams.DecSpacing = 1;
-                decArcParams.NorthDecLimit = 85;
-
-                if (decArcParams.SouthDecLimit > 82) {
-                    decArcParams.SouthDecLimit = 82;
-                }
-
-                if (decArcParams.RaSpacing < 16) {
-                    decArcParams.RaSpacing = 16;
-                }
-            }
-
-            if (decArcParams.SouthDecLimit < -85) {
-                decArcParams.DecSpacing = 1;
-                decArcParams.SouthDecLimit = -85;
-
-                if (decArcParams.NorthDecLimit < -82) {
-                    decArcParams.NorthDecLimit = -82;
-                }
-
-                if (decArcParams.RaSpacing < 16) {
-                    decArcParams.RaSpacing = 16;
-                }
+                var totalSpan = (decArcParams.ArcQuantity - 1) * decArcParams.DecSpacing;
+                decArcParams.SouthDecLimit = Math.Max(-85, (int)Math.Round(target.Coordinates.Dec - (totalSpan / 2)));
+                decArcParams.NorthDecLimit = Math.Min(85, decArcParams.SouthDecLimit + totalSpan);
+                decArcParams.DecOffset = decArcParams.SouthDecLimit % decArcParams.DecSpacing;
             }
 
             return decArcParams;
@@ -352,6 +314,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             public int TargetDec { get; set; } = 0;
             public int NorthDecLimit { get; set; } = 0;
             public int SouthDecLimit { get; set; } = 0;
+            public int DecOffset { get; set; } = 0;
             public int ArcQuantity { get; set; } = 0;
             public int DecSpacing { get; set; } = 0;
             public int RaSpacing { get; set; } = 0;
