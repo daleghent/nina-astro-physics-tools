@@ -133,10 +133,23 @@ namespace DaleGhent.NINA.AstroPhysics {
         }
 
         public double HourAngleLeadIn {
-            get => Properties.Settings.Default.HourAngleLeadIn;
+            get {
+                HoursToDegrees = 15 * Properties.Settings.Default.HourAngleLeadIn;
+                return Properties.Settings.Default.HourAngleLeadIn;
+            }
             set {
                 Properties.Settings.Default.HourAngleLeadIn = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        private double hoursToDegrees = double.NaN;
+
+        public double HoursToDegrees {
+            get => hoursToDegrees;
+            private set {
+                hoursToDegrees = value;
                 RaisePropertyChanged();
             }
         }

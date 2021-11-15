@@ -302,6 +302,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="130" />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock
@@ -322,6 +323,13 @@
                                 Precision="2"
                                 Unit="hours"
                                 Value="{Binding HourAngleLeadIn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Text="{Binding HoursToDegrees, StringFormat={}{0:0.0}° farther eastward}" />
                         </Grid>
                     </StackPanel>
                 </StackPanel>
