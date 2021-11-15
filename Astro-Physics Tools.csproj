@@ -75,7 +75,7 @@
     <Compile Include="CreateAPPMModel\CreateAPPMModelTemplate.xaml.cs">
       <DependentUpon>CreateAPPMModelTemplate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities.cs" />
+    <Compile Include="Utility\Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -143,6 +143,7 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

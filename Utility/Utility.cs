@@ -13,11 +13,12 @@
 using NINA.Astrometry;
 using NINA.Sequencer.Container;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
-namespace DaleGhent.NINA.AstroPhysics {
+namespace DaleGhent.NINA.AstroPhysics.Utility {
 
-    public class Utilities {
+    public class Utility {
 
         public static DeepSkyObject FindDsoInfo(ISequenceContainer container) {
             DeepSkyObject target = null;
@@ -34,6 +35,13 @@ namespace DaleGhent.NINA.AstroPhysics {
 
             return target;
         }
+
+        public static readonly IList<string> PointOrderingStrategyList = new List<string> {
+            "Declination",
+            "Declination (Equal RA)",
+            "Declination (Graduated RA)",
+            "Hour Angle"
+        };
 
         public sealed class TemporaryFile : IDisposable {
 

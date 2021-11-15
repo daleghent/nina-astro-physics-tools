@@ -10,11 +10,13 @@
 
 #endregion "copyright"
 
+using DaleGhent.NINA.AstroPhysics.Utility;
 using NINA.Core.Utility;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
 using NINA.Profile.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -150,6 +152,35 @@ namespace DaleGhent.NINA.AstroPhysics {
             get => hoursToDegrees;
             private set {
                 hoursToDegrees = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public IList<string> PointOrderingStrategyList => Utility.Utility.PointOrderingStrategyList;
+
+        public int PointOrderingStrategy {
+            get => Properties.Settings.Default.PointOrderingStrategy;
+            set {
+                Properties.Settings.Default.PointOrderingStrategy = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int PolarPointOrderingStrategy {
+            get => Properties.Settings.Default.PolarPointOrderingStrategy;
+            set {
+                Properties.Settings.Default.PolarPointOrderingStrategy = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int PolarProximityLimit {
+            get => Properties.Settings.Default.PolarProximityLimit;
+            set {
+                Properties.Settings.Default.PolarProximityLimit = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }

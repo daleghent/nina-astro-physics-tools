@@ -41,8 +41,14 @@
     <Setting Name="DecArcQuantity" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="DefaultPointOrder" Type="System.Int32" Scope="User">
+    <Setting Name="PointOrderingStrategy" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="PolarProximityLimit" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">35</Value>
+    </Setting>
+    <Setting Name="PolarPointOrderingStrategy" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

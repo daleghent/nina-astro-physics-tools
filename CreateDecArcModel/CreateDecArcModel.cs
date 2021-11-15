@@ -10,6 +10,7 @@
 
 #endregion "copyright"
 
+using DaleGhent.NINA.AstroPhysics.Utility;
 using Newtonsoft.Json;
 using NINA.Astrometry;
 using NINA.Core.Model;
@@ -50,6 +51,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             DecArcDecSpacing = Properties.Settings.Default.DecArcDecSpacing;
             HourAngleLeadIn = Properties.Settings.Default.HourAngleLeadIn;
             DecArcQuantity = Properties.Settings.Default.DecArcQuantity;
+            PointOrderingStrategy = Properties.Settings.Default.PointOrderingStrategy;
+            PolarPointOrderingStrategy = Properties.Settings.Default.PolarPointOrderingStrategy;
+            PolarProximityLimit = Properties.Settings.Default.PolarProximityLimit;
 
             Properties.Settings.Default.PropertyChanged += SettingsChanged;
 
@@ -90,7 +94,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         public override Task Execute(IProgress<ApplicationStatus> progress, CancellationToken token) {
             var measurementSettings = measurementConfig;
 
-            var target = Utilities.FindDsoInfo(this.Parent);
+            var target = Utility.Utility.FindDsoInfo(this.Parent);
 
             if (target == null) {
                 throw new SequenceEntityFailedException("No DSO has been defined");
@@ -114,12 +118,13 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             measurementSettings["DeclinationOffset"] = decArcParams.DecOffset;
             measurementSettings["RightAscensionSpacing"] = decArcParams.RaSpacing;
             measurementSettings["MinHourAngleEast"] = decArcParams.EastHaLimit;
+            measurementSettings["PointOrderingStrategy"] = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit ? decArcParams.PolarPointOrderingStrategy : PointOrderingStrategy;
 
             /*
              * Write out APPM measurement config and run APPM
              */
 
-            var tmpFile = new Utilities.TemporaryFile();
+            var tmpFile = new Utility.Utility.TemporaryFile();
             AppmMeasurementConfPath = tmpFile.FilePath;
 
             GenerateMesurementFile(measurementSettings, tmpFile, target);
@@ -147,7 +152,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         public bool Validate() {
             var i = new List<string>();
 
-            if (Utilities.FindDsoInfo(this.Parent) == null) {
+            if (Utility.Utility.FindDsoInfo(this.Parent) == null) {
                 i.Add("No DSO has been defined");
             }
 
@@ -174,6 +179,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private int DecArcDecSpacing { get; set; }
         private double HourAngleLeadIn { get; set; }
         private int DecArcQuantity { get; set; }
+        private int PointOrderingStrategy { get; set; }
+        private int PolarPointOrderingStrategy { get; set; }
+        private int PolarProximityLimit { get; set; }
 
         private int RunAPPM() {
             List<string> args = new List<string>();
@@ -226,7 +234,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             { "MaxHourAngleWest", 12d },
         };
 
-        private void GenerateMesurementFile(Dictionary<string, object> measurementSettings, Utilities.TemporaryFile tmpFile, DeepSkyObject target) {
+        private void GenerateMesurementFile(Dictionary<string, object> measurementSettings, Utility.Utility.TemporaryFile tmpFile, DeepSkyObject target) {
             var fileStream = File.OpenWrite(tmpFile.FilePath);
 
             var header = $"# Dec Arc configuration generated at {DateTime.UtcNow:R}{Environment.NewLine}";
@@ -283,6 +291,18 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 case "HourAngleLeadIn":
                     HourAngleLeadIn = Properties.Settings.Default.HourAngleLeadIn;
                     break;
+
+                case "PointOrderingStrategy":
+                    PointOrderingStrategy = Properties.Settings.Default.PointOrderingStrategy;
+                    break;
+
+                case "PolarPointOrderingStrategy":
+                    PolarPointOrderingStrategy = Properties.Settings.Default.PolarPointOrderingStrategy;
+                    break;
+
+                case "PolarProximityLimit":
+                    PolarProximityLimit = Properties.Settings.Default.PolarProximityLimit;
+                    break;
             }
         }
 
@@ -291,6 +311,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 ArcQuantity = DecArcQuantity,
                 DecSpacing = DecArcDecSpacing,
                 RaSpacing = DecArcRaSpacing,
+                PointOrderingStrategy = PointOrderingStrategy,
+                PolarPointOrderingStrategy = PolarPointOrderingStrategy,
+                PolarProximityLimit = PolarProximityLimit,
             };
 
             decArcParams.TargetHa = CurrentHourAngle(target);
@@ -323,7 +346,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             public double EastHaLimit { get; set; } = -12;
             public double WestHaLimit { get; set; } = 12;
             public double HaLeadIn { get; set; } = 0;
-            public PointOrderingStrategy PointOrderingStrategy { get; set; } = PointOrderingStrategy.Auto;
+            public int PointOrderingStrategy { get; set; } = 0;
+            public int PolarPointOrderingStrategy { get; set; } = 0;
+            public int PolarProximityLimit { get; set; } = 0;
         }
 
         public class AppmMeasurementConfig {
@@ -342,14 +367,6 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             public bool UseMaxHourAngleWest { get; set; } = true;
             public double MinHourAngleEast { get; set; } = -12d;
             public double MaxHourAngleWest { get; set; } = 12d;
-        }
-
-        public enum PointOrderingStrategy {
-            Auto,
-            Declination,
-            Declination_Equal_RA,
-            Declination_Graduated_RA,
-            Hour_Angle,
         }
     }
 }

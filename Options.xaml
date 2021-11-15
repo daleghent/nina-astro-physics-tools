@@ -10,6 +10,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ninactrl="clr-namespace:NINACustomControlLibrary;assembly=NINACustomControlLibrary"
+    xmlns:util="clr-namespace:DaleGhent.NINA.AstroPhysics.Utility"
     xmlns:rules="clr-namespace:NINA.Core.Utility.ValidationRules;assembly=NINA.Core">
     <DataTemplate x:Key="Astro-Physics Tools_Options">
         <TabControl TabStripPlacement="Top">
@@ -329,7 +330,87 @@
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
-                                Text="{Binding HoursToDegrees, StringFormat={}Starts the arcs {0:0.0}° east of the target}" />
+                                Text="{Binding HoursToDegrees, StringFormat={}Begins mapping the arcs {0:0.0}° east of the target}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Width="140">
+                                <TextBlock.Text>Point ordering</TextBlock.Text>
+                                <TextBlock.ToolTip>The default point ordering strategy that Dec Arc models will use when executing</TextBlock.ToolTip>
+                            </TextBlock>
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                MinWidth="130"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding PointOrderingStrategyList}"
+                                SelectedIndex="{Binding PointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Width="140">
+                                <TextBlock.Text>Polar proximity ordering</TextBlock.Text>
+                                <TextBlock.ToolTip>The ordering strategy used when the target's declination is within the specified distance of the pole</TextBlock.ToolTip>
+                            </TextBlock>
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                MinWidth="130"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding PointOrderingStrategyList}"
+                                SelectedIndex="{Binding PolarPointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center">
+                                <TextBlock.Text>when the target is within</TextBlock.Text>
+                            </TextBlock>
+                            <ninactrl:IntStepperControl
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Margin="5,0,0,0"
+                                MaxValue="85"
+                                MinValue="0"
+                                StepSize="1"
+                                Unit="°"
+                                Value="{Binding PolarProximityLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="4"
+                                Margin="5,0,0,0"
+                                VerticalAlignment="Center">
+                                <TextBlock.Text>of the celestial pole</TextBlock.Text>
+                            </TextBlock>
                         </Grid>
                     </StackPanel>
                 </StackPanel>

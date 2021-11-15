@@ -12,7 +12,7 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -182,12 +182,36 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int DefaultPointOrder {
+        public int PointOrderingStrategy {
             get {
-                return ((int)(this["DefaultPointOrder"]));
+                return ((int)(this["PointOrderingStrategy"]));
             }
             set {
-                this["DefaultPointOrder"] = value;
+                this["PointOrderingStrategy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("35")]
+        public int PolarProximityLimit {
+            get {
+                return ((int)(this["PolarProximityLimit"]));
+            }
+            set {
+                this["PolarProximityLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int PolarPointOrderingStrategy {
+            get {
+                return ((int)(this["PolarPointOrderingStrategy"]));
+            }
+            set {
+                this["PolarPointOrderingStrategy"] = value;
             }
         }
     }
