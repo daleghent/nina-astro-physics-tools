@@ -248,10 +248,6 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 args.Add($"-s{APPMSettingsPath}");
             }
 
-            if (File.Exists(AppmMeasurementConfPath)) {
-                args.Add($"-M{AppmMeasurementConfPath}");
-            }
-
             var appm = new ProcessStartInfo(APPMExePath) {
                 Arguments = string.Join(" ", args.ToArray())
             };
@@ -304,7 +300,6 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
         private string APPMExePath { get; set; }
         private string APPMSettingsPath { get; set; }
-        private string AppmMeasurementConfPath { get; set; }
         private int DecArcRaSpacing { get; set; }
         private int DecArcDecSpacing { get; set; }
         private double HourAngleLeadIn { get; set; }
