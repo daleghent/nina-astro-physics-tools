@@ -121,7 +121,6 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
             var appm = new AppmApi.AppmApi();
-
             var target = Utility.Utility.FindDsoInfo(this.Parent);
 
             if (target == null) {
@@ -141,7 +140,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
 
             var proc = RunAPPM();
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            await appm.WaitForApiInit(ct);
 
             var config = await appm.GetConfiguration(ct);
             var newConfig = new AppmApi.AppmMeasurementConfigurationRequest() {
@@ -172,9 +171,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
             if (!ManualMode) {
                 await appm.Start(ct);
-                await Task.Delay(TimeSpan.FromSeconds(3), ct);
 
-                var runStatus = await appm.Status(ct);
+                var runStatus = await appm.WaitForMappingState("Running", ct);
                 ModelStatus = runStatus.Status.MappingRunState;
 
                 while (!runStatus.Status.MappingRunState.Equals("Idle")) {

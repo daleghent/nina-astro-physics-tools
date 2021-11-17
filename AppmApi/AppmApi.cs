@@ -102,6 +102,34 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             return response;
         }
 
+        public async Task<bool> WaitForApiInit(CancellationToken ct) {
+            bool success = false;
+
+            while (!ct.IsCancellationRequested) {
+                try {
+                    await HttpRequestAsync("/", "", ct);
+                    success = true;
+                    break;
+                } catch (HttpRequestException) {
+                    Logger.Trace($"APPM not yet answering on API; trying again...");
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                }
+            }
+
+            return success;
+        }
+
+        public async Task<AppmMappingRunStatusResult> WaitForMappingState(string status, CancellationToken ct) {
+            var appmStatus = await Status(ct); ;
+
+            while (!appmStatus.Status.MappingRunState.Equals(status) && !ct.IsCancellationRequested) {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                appmStatus = await Status(ct);
+            }
+
+            return appmStatus;
+        }
+
         private async Task<HttpResponseMessage> HttpRequestAsync(string url, string body, CancellationToken ct) {
             var uri = new Uri($"http://{this.host}:{this.port}{url}");
 

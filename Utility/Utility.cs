@@ -11,12 +11,8 @@
 #endregion "copyright"
 
 using NINA.Astrometry;
-using NINA.Core.Utility;
 using NINA.Sequencer.Container;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 
 namespace DaleGhent.NINA.AstroPhysics.Utility {
 
