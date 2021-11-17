@@ -44,20 +44,5 @@ namespace DaleGhent.NINA.AstroPhysics.Utility {
             "Declination (Graduated RA)",
             "Hour Angle"
         };
-
-        public static bool IsProcessRunning(string process) {
-            bool isRunning = false;
-
-            Process[] pname = Process.GetProcessesByName(process);
-
-            if (pname.Length > 0) {
-                Logger.Debug($"Process {process} is running. Count={pname.Length}");
-                isRunning = true;
-            } else {
-                Logger.Debug($"Process {process} is not running.");
-            }
-
-            return isRunning;
-        }
     }
 }

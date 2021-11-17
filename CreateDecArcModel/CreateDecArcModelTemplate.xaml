@@ -40,17 +40,19 @@
                     <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
 
                     <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
-                        <TextBlock.Text>Manual start</TextBlock.Text>
+                        <TextBlock.Text>Manual mode</TextBlock.Text>
                         <TextBlock.ToolTip>
                             <TextBlock>
-                            If on, this instruction will launch APPM but not automatically start the modeling run. This will allow you to review the model before it is ran. Because this does not run APPM in automatic mode, you will also need to manually connect APPM to the mount, camera, and any dome devices prior to starting the run.
+                                If on, this instruction will launch APPM but not automatically start the modeling run. This will allow you to review the model before it is ran. Because this does not run APPM in automatic mode, you will also need to manually connect APPM to the mount, camera, and any dome devices prior to also manually starting the run.
+                                <LineBreak />
+                                The instruction finishes when APPM exits.
                             </TextBlock>
                         </TextBlock.ToolTip>
                     </TextBlock>
                     <CheckBox
                         Margin="5,0,0,0"
                         VerticalAlignment="Center"
-                        IsChecked="{Binding ManualStart, UpdateSourceTrigger=PropertyChanged}" />
+                        IsChecked="{Binding ManualMode, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
 

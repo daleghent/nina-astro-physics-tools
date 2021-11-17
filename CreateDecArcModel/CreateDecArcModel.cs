@@ -36,7 +36,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateDecArcModel : SequenceItem, IValidatable, INotifyPropertyChanged {
-        private bool manualStart = false;
+        private bool manualMode = false;
         private bool doNotExit = false;
         private bool doFullArc = false;
         private int totalPoints = 0;
@@ -75,10 +75,10 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         }
 
         [JsonProperty]
-        public bool ManualStart {
-            get => manualStart;
+        public bool ManualMode {
+            get => manualMode;
             set {
-                manualStart = value;
+                manualMode = value;
                 RaisePropertyChanged();
             }
         }
@@ -140,10 +140,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={(decArcParams.WestHaLimit - Math.Abs(decArcParams.EastHaLimit)):0.00}");
             Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
 
-            if (!Utility.Utility.IsProcessRunning("ApPointMapper")) {
-                RunAPPM(false);
-                await Task.Delay(TimeSpan.FromSeconds(5));
-            }
+            var proc = RunAPPM();
+            await Task.Delay(TimeSpan.FromSeconds(5));
 
             var config = await appm.GetConfiguration(ct);
             var newConfig = new AppmApi.AppmMeasurementConfigurationRequest() {
@@ -172,23 +170,27 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             var pointCountResult = await appm.SetConfiguration(newConfig, ct);
             TotalPoints = pointCountResult.PointCount;
 
-            await appm.Start(ct);
-            await Task.Delay(TimeSpan.FromSeconds(3), ct);
+            if (!ManualMode) {
+                await appm.Start(ct);
+                await Task.Delay(TimeSpan.FromSeconds(3), ct);
 
-            var runStatus = await appm.Status(ct);
-            ModelStatus = runStatus.Status.MappingRunState;
-
-            while (!runStatus.Status.MappingRunState.Equals("Idle")) {
-                if (ct.IsCancellationRequested) {
-                    await appm.Stop(CancellationToken.None);
-                    return;
-                }
-
-                runStatus = await appm.Status(ct);
-                CompletedPoints = runStatus.Status.MeasurementPointsCount;
+                var runStatus = await appm.Status(ct);
                 ModelStatus = runStatus.Status.MappingRunState;
 
-                await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                while (!runStatus.Status.MappingRunState.Equals("Idle")) {
+                    if (ct.IsCancellationRequested) {
+                        await appm.Stop(CancellationToken.None);
+                        return;
+                    }
+
+                    runStatus = await appm.Status(ct);
+                    CompletedPoints = runStatus.Status.MeasurementPointsCount;
+                    ModelStatus = runStatus.Status.MappingRunState;
+
+                    await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                }
+            } else {
+                proc.WaitForExit();
             }
 
             return;
@@ -197,13 +199,13 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         public override object Clone() {
             return new CreateDecArcModel(this) {
                 DoFullArc = DoFullArc,
-                ManualStart = ManualStart,
+                ManualMode = ManualMode,
                 DoNotExit = DoNotExit,
             };
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualStart={ManualStart}, DotNotExit={DoNotExit}, ExePath={APPMExePath}, Settings={APPMSettingsPath}";
+            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={APPMExePath}, Settings={APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -231,14 +233,15 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             return i.Count == 0;
         }
 
-        private int RunAPPM(bool wait) {
-            if (Utility.Utility.IsProcessRunning("ApPointMapper")) { return 0; }
+        private Process RunAPPM() {
+            Process[] proc = Process.GetProcessesByName("ApPointMapper");
+
+            if (proc.Length > 0) {
+                Logger.Info($"ApPointMapper.exe is already running as PID {proc[0].Id}");
+                return proc[0];
+            }
 
             List<string> args = new List<string>();
-
-            if (!ManualStart) {
-                args.Add("-auto");
-            }
 
             if (DoNotExit) {
                 args.Add("-dontexit");
@@ -253,16 +256,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             };
 
             Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
-
-            var cmd = Process.Start(appm);
-
-            if (wait) {
-                cmd.WaitForExit();
-                Logger.Debug($"APPM exited with exit code {cmd.ExitCode}");
-                return cmd.ExitCode;
-            }
-
-            return 0;
+            return Process.Start(appm);
         }
 
         private double CurrentHourAngle(DeepSkyObject target) {
