@@ -191,6 +191,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 proc.WaitForExit();
             }
 
+            proc.Dispose();
             return;
         }
 
