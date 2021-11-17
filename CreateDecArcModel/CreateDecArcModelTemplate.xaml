@@ -75,6 +75,14 @@
 
     <DataTemplate x:Key="DaleGhent.NINA.AstroPhysics.CreateDecArcModel_Mini">
         <mini:MiniSequenceItem>
+            <mini:MiniSequenceItem.SequenceItemContent>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Text="Status: " />
+                    <TextBlock VerticalAlignment="Center" Text="{Binding CompletedPoints}" />
+                    <TextBlock VerticalAlignment="Center" Text="/" />
+                    <TextBlock VerticalAlignment="Center" Text="{Binding TotalPoints}" />
+                </StackPanel>
+            </mini:MiniSequenceItem.SequenceItemContent>
         </mini:MiniSequenceItem>
     </DataTemplate>
 </ResourceDictionary>

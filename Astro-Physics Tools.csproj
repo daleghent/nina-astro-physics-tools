@@ -75,6 +75,8 @@
     <Compile Include="CreateAPPMModel\CreateAPPMModelTemplate.xaml.cs">
       <DependentUpon>CreateAPPMModelTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppmApi\AppmApi.cs" />
+    <Compile Include="AppmApi\AppmApiObjects.cs" />
     <Compile Include="Utility\Utility.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -11,9 +11,11 @@
 #endregion "copyright"
 
 using NINA.Astrometry;
+using NINA.Core.Utility;
 using NINA.Sequencer.Container;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace DaleGhent.NINA.AstroPhysics.Utility {
@@ -43,36 +45,19 @@ namespace DaleGhent.NINA.AstroPhysics.Utility {
             "Hour Angle"
         };
 
-        public sealed class TemporaryFile : IDisposable {
+        public static bool IsProcessRunning(string process) {
+            bool isRunning = false;
 
-            public TemporaryFile() :
-              this(Path.GetTempPath()) { }
+            Process[] pname = Process.GetProcessesByName(process);
 
-            public TemporaryFile(string directory) {
-                Create(Path.Combine(directory, Path.GetRandomFileName()));
+            if (pname.Length > 0) {
+                Logger.Debug($"Process {process} is running. Count={pname.Length}");
+                isRunning = true;
+            } else {
+                Logger.Debug($"Process {process} is not running.");
             }
 
-            ~TemporaryFile() {
-                Delete();
-            }
-
-            public void Dispose() {
-                Delete();
-                GC.SuppressFinalize(this);
-            }
-
-            public string FilePath { get; private set; }
-
-            private void Create(string path) {
-                FilePath = path;
-                using (File.Create(FilePath)) { };
-            }
-
-            private void Delete() {
-                if (FilePath == null) return;
-                File.Delete(FilePath);
-                FilePath = null;
-            }
+            return isRunning;
         }
     }
 }
