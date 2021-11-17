@@ -53,6 +53,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
                 response = JsonConvert.DeserializeObject<AppmMappingRunStatusResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
             }
 
+            result.Dispose();
             return response;
         }
 
@@ -64,6 +65,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
                 response = JsonConvert.DeserializeObject<AppmPointCountResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
             }
 
+            result.Dispose();
             return response;
         }
 
@@ -75,6 +77,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
                 response = JsonConvert.DeserializeObject<AppmMappingPointsResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
             }
 
+            result.Dispose();
             return response;
         }
 
@@ -86,6 +89,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
                 response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
             }
 
+            result.Dispose();
             return response;
         }
 
@@ -99,6 +103,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
                 response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
             }
 
+            result.Dispose();
             return response;
         }
 
