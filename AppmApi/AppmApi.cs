@@ -154,15 +154,15 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             }
 
             Logger.Debug($"Request URL: {request.RequestUri}");
-            Logger.Debug($"Request type: {request.Method}");
-            Logger.Debug($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync().Result}");
+            Logger.Trace($"Request type: {request.Method}");
+            Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync().Result}");
 
             var client = new HttpClient();
             var response = await client.SendAsync(request, ct);
             client.Dispose();
 
             Logger.Debug($"Response status code: {response.StatusCode}");
-            Logger.Debug($"Response body:{Environment.NewLine}{response.Content?.ReadAsStringAsync().Result}");
+            Logger.Trace($"Response body:{Environment.NewLine}{response.Content?.ReadAsStringAsync().Result}");
 
             return response;
         }
