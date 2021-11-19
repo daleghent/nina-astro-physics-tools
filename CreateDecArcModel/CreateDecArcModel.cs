@@ -46,7 +46,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private AppmApi.AppmApi appm = null;
         private IProfileService profileService;
 
-        private Version minVersion = new Version(1, 9, 2, 3);
+        private readonly Version minVersion = new Version(1, 9, 2, 3);
 
         [ImportingConstructor]
         public CreateDecArcModel(IProfileService profileService) {
