@@ -3,7 +3,7 @@
 ## 1.4.0.0 - 2021-11-14
 * Plugin renamed to **Astro-Physics Tools** - same great taste, all-new flavor. But, really, the original name was a mouthful.
 * Initial APPM Dec-Arc instruction. A work-in-progress
-* Minimum supported NINA version is now 2.0 Beta 1
+* Minimum supported NINA version is now 2.0 Beta 4
 
 ## 1.3.5.0 - 2021-10-27
 * Updated the settings save routine to use the new safe multi-instance method in 1.11 build 172
