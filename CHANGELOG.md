@@ -1,8 +1,8 @@
 ﻿# Utilities for Astro-Physics mounts
 
-## 1.4.0.0 - 2021-11-14
+## 1.4.0.0 - 2021-11-20
 * Plugin renamed to **Astro-Physics Tools** - same great taste, all-new flavor. But, really, the original name was a mouthful.
-* Initial APPM Dec-Arc instruction. A work-in-progress
+* Initial APPM Dec-Arc instruction, a BETA 
 * Minimum supported NINA version is now 2.0 Beta 4
 
 ## 1.3.5.0 - 2021-10-27

@@ -29,9 +29,9 @@ using System.Threading.Tasks;
 
 namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
-    [ExportMetadata("Name", "Create Dec Arc Model")]
+    [ExportMetadata("Name", "Create Dec Arc Model (BETA)")]
     [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended dec arc model creation")]
-    [ExportMetadata("Icon", "APPM_SVG")]
+    [ExportMetadata("Icon", "DecArc_SVG")]
     [ExportMetadata("Category", "Astro-Physics Tools")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
