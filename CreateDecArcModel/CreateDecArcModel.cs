@@ -140,62 +140,66 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
 
             var proc = RunAPPM();
-            await appm.WaitForApiInit(ct);
 
-            var config = await appm.GetConfiguration(ct);
-            var newConfig = new AppmApi.AppmMeasurementConfigurationRequest() {
-                Configuration = config.Configuration
-            };
+            try {
+                await appm.WaitForApiInit(ct);
 
-            newConfig.Configuration.UseMaxDeclination = true;
-            newConfig.Configuration.UseMinDeclination = true;
-            newConfig.Configuration.UseMaxHourAngleWest = true;
-            newConfig.Configuration.UseMinHourAngleEast = true;
-            newConfig.Configuration.CreateEastPoints = true;
-            newConfig.Configuration.CreateWestPoints = true;
-            newConfig.Configuration.UseMeridianLimits = true;
-            newConfig.Configuration.UseHorizonLimits = true;
-            newConfig.Configuration.UseMinAltitude = true;
-            newConfig.Configuration.RightAscensionOffset = 0;
-            newConfig.Configuration.DeclinationSpacing = decArcParams.DecSpacing;
-            newConfig.Configuration.MaxDeclination = decArcParams.NorthDecLimit;
-            newConfig.Configuration.MinDeclination = decArcParams.SouthDecLimit;
-            newConfig.Configuration.DeclinationOffset = decArcParams.DecOffset;
-            newConfig.Configuration.RightAscensionSpacing = decArcParams.RaSpacing;
-            newConfig.Configuration.MinHourAngleEast = decArcParams.EastHaLimit;
-            newConfig.Configuration.MaxHourAngleWest = decArcParams.WestHaLimit;
-            newConfig.Configuration.PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit ? decArcParams.PolarPointOrderingStrategy : PointOrderingStrategy;
+                var config = await appm.GetConfiguration(ct);
+                var newConfig = new AppmApi.AppmMeasurementConfigurationRequest() {
+                    Configuration = config.Configuration
+                };
 
-            var pointCountResult = await appm.SetConfiguration(newConfig, ct);
-            TotalPoints = pointCountResult.PointCount;
+                newConfig.Configuration.UseMaxDeclination = true;
+                newConfig.Configuration.UseMinDeclination = true;
+                newConfig.Configuration.UseMaxHourAngleWest = true;
+                newConfig.Configuration.UseMinHourAngleEast = true;
+                newConfig.Configuration.CreateEastPoints = true;
+                newConfig.Configuration.CreateWestPoints = true;
+                newConfig.Configuration.UseMeridianLimits = true;
+                newConfig.Configuration.UseHorizonLimits = true;
+                newConfig.Configuration.UseMinAltitude = true;
+                newConfig.Configuration.RightAscensionOffset = 0;
+                newConfig.Configuration.DeclinationSpacing = decArcParams.DecSpacing;
+                newConfig.Configuration.MaxDeclination = decArcParams.NorthDecLimit;
+                newConfig.Configuration.MinDeclination = decArcParams.SouthDecLimit;
+                newConfig.Configuration.DeclinationOffset = decArcParams.DecOffset;
+                newConfig.Configuration.RightAscensionSpacing = decArcParams.RaSpacing;
+                newConfig.Configuration.MinHourAngleEast = decArcParams.EastHaLimit;
+                newConfig.Configuration.MaxHourAngleWest = decArcParams.WestHaLimit;
+                newConfig.Configuration.PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit ? decArcParams.PolarPointOrderingStrategy : PointOrderingStrategy;
 
-            if (!ManualMode) {
-                await appm.Start(ct);
+                var pointCountResult = await appm.SetConfiguration(newConfig, ct);
+                TotalPoints = pointCountResult.PointCount;
 
-                var runStatus = await appm.WaitForMappingState("Running", ct);
-                ModelStatus = runStatus.Status.MappingRunState;
+                if (!ManualMode) {
+                    await appm.Start(ct);
 
-                while (!runStatus.Status.MappingRunState.Equals("Idle")) {
-                    if (ct.IsCancellationRequested) {
-                        Logger.Info($"Cancellation requested");
-                        await appm.Stop(CancellationToken.None);
-                        await appm.Close(CancellationToken.None);
-                        return;
-                    }
-
-                    runStatus = await appm.Status(ct);
-                    CompletedPoints = runStatus.Status.MeasurementPointsCount;
+                    var runStatus = await appm.WaitForMappingState("Running", ct);
                     ModelStatus = runStatus.Status.MappingRunState;
 
-                    await Task.Delay(TimeSpan.FromSeconds(2), ct);
-                }
+                    while (!runStatus.Status.MappingRunState.Equals("Idle")) {
+                        runStatus = await appm.Status(ct);
+                        CompletedPoints = runStatus.Status.MeasurementPointsCount;
+                        ModelStatus = runStatus.Status.MappingRunState;
 
-                await appm.Close(ct);
-            } else {
-                proc.WaitForExit();
+                        await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                    }
+
+                    await appm.Close(ct);
+                } else {
+                    proc.WaitForExit();
+                }
+            } catch (OperationCanceledException) {
+                Logger.Info($"Cancellation requested");
+                await appm.Stop(CancellationToken.None);
+
+                if (!DoNotExit) {
+                    await appm.Close(CancellationToken.None);
+                }
+            } finally {
+                proc.Dispose();
             }
 
-            proc.Dispose();
             return;
         }
 
