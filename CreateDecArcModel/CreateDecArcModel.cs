@@ -44,6 +44,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private string modelStatus = string.Empty;
         private IProfileService profileService;
 
+        private Version minVersion = new Version(1, 9, 2, 3);
+
         [ImportingConstructor]
         public CreateDecArcModel(IProfileService profileService) {
             APPMExePath = Properties.Settings.Default.APPMExePath;
@@ -59,6 +61,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             Properties.Settings.Default.PropertyChanged += SettingsChanged;
 
             this.profileService = profileService;
+
+            AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
         }
 
         public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService) {
@@ -220,6 +224,10 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         public bool Validate() {
             var i = new List<string>();
 
+            if (AppmFileVersion < minVersion) {
+                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {minVersion} or higher");
+            }
+
             if (Utility.Utility.FindDsoInfo(this.Parent) == null) {
                 i.Add("No DSO has been defined");
             }
@@ -308,6 +316,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private int PointOrderingStrategy { get; set; }
         private int PolarPointOrderingStrategy { get; set; }
         private int PolarProximityLimit { get; set; }
+
+        private Version AppmFileVersion { get; set; }
 
         private void SettingsChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
