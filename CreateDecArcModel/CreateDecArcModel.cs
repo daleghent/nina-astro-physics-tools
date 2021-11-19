@@ -189,7 +189,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                         await Task.Delay(TimeSpan.FromSeconds(2), ct);
                     }
 
-                    await appm.Close(ct);
+                    if (!DoNotExit) {
+                        await appm.Close(ct);
+                    }
                 } else {
                     proc.WaitForExit();
                 }
