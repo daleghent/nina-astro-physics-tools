@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using NINA.Astrometry;
 using NINA.Core.Model;
 using NINA.Core.Utility;
+using NINA.Core.Utility.Notification;
 using NINA.Profile.Interfaces;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.Validations;
@@ -42,6 +43,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private int totalPoints = 0;
         private int completedPoints = 0;
         private string modelStatus = string.Empty;
+        private AppmApi.AppmApi appm = null;
         private IProfileService profileService;
 
         private Version minVersion = new Version(1, 9, 2, 3);
@@ -124,7 +126,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         }
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
-            var appm = new AppmApi.AppmApi();
+            Task updateStatusTask = null;
+            appm = new AppmApi.AppmApi();
             var target = Utility.Utility.FindDsoInfo(this.Parent);
 
             if (target == null) {
@@ -147,6 +150,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
             try {
                 await appm.WaitForApiInit(ct);
+
+                updateStatusTask = UpdateStatus(ct);
 
                 var config = await appm.GetConfiguration(ct);
                 var newConfig = new AppmApi.AppmMeasurementConfigurationRequest() {
@@ -175,17 +180,17 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 var pointCountResult = await appm.SetConfiguration(newConfig, ct);
                 TotalPoints = pointCountResult.PointCount;
 
+                if (TotalPoints == 0) {
+                    Logger.Warning($"Total point count is {TotalPoints}. Exiting without running model");
+                    Notification.ShowWarning($"The point count for this mapping run is {TotalPoints}. The mapping run will not start. This is not an error, but it's perhaps not what you intended.");
+                    throw new OperationCanceledException("Not enough points to model");
+                }
+
                 if (!ManualMode) {
                     await appm.Start(ct);
+                    await appm.WaitForMappingState("Running", ct);
 
-                    var runStatus = await appm.WaitForMappingState("Running", ct);
-                    ModelStatus = runStatus.Status.MappingRunState;
-
-                    while (!runStatus.Status.MappingRunState.Equals("Idle")) {
-                        runStatus = await appm.Status(ct);
-                        CompletedPoints = runStatus.Status.MeasurementPointsCount;
-                        ModelStatus = runStatus.Status.MappingRunState;
-
+                    while (ModelStatus.Equals("Running")) {
                         await Task.Delay(TimeSpan.FromSeconds(2), ct);
                     }
 
@@ -197,12 +202,19 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 }
             } catch (OperationCanceledException) {
                 Logger.Info($"Cancellation requested");
-                await appm.Stop(CancellationToken.None);
+
+                if (ModelStatus.Equals("Running")) {
+                    await appm.Stop(CancellationToken.None);
+                }
 
                 if (!DoNotExit) {
                     await appm.Close(CancellationToken.None);
                 }
             } finally {
+                if (updateStatusTask != null && updateStatusTask.IsCompleted) {
+                    updateStatusTask.Dispose();
+                }
+
                 proc.Dispose();
             }
 
@@ -307,6 +319,26 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             }
 
             return decArcParams;
+        }
+
+        private async Task UpdateStatus(CancellationToken ct) {
+            while (true) {
+                try {
+                    if (ct.IsCancellationRequested) {
+                        throw new OperationCanceledException();
+                    }
+
+                    Logger.Debug("Updating APPM stats...");
+                    var runStatus = await appm.Status(ct);
+                    CompletedPoints = runStatus.Status.MeasurementPointsCount;
+                    ModelStatus = runStatus.Status.MappingRunState;
+
+                    await Task.Delay(TimeSpan.FromSeconds(1), ct);
+                } catch {
+                    Logger.Debug("Update task is exiting");
+                    return;
+                }
+            }
         }
 
         private string APPMExePath { get; set; }
