@@ -38,16 +38,20 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
         }
 
         public async Task Start(CancellationToken ct) {
-            _ = await HttpRequestAsync("/api/MappingRun/Start", "", ct);
+            _ = await HttpRequestAsync("/api/MappingRun/Start", "{\"Action\":\"Start\"}", HttpMethod.Post, ct);
         }
 
         public async Task Stop(CancellationToken ct) {
-            _ = await HttpRequestAsync("/api/MappingRun/Stop", "", ct);
+            _ = await HttpRequestAsync("/api/MappingRun/Stop", "{\"Action\":\"Stop\"}", HttpMethod.Post, ct);
+        }
+
+        public async Task Close(CancellationToken ct) {
+            _ = await HttpRequestAsync("/api/Application/Close", "{}", HttpMethod.Post, ct);
         }
 
         public async Task<AppmMappingRunStatusResult> Status(CancellationToken ct) {
             AppmMappingRunStatusResult response = null;
-            var result = await HttpRequestAsync("/api/MappingRun/Status", null, ct);
+            var result = await HttpRequestAsync("/api/MappingRun/Status", null, HttpMethod.Get, ct);
 
             if (result != null) {
                 response = JsonConvert.DeserializeObject<AppmMappingRunStatusResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
@@ -59,7 +63,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
 
         public async Task<AppmPointCountResult> PointCount(CancellationToken ct) {
             AppmPointCountResult response = null;
-            var result = await HttpRequestAsync("/api/MappingPoints/PointCount", null, ct);
+            var result = await HttpRequestAsync("/api/MappingPoints/PointCount", null, HttpMethod.Get, ct);
 
             if (result != null) {
                 response = JsonConvert.DeserializeObject<AppmPointCountResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
@@ -71,7 +75,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
 
         public async Task<AppmMappingPointsResult> MappingPoints(CancellationToken ct) {
             AppmMappingPointsResult response = null;
-            var result = await HttpRequestAsync("/api/MappingPoints", null, ct);
+            var result = await HttpRequestAsync("/api/MappingPoints", null, HttpMethod.Get, ct);
 
             if (result != null) {
                 response = JsonConvert.DeserializeObject<AppmMappingPointsResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
@@ -83,7 +87,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
 
         public async Task<AppmMeasurementConfigurationResult> GetConfiguration(CancellationToken ct) {
             AppmMeasurementConfigurationResult response = null;
-            var result = await HttpRequestAsync("/api/MappingPoints/Configuration", null, ct);
+            var result = await HttpRequestAsync("/api/MappingPoints/Configuration", null, HttpMethod.Get, ct);
 
             if (result != null) {
                 response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
@@ -97,7 +101,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             AppmMeasurementConfigurationResult response = null;
 
             string configSer = JsonConvert.SerializeObject(config, serializerSettings);
-            var result = await HttpRequestAsync("/api/MappingPoints/Configuration", configSer, ct);
+            var result = await HttpRequestAsync("/api/MappingPoints/Configuration", configSer, HttpMethod.Put, ct);
 
             if (result != null) {
                 response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
@@ -112,15 +116,16 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
 
             while (!ct.IsCancellationRequested) {
                 try {
-                    await HttpRequestAsync("/", "", ct);
+                    await HttpRequestAsync("/", null, HttpMethod.Get, ct);
                     success = true;
                     break;
                 } catch (HttpRequestException) {
-                    Logger.Trace($"APPM not yet answering on API; trying again...");
+                    Logger.Debug($"APPM not yet answering on API; trying again...");
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
             }
 
+            Logger.Debug("APPM is up");
             return success;
         }
 
@@ -135,17 +140,16 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             return appmStatus;
         }
 
-        private async Task<HttpResponseMessage> HttpRequestAsync(string url, string body, CancellationToken ct) {
+        private async Task<HttpResponseMessage> HttpRequestAsync(string url, string body, HttpMethod method, CancellationToken ct) {
             var uri = new Uri($"http://{this.host}:{this.port}{url}");
 
             if (!uri.IsWellFormedOriginalString()) {
                 throw new SequenceEntityFailedException($"Invalid or malformed URL: {uri}");
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            var request = new HttpRequestMessage(method, uri);
 
-            if (body != null) {
-                request.Method = HttpMethod.Put;
+            if (!string.IsNullOrEmpty(body)) {
                 request.Content = new StringContent(body, Encoding.UTF8, "application/json");
             }
 

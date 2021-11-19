@@ -177,7 +177,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
                 while (!runStatus.Status.MappingRunState.Equals("Idle")) {
                     if (ct.IsCancellationRequested) {
+                        Logger.Info($"Cancellation requested");
                         await appm.Stop(CancellationToken.None);
+                        await appm.Close(CancellationToken.None);
                         return;
                     }
 
@@ -187,6 +189,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
                     await Task.Delay(TimeSpan.FromSeconds(2), ct);
                 }
+
+                await appm.Close(ct);
             } else {
                 proc.WaitForExit();
             }
