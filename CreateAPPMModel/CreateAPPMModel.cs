@@ -13,6 +13,7 @@
 using Newtonsoft.Json;
 using NINA.Core.Model;
 using NINA.Core.Utility;
+using NINA.Equipment.Interfaces.Mediator;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.Validations;
 using System;
@@ -35,17 +36,20 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateAPPMModel : SequenceItem, IValidatable, INotifyPropertyChanged {
         private bool doNotExit = false;
+        private ICameraMediator cameraMediator;
 
         [ImportingConstructor]
-        public CreateAPPMModel() {
+        public CreateAPPMModel(ICameraMediator cameraMediator) {
             APPMExePath = Properties.Settings.Default.APPMExePath;
             APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
             APPMMapPath = Properties.Settings.Default.APPMMapPath;
 
             Properties.Settings.Default.PropertyChanged += SettingsChanged;
+
+            this.cameraMediator = cameraMediator;
         }
 
-        public CreateAPPMModel(CreateAPPMModel copyMe) : this() {
+        public CreateAPPMModel(CreateAPPMModel copyMe) : this(copyMe.cameraMediator) {
             CopyMetaData(copyMe);
         }
 
@@ -78,6 +82,10 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAPPMModel {
 
         public bool Validate() {
             var i = new List<string>();
+
+            if (!cameraMediator.GetInfo().Connected) {
+                i.Add($"Camera is not connected");
+            }
 
             if (string.IsNullOrEmpty(APPMExePath) || !File.Exists(APPMExePath)) {
                 i.Add("Invalid location for ApPointMapper.exe");

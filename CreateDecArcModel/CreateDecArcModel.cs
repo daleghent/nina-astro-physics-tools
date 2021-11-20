@@ -15,6 +15,7 @@ using NINA.Astrometry;
 using NINA.Core.Model;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
+using NINA.Equipment.Interfaces.Mediator;
 using NINA.Profile.Interfaces;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.Validations;
@@ -45,11 +46,12 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private string mappingRunState = "Unknown";
         private AppmApi.AppmApi appm = null;
         private IProfileService profileService;
+        private ICameraMediator cameraMediator;
 
         private readonly Version minVersion = new Version(1, 9, 2, 3);
 
         [ImportingConstructor]
-        public CreateDecArcModel(IProfileService profileService) {
+        public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator) {
             APPMExePath = Properties.Settings.Default.APPMExePath;
             APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
             DecArcRaSpacing = Properties.Settings.Default.DecArcRaSpacing;
@@ -63,11 +65,12 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             Properties.Settings.Default.PropertyChanged += SettingsChanged;
 
             this.profileService = profileService;
+            this.cameraMediator = cameraMediator;
 
             AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
         }
 
-        public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService) {
+        public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator) {
             CopyMetaData(copyMe);
         }
 
@@ -259,6 +262,10 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
             if (AppmFileVersion < minVersion) {
                 i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {minVersion} or higher");
+            }
+
+            if (!cameraMediator.GetInfo().Connected) {
+                i.Add($"Camera is not connected");
             }
 
             if (Utility.Utility.FindDsoInfo(this.Parent) == null) {
