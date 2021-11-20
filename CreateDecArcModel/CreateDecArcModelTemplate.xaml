@@ -86,7 +86,7 @@
                     <TextBlock
                         Margin="5,0,0,0"
                         VerticalAlignment="Center"
-                        Text="{Binding MappingStatus}" />
+                        Text="{Binding MappingRunState}" />
 
                     <TextBlock
                         Margin="10,0,0,0"
