@@ -58,43 +58,6 @@
                         <TextBlock
                             VerticalAlignment="Center"
                             Width="140">
-                            <TextBlock.Text>APPM map file</TextBlock.Text>
-                            <TextBlock.ToolTip>OPTIONAL: The location of an APPM map file if not using the default</TextBlock.ToolTip>
-                        </TextBlock>
-
-                        <TextBox
-                            Margin="5,0,0,0"
-                            Width="500"
-                            VerticalAlignment="Center"
-                            VerticalContentAlignment="Center">
-                            <TextBox.Text>
-                                <Binding Path="APPMMapPath" UpdateSourceTrigger="LostFocus">
-                                    <Binding.ValidationRules>
-                                        <rules:FileExistsRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-
-                        <Button
-                            Width="25"
-                            Height="25"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Command="{Binding APPMMapPathDialoggCommand}">
-                            <Path
-                                Margin="4,17,4,4"
-                                Data="{StaticResource DotsSVG}"
-                                Fill="{StaticResource ButtonForegroundBrush}"
-                                Stretch="Uniform" />
-                        </Button>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Width="140">
                             <TextBlock.Text>APPM location</TextBlock.Text>
                             <TextBlock.ToolTip>The location of ApPointMapper.exe if it is somewhere other than its default location</TextBlock.ToolTip>
                         </TextBlock>
@@ -412,6 +375,48 @@
                                 <TextBlock.Text>of the celestial pole</TextBlock.Text>
                             </TextBlock>
                         </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="All-Sky Parameters" Name="AllSkyParams">
+                <StackPanel DataContext="{Binding}" Orientation="Vertical" Margin="0,10,0,0">
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Width="140">
+                            <TextBlock.Text>Map file</TextBlock.Text>
+                            <TextBlock.ToolTip>The location of an APPM map file if not using the default, last-used measurement settings</TextBlock.ToolTip>
+                        </TextBlock>
+
+                        <TextBox
+                            Margin="5,0,0,0"
+                            Width="500"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Center">
+                            <TextBox.Text>
+                                <Binding Path="APPMMapPath" UpdateSourceTrigger="LostFocus">
+                                    <Binding.ValidationRules>
+                                        <rules:FileExistsRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <Button
+                            Width="25"
+                            Height="25"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding APPMMapPathDialoggCommand}">
+                            <Path
+                                Margin="4,17,4,4"
+                                Data="{StaticResource DotsSVG}"
+                                Fill="{StaticResource ButtonForegroundBrush}"
+                                Stretch="Uniform" />
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </TabItem>

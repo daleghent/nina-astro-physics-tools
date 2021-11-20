@@ -2,8 +2,9 @@
 
 ## 1.4.0.0 - 2021-11-??
 * Plugin renamed to **Astro-Physics Tools** - same great taste, all-new flavor. But, really, the original name was a mouthful.
-* Renamed the **Create APPM Model** instruction to **Create All-Sky Model**
 * Initial beta of the new **Create Dec Arc Model** instruction
+* Renamed the **Create APPM Model** instruction to **Create All-Sky Model**
+* Moved **APPM Map File** setting to a new **All-Sky Parameters** Options tab because it's relevant only for all-sky model creation
 * Instructions now check to make sure a camera is connected in NINA (for APPM's use) and raise a validation warning if one is not
 * Minimum supported NINA version is now 2.0 Beta 4
 
