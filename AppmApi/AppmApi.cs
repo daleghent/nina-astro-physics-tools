@@ -129,17 +129,6 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             return success;
         }
 
-        public async Task<AppmMappingRunStatusResult> WaitForMappingState(string status, CancellationToken ct) {
-            var appmStatus = await Status(ct); ;
-
-            while (!appmStatus.Status.MappingRunState.Equals(status) && !ct.IsCancellationRequested) {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                appmStatus = await Status(ct);
-            }
-
-            return appmStatus;
-        }
-
         private async Task<HttpResponseMessage> HttpRequestAsync(string url, string body, HttpMethod method, CancellationToken ct) {
             var uri = new Uri($"http://{this.host}:{this.port}{url}");
 
@@ -153,8 +142,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
                 request.Content = new StringContent(body, Encoding.UTF8, "application/json");
             }
 
-            Logger.Debug($"Request URL: {request.RequestUri}");
-            Logger.Trace($"Request type: {request.Method}");
+            Logger.Debug($"Request URL: {request.Method} {request.RequestUri}");
             Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync().Result}");
 
             var client = new HttpClient();

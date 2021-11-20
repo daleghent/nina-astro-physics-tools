@@ -41,8 +41,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private bool doNotExit = false;
         private bool doFullArc = false;
         private int totalPoints = 0;
-        private int completedPoints = 0;
-        private string modelStatus = string.Empty;
+        private int currentPoint = 0;
+        private string mappingRunState = "Unknown";
         private AppmApi.AppmApi appm = null;
         private IProfileService profileService;
 
@@ -107,25 +107,27 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             }
         }
 
-        public int CompletedPoints {
-            get => completedPoints;
+        public int CurrentPoint {
+            get => currentPoint;
             set {
-                completedPoints = value;
-                Logger.Debug($"CompletedPoints={completedPoints}");
+                currentPoint = value;
+                Logger.Debug($"CurrentPoint={currentPoint}");
                 RaisePropertyChanged();
             }
         }
 
-        public string ModelStatus {
-            get => modelStatus;
+        public string MappingRunState {
+            get => mappingRunState;
             set {
-                modelStatus = value;
-                Logger.Debug($"ModelStatus={modelStatus}");
+                mappingRunState = value;
+                Logger.Debug($"MappingStatus set to {mappingRunState}");
                 RaisePropertyChanged();
             }
         }
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
+            CancellationTokenSource updateStatusTaskCts = new CancellationTokenSource();
+            CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
             appm = new AppmApi.AppmApi();
             var target = Utility.Utility.FindDsoInfo(this.Parent);
@@ -151,7 +153,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             try {
                 await appm.WaitForApiInit(ct);
 
-                updateStatusTask = UpdateStatus(ct);
+                updateStatusTask = UpdateStatus(updateStatusTaskCt);
 
                 var config = await appm.GetConfiguration(ct);
                 var newConfig = new AppmApi.AppmMeasurementConfigurationRequest() {
@@ -187,11 +189,24 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 }
 
                 if (!ManualMode) {
-                    await appm.Start(ct);
-                    await appm.WaitForMappingState("Running", ct);
+                    if (MappingRunState.Equals("Idle")) {
+                        var completedPoint = 0;
+                        await appm.Start(ct);
 
-                    while (ModelStatus.Equals("Running")) {
-                        await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                        WaitForMappingStatus("Running", ct);
+
+                        while (CurrentPoint < TotalPoints) {
+                            Logger.Debug($"CurrentPoint={CurrentPoint}, TotalPoints={TotalPoints}");
+
+                            if (completedPoint < CurrentPoint) {
+                                Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
+                                completedPoint = CurrentPoint;
+                            }
+
+                            await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                        }
+
+                        Logger.Info($"APPM mapping run has finished. MappingRunState={MappingRunState}");
                     }
 
                     if (!DoNotExit) {
@@ -203,7 +218,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             } catch (OperationCanceledException) {
                 Logger.Info($"Cancellation requested");
 
-                if (ModelStatus.Equals("Running")) {
+                if (MappingRunState.Equals("Running")) {
                     await appm.Stop(CancellationToken.None);
                 }
 
@@ -211,11 +226,15 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                     await appm.Close(CancellationToken.None);
                 }
             } finally {
-                if (updateStatusTask != null && updateStatusTask.IsCompleted) {
+                if (updateStatusTask != null) {
+                    updateStatusTaskCts.Cancel();
                     updateStatusTask.Dispose();
                 }
 
+                updateStatusTaskCts.Dispose();
                 proc.Dispose();
+
+                MappingRunState = ct.IsCancellationRequested ? "Cancelled" : "Completed";
             }
 
             return;
@@ -321,7 +340,16 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             return decArcParams;
         }
 
-        private async Task UpdateStatus(CancellationToken ct) {
+        private async void WaitForMappingStatus(string status, CancellationToken ct) {
+            while (!MappingRunState.Equals(status) && !ct.IsCancellationRequested) {
+                Logger.Debug($"MappingRunState={MappingRunState}, want: {status}");
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+            }
+
+            Logger.Debug($"MappingStatus has transitioned to {MappingRunState}");
+        }
+
+        private async Task<Task> UpdateStatus(CancellationToken ct) {
             while (true) {
                 try {
                     if (ct.IsCancellationRequested) {
@@ -330,13 +358,13 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
                     Logger.Debug("Updating APPM stats...");
                     var runStatus = await appm.Status(ct);
-                    CompletedPoints = runStatus.Status.MeasurementPointsCount;
-                    ModelStatus = runStatus.Status.MappingRunState;
+                    CurrentPoint = runStatus.Status.MeasurementPointsCount;
+                    MappingRunState = runStatus.Status.MappingRunState;
 
                     await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 } catch {
                     Logger.Debug("Update task is exiting");
-                    return;
+                    return Task.FromCanceled(ct);
                 }
             }
         }
