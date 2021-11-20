@@ -35,19 +35,19 @@
     <Setting Name="DecArcDecSpacing" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="HourAngleLeadIn" Type="System.Double" Scope="User">
+    <Setting Name="DecArcHourAngleLeadIn" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="DecArcQuantity" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="PointOrderingStrategy" Type="System.Int32" Scope="User">
+    <Setting Name="DecArcPointOrderingStrategy" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="PolarProximityLimit" Type="System.Int32" Scope="User">
+    <Setting Name="DecArcPolarProximityLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">35</Value>
     </Setting>
-    <Setting Name="PolarPointOrderingStrategy" Type="System.Int32" Scope="User">
+    <Setting Name="DecArcPolarPointOrderingStrategy" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>

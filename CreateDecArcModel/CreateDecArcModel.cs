@@ -56,11 +56,11 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
             DecArcRaSpacing = Properties.Settings.Default.DecArcRaSpacing;
             DecArcDecSpacing = Properties.Settings.Default.DecArcDecSpacing;
-            HourAngleLeadIn = Properties.Settings.Default.HourAngleLeadIn;
+            DecArcHourAngleLeadIn = Properties.Settings.Default.DecArcHourAngleLeadIn;
             DecArcQuantity = Properties.Settings.Default.DecArcQuantity;
-            PointOrderingStrategy = Properties.Settings.Default.PointOrderingStrategy;
-            PolarPointOrderingStrategy = Properties.Settings.Default.PolarPointOrderingStrategy;
-            PolarProximityLimit = Properties.Settings.Default.PolarProximityLimit;
+            DecArcPointOrderingStrategy = Properties.Settings.Default.DecArcPointOrderingStrategy;
+            DecArcPolarPointOrderingStrategy = Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
+            DecArcPolarProximityLimit = Properties.Settings.Default.DecArcPolarProximityLimit;
 
             Properties.Settings.Default.PropertyChanged += SettingsChanged;
 
@@ -180,7 +180,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 newConfig.Configuration.RightAscensionSpacing = decArcParams.RaSpacing;
                 newConfig.Configuration.MinHourAngleEast = decArcParams.EastHaLimit;
                 newConfig.Configuration.MaxHourAngleWest = decArcParams.WestHaLimit;
-                newConfig.Configuration.PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit ? decArcParams.PolarPointOrderingStrategy : PointOrderingStrategy;
+                newConfig.Configuration.PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit ? decArcParams.PolarPointOrderingStrategy : DecArcPointOrderingStrategy;
 
                 var pointCountResult = await appm.SetConfiguration(newConfig, ct);
                 TotalPoints = pointCountResult.PointCount;
@@ -324,9 +324,9 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 ArcQuantity = DecArcQuantity,
                 DecSpacing = DecArcDecSpacing,
                 RaSpacing = DecArcRaSpacing,
-                PointOrderingStrategy = PointOrderingStrategy,
-                PolarPointOrderingStrategy = PolarPointOrderingStrategy,
-                PolarProximityLimit = PolarProximityLimit,
+                PointOrderingStrategy = DecArcPointOrderingStrategy,
+                PolarPointOrderingStrategy = DecArcPolarPointOrderingStrategy,
+                PolarProximityLimit = DecArcPolarProximityLimit,
             };
 
             decArcParams.TargetHa = CurrentHourAngle(target);
@@ -380,11 +380,11 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private string APPMSettingsPath { get; set; }
         private int DecArcRaSpacing { get; set; }
         private int DecArcDecSpacing { get; set; }
-        private double HourAngleLeadIn { get; set; }
+        private double DecArcHourAngleLeadIn { get; set; }
         private int DecArcQuantity { get; set; }
-        private int PointOrderingStrategy { get; set; }
-        private int PolarPointOrderingStrategy { get; set; }
-        private int PolarProximityLimit { get; set; }
+        private int DecArcPointOrderingStrategy { get; set; }
+        private int DecArcPolarPointOrderingStrategy { get; set; }
+        private int DecArcPolarProximityLimit { get; set; }
 
         private Version AppmFileVersion { get; set; }
 
@@ -410,20 +410,20 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                     DecArcQuantity = Properties.Settings.Default.DecArcQuantity;
                     break;
 
-                case "HourAngleLeadIn":
-                    HourAngleLeadIn = Properties.Settings.Default.HourAngleLeadIn;
+                case "DecArcHourAngleLeadIn":
+                    DecArcHourAngleLeadIn = Properties.Settings.Default.DecArcHourAngleLeadIn;
                     break;
 
-                case "PointOrderingStrategy":
-                    PointOrderingStrategy = Properties.Settings.Default.PointOrderingStrategy;
+                case "DecArcPointOrderingStrategy":
+                    DecArcPointOrderingStrategy = Properties.Settings.Default.DecArcPointOrderingStrategy;
                     break;
 
-                case "PolarPointOrderingStrategy":
-                    PolarPointOrderingStrategy = Properties.Settings.Default.PolarPointOrderingStrategy;
+                case "DecArcPolarPointOrderingStrategy":
+                    DecArcPolarPointOrderingStrategy = Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
                     break;
 
-                case "PolarProximityLimit":
-                    PolarProximityLimit = Properties.Settings.Default.PolarProximityLimit;
+                case "DecArcPolarProximityLimit":
+                    DecArcPolarProximityLimit = Properties.Settings.Default.DecArcPolarProximityLimit;
                     break;
             }
         }

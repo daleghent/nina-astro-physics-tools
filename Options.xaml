@@ -323,7 +323,7 @@
                                 StepSize="0.1"
                                 Precision="2"
                                 Unit="hours"
-                                Value="{Binding HourAngleLeadIn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
+                                Value="{Binding DecArcHourAngleLeadIn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="2"
@@ -357,7 +357,7 @@
                                 Margin="5,0,0,0"
                                 VerticalAlignment="Center"
                                 ItemsSource="{Binding PointOrderingStrategyList}"
-                                SelectedIndex="{Binding PointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                SelectedIndex="{Binding DecArcPointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                     </StackPanel>
 
@@ -387,7 +387,7 @@
                                 Margin="5,0,0,0"
                                 VerticalAlignment="Center"
                                 ItemsSource="{Binding PointOrderingStrategyList}"
-                                SelectedIndex="{Binding PolarPointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                SelectedIndex="{Binding DecArcPolarPointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="2"
@@ -403,7 +403,7 @@
                                 MinValue="0"
                                 StepSize="1"
                                 Unit="°"
-                                Value="{Binding PolarProximityLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Value="{Binding DecArcPolarProximityLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="4"

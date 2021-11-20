@@ -158,12 +158,12 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double HourAngleLeadIn {
+        public double DecArcHourAngleLeadIn {
             get {
-                return ((double)(this["HourAngleLeadIn"]));
+                return ((double)(this["DecArcHourAngleLeadIn"]));
             }
             set {
-                this["HourAngleLeadIn"] = value;
+                this["DecArcHourAngleLeadIn"] = value;
             }
         }
         
@@ -182,36 +182,36 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int PointOrderingStrategy {
+        public int DecArcPointOrderingStrategy {
             get {
-                return ((int)(this["PointOrderingStrategy"]));
+                return ((int)(this["DecArcPointOrderingStrategy"]));
             }
             set {
-                this["PointOrderingStrategy"] = value;
+                this["DecArcPointOrderingStrategy"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("35")]
-        public int PolarProximityLimit {
+        public int DecArcPolarProximityLimit {
             get {
-                return ((int)(this["PolarProximityLimit"]));
+                return ((int)(this["DecArcPolarProximityLimit"]));
             }
             set {
-                this["PolarProximityLimit"] = value;
+                this["DecArcPolarProximityLimit"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int PolarPointOrderingStrategy {
+        public int DecArcPolarPointOrderingStrategy {
             get {
-                return ((int)(this["PolarPointOrderingStrategy"]));
+                return ((int)(this["DecArcPolarPointOrderingStrategy"]));
             }
             set {
-                this["PolarPointOrderingStrategy"] = value;
+                this["DecArcPolarPointOrderingStrategy"] = value;
             }
         }
     }

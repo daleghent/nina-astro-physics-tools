@@ -134,13 +134,13 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
         }
 
-        public double HourAngleLeadIn {
+        public double DecArcHourAngleLeadIn {
             get {
-                HoursToDegrees = 15 * Properties.Settings.Default.HourAngleLeadIn;
-                return Properties.Settings.Default.HourAngleLeadIn;
+                HoursToDegrees = 15 * Properties.Settings.Default.DecArcHourAngleLeadIn;
+                return Properties.Settings.Default.DecArcHourAngleLeadIn;
             }
             set {
-                Properties.Settings.Default.HourAngleLeadIn = value;
+                Properties.Settings.Default.DecArcHourAngleLeadIn = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
@@ -158,28 +158,28 @@ namespace DaleGhent.NINA.AstroPhysics {
 
         public IList<string> PointOrderingStrategyList => Utility.Utility.PointOrderingStrategyList;
 
-        public int PointOrderingStrategy {
-            get => Properties.Settings.Default.PointOrderingStrategy;
+        public int DecArcPointOrderingStrategy {
+            get => Properties.Settings.Default.DecArcPointOrderingStrategy;
             set {
-                Properties.Settings.Default.PointOrderingStrategy = value;
+                Properties.Settings.Default.DecArcPointOrderingStrategy = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
 
-        public int PolarPointOrderingStrategy {
-            get => Properties.Settings.Default.PolarPointOrderingStrategy;
+        public int DecArcPolarPointOrderingStrategy {
+            get => Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
             set {
-                Properties.Settings.Default.PolarPointOrderingStrategy = value;
+                Properties.Settings.Default.DecArcPolarPointOrderingStrategy = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
 
-        public int PolarProximityLimit {
-            get => Properties.Settings.Default.PolarProximityLimit;
+        public int DecArcPolarProximityLimit {
+            get => Properties.Settings.Default.DecArcPolarProximityLimit;
             set {
-                Properties.Settings.Default.PolarProximityLimit = value;
+                Properties.Settings.Default.DecArcPolarProximityLimit = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
