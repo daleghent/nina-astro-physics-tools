@@ -220,10 +220,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 }
             } catch (OperationCanceledException) {
                 Logger.Info($"Cancellation requested");
-
-                if (MappingRunState.Equals("Running")) {
-                    await appm.Stop(CancellationToken.None);
-                }
+                await appm.Stop(CancellationToken.None);
 
                 if (!DoNotExit) {
                     await appm.Close(CancellationToken.None);
