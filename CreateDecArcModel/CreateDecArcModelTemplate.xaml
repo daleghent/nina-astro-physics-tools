@@ -75,12 +75,12 @@
         </nina:SequenceBlockView>
     </DataTemplate>
 
-    <DataTemplate x:Key="DaleGhent.NINA.AstroPhysics.CreateDecArcModel_Mini">
+    <DataTemplate x:Key="DaleGhent.NINA.AstroPhysics.CreateDecArcModel.CreateDecArcModel_Mini">
         <mini:MiniSequenceItem>
             <mini:MiniSequenceItem.SequenceItemContent>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
-                        Margin="10,0,0,0"
+                        Margin="5,0,0,0"
                         VerticalAlignment="Center"
                         Text="Status:" />
                     <TextBlock
@@ -89,12 +89,12 @@
                         Text="{Binding MappingRunState}" />
 
                     <TextBlock
-                        Margin="10,0,0,0"
+                        Margin="5,0,0,0"
                         VerticalAlignment="Center"
                         Text="|" />
 
                     <TextBlock
-                        Margin="10,0,0,0"
+                        Margin="5,0,0,0"
                         VerticalAlignment="Center"
                         Text="Points:" />
                     <TextBlock
