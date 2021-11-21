@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 // The following attributes are optional for the official manifest meta data
 
 //[Optional] Your plugin homepage - omit if not applicaple
-[assembly: AssemblyMetadata("Homepage", "https://daleghent.com/utilities-for-astro-physics-mounts")]
+[assembly: AssemblyMetadata("Homepage", "https://daleghent.com/astro-physics-tools")]
 
 //[Optional] Common tags that quickly describe your plugin
 [assembly: AssemblyMetadata("Tags", "appm,astro-physics,apcc,sequencer")]
@@ -51,8 +51,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyMetadata("AltScreenshotURL", "")]
 //[Optional] An in-depth description of your plugin
 [assembly: AssemblyMetadata("LongDescription", @"Astro-Physics Tools is a collection of Instructions and other things for running from within NINA's Advanced Sequencer.
-
-Please refer to this [plugin's website](https://daleghent.com/utilities-for-astro-physics-mounts) for detailed documentation. I also maintain a [website with tips](https://daleghent.com/nina-and-astro-physics-mounts) on using NINA with Astro-Physics mounts.
 
 # Requirements #
 
@@ -71,7 +69,9 @@ Please refer to this [plugin's website](https://daleghent.com/utilities-for-astr
 
 # Getting help #
 
-Help for this plugin may be found in the **#plugin-discussions** channel on the NINA project [Discord chat server](https://discord.com/invite/rWRbVbw), Astro-Physics' [AP-GTO forum](https://ap-gto.groups.io/g/main), or by filing an issue report at this plugin's [Github repository](https://github.com/daleghent/nina-plugins/issues).
+Please refer to this [plugin's website](https://daleghent.com/astro-physics-tools) for detailed documentation. I also maintain a [website with tips](https://daleghent.com/nina-and-astro-physics-mounts) on using NINA with Astro-Physics mounts.
+
+If you have questions about this plugin, come ask them in the **#plugin-discussions** channel on the NINA project [Discord chat server](https://discord.com/invite/rWRbVbw) or on Astro-Physics' [AP-GTO forum](https://ap-gto.groups.io/g/main), or by filing an issue report at this plugin's [Github repository](https://github.com/daleghent/nina-plugins/issues).
 
 * Astro-Physics Tools is provided 'as is' under the terms of the [Mozilla Public License 2.0](https://github.com/daleghent/nina-astro-physics-tools/blob/main/LICENSE.txt)
 * Source code for this plugin is available at this plugin's [source code repository](https://github.com/daleghent/nina-astro-physics-tools)
