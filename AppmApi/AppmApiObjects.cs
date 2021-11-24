@@ -96,7 +96,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
         public string DecSolved { get; set; }
 
         [JsonProperty]
-        public int Temperature { get; set; }
+        public double Temperature { get; set; }
 
         [JsonProperty]
         public string SolveError { get; set; }

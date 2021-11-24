@@ -111,13 +111,13 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             return response;
         }
 
-        public async Task<bool> WaitForApiInit(CancellationToken ct) {
-            bool success = false;
+        public async Task<AppmMappingRunStatusResult> WaitForApiInit(CancellationToken ct) {
+            var appm = new AppmApi();
+            AppmMappingRunStatusResult status = null;
 
             while (!ct.IsCancellationRequested) {
                 try {
-                    await HttpRequestAsync("/", null, HttpMethod.Get, ct);
-                    success = true;
+                    status = await appm.Status(ct);
                     break;
                 } catch (HttpRequestException) {
                     Logger.Debug($"APPM not yet answering on API; trying again...");
@@ -126,7 +126,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             }
 
             Logger.Debug("APPM is up");
-            return success;
+            return status;
         }
 
         private async Task<HttpResponseMessage> HttpRequestAsync(string url, string body, HttpMethod method, CancellationToken ct) {
@@ -143,7 +143,9 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
             }
 
             Logger.Debug($"Request URL: {request.Method} {request.RequestUri}");
-            Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync().Result}");
+            if (request.Method != HttpMethod.Get && request.Method != HttpMethod.Head) {
+                Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync().Result}");
+            }
 
             var client = new HttpClient();
             var response = await client.SendAsync(request, ct);

@@ -110,7 +110,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAllSkyModel {
             get => totalPoints;
             set {
                 totalPoints = value;
-                Logger.Debug($"TotalPoints={totalPoints}");
+                Logger.Debug($"TotalPoints set to {totalPoints}");
                 RaisePropertyChanged();
             }
         }
@@ -119,7 +119,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAllSkyModel {
             get => currentPoint;
             set {
                 currentPoint = value;
-                Logger.Debug($"CurrentPoint={currentPoint}");
+                Logger.Debug($"CurrentPoint set to {currentPoint}");
                 RaisePropertyChanged();
             }
         }
@@ -170,7 +170,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAllSkyModel {
             var proc = RunAPPM();
 
             try {
-                await appm.WaitForApiInit(ct);
+                MappingRunState = appm.WaitForApiInit(ct).Result.Status.MappingRunState;
                 updateStatusTask = UpdateStatus(updateStatusTaskCt);
 
                 var response = appm.SetConfiguration(request, ct);
@@ -189,19 +189,15 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAllSkyModel {
 
                 if (!ManualMode) {
                     if (MappingRunState.Equals("Idle")) {
-                        var completedPoint = 0;
                         await appm.Start(ct);
 
-                        WaitForMappingStatus("Running", ct);
+                        while (!MappingRunState.Equals("Running")) {
+                            Logger.Info($"Waiting for MappingRunState=Running");
+                            await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                        }
 
-                        while (CurrentPoint < TotalPoints) {
-                            Logger.Debug($"CurrentPoint={CurrentPoint}, TotalPoints={TotalPoints}");
-
-                            if (completedPoint < CurrentPoint) {
-                                Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
-                                completedPoint = CurrentPoint;
-                            }
-
+                        while (MappingRunState.Equals("Running")) {
+                            Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
@@ -282,31 +278,19 @@ namespace DaleGhent.NINA.AstroPhysics.CreateAllSkyModel {
             return i.Count == 0;
         }
 
-        private async void WaitForMappingStatus(string status, CancellationToken ct) {
-            while (!MappingRunState.Equals(status) && !ct.IsCancellationRequested) {
-                Logger.Debug($"MappingRunState={MappingRunState}, want: {status}");
-                await Task.Delay(TimeSpan.FromSeconds(1), ct);
-            }
-
-            Logger.Debug($"MappingStatus has transitioned to {MappingRunState}");
-        }
-
         private async Task<Task> UpdateStatus(CancellationToken ct) {
             while (true) {
                 try {
-                    if (ct.IsCancellationRequested) {
-                        throw new OperationCanceledException();
-                    }
-
                     Logger.Debug("Updating APPM stats...");
+
                     var runStatus = await appm.Status(ct);
                     CurrentPoint = runStatus.Status.MeasurementPointsCount;
                     MappingRunState = runStatus.Status.MappingRunState;
 
                     await Task.Delay(TimeSpan.FromSeconds(1), ct);
-                } catch {
-                    Logger.Debug("Update task is exiting");
-                    return Task.FromCanceled(ct);
+                } catch (Exception ex) {
+                    Logger.Debug($"Update task is exiting: {ex.GetType()}, {ex.Message}");
+                    return Task.CompletedTask;
                 }
             }
         }
