@@ -124,7 +124,7 @@
                             </StackPanel>
                         </GroupBox>
 
-                        <GroupBox Header="Altitude Limit" Margin="25,0,0,0">
+                        <GroupBox Header="Altitude limit" Margin="25,0,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140" />
