@@ -135,7 +135,7 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
         public bool CreateEastPoints { get; set; } = true;
 
         [JsonProperty]
-        public bool SetSlewRate { get; set; } = false;
+        public bool SetSlewRate { get; set; } = true;
 
         [JsonProperty]
         public int SlewRate { get; set; } = 600;
@@ -150,10 +150,10 @@ namespace DaleGhent.NINA.AstroPhysics.AppmApi {
         public bool UseHorizonLimits { get; set; } = true;
 
         [JsonProperty]
-        public int ZenithSafetyDistance { get; set; } = 0;
+        public double ZenithSafetyDistance { get; set; } = 0;
 
         [JsonProperty]
-        public int ZenithSyncDistance { get; set; } = 3;
+        public double ZenithSyncDistance { get; set; } = 3;
 
         [JsonProperty]
         public int PointOrderingStrategy { get; set; } = 0;

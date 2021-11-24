@@ -71,9 +71,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="CreateAPPMModel\CreateAPPMModel.cs" />
-    <Compile Include="CreateAPPMModel\CreateAPPMModelTemplate.xaml.cs">
-      <DependentUpon>CreateAPPMModelTemplate.xaml</DependentUpon>
+    <Compile Include="CreateAllSkyModel\CreateAllSkyModel.cs" />
+    <Compile Include="CreateAllSkyModel\CreateAllSkyModelTemplate.xaml.cs">
+      <DependentUpon>CreateAllSkyModelTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppmApi\AppmApi.cs" />
     <Compile Include="AppmApi\AppmApiObjects.cs" />
@@ -99,7 +99,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="CreateAPPMModel\CreateAPPMModelTemplate.xaml">
+    <Page Include="CreateAllSkyModel\CreateAllSkyModelTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

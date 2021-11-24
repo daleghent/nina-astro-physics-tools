@@ -11,12 +11,10 @@
 #endregion "copyright"
 
 using Newtonsoft.Json;
-using NINA.Astrometry;
 using NINA.Core.Model;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Equipment.Interfaces.Mediator;
-using NINA.Profile.Interfaces;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.Validations;
 using System;
@@ -29,29 +27,27 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
+namespace DaleGhent.NINA.AstroPhysics.CreateAllSkyModel {
 
-    [ExportMetadata("Name", "Create Dec Arc Model (BETA)")]
-    [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended dec arc model creation")]
-    [ExportMetadata("Icon", "DecArc_SVG")]
+    [ExportMetadata("Name", "Create All-Sky Model")]
+    [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended all-sky model creation. A point map file must be configured under this plugin's Options > All-Sky Parameters")]
+    [ExportMetadata("Icon", "AllSky_SVG")]
     [ExportMetadata("Category", "Astro-Physics Tools")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
-    public class CreateDecArcModel : SequenceItem, IValidatable, INotifyPropertyChanged {
+    public class CreateAllSkyModel : SequenceItem, IValidatable, INotifyPropertyChanged {
         private bool manualMode = false;
         private bool doNotExit = false;
-        private bool doFullArc = false;
         private int totalPoints = 0;
         private int currentPoint = 0;
         private string mappingRunState = "Unknown";
         private AppmApi.AppmApi appm = null;
-        private IProfileService profileService;
         private ICameraMediator cameraMediator;
 
         private readonly Version minVersion = new Version(1, 9, 2, 3);
 
         [ImportingConstructor]
-        public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator) {
+        public CreateAllSkyModel(ICameraMediator cameraMediator) {
             APPMExePath = Properties.Settings.Default.APPMExePath;
             APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
 
@@ -63,33 +59,33 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             AppmUseMinAltitude = Properties.Settings.Default.AppmUseMinAltitude;
             AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
 
-            DecArcRaSpacing = Properties.Settings.Default.DecArcRaSpacing;
-            DecArcDecSpacing = Properties.Settings.Default.DecArcDecSpacing;
-            DecArcHourAngleLeadIn = Properties.Settings.Default.DecArcHourAngleLeadIn;
-            DecArcQuantity = Properties.Settings.Default.DecArcQuantity;
-            DecArcPointOrderingStrategy = Properties.Settings.Default.DecArcPointOrderingStrategy;
-            DecArcPolarPointOrderingStrategy = Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
-            DecArcPolarProximityLimit = Properties.Settings.Default.DecArcPolarProximityLimit;
+            AllSkyCreateWestPoints = Properties.Settings.Default.AllSkyCreateWestPoints;
+            AllSkyCreateEastPoints = Properties.Settings.Default.AllSkyCreateEastPoints;
+            AllSkyUseMeridianLimits = Properties.Settings.Default.AllSkyUseMeridianLimits;
+            AllSkyUseHorizonLimits = Properties.Settings.Default.AllSkyUseHorizonLimits;
+            AllSkyPointOrderingStrategy = Properties.Settings.Default.AllSkyPointOrderingStrategy;
+            AllSkyDeclinationSpacing = Properties.Settings.Default.AllSkyDeclinationSpacing;
+            AllSkyDeclinationOffset = Properties.Settings.Default.AllSkyDeclinationOffset;
+            AllSkyUseMinDeclination = Properties.Settings.Default.AllSkyUseMinDeclination;
+            AllSkyUseMaxDeclination = Properties.Settings.Default.AllSkyUseMaxDeclination;
+            AllSkyMinDeclination = Properties.Settings.Default.AllSkyMinDeclination;
+            AllSkyMaxDeclination = Properties.Settings.Default.AllSkyMaxDeclination;
+            AllSkyRightAscensionSpacing = Properties.Settings.Default.AllSkyRightAscensionSpacing;
+            AllSkyRightAscensionOffset = Properties.Settings.Default.AllSkyRightAscensionOffset;
+            AllSkyUseMinHourAngleEast = Properties.Settings.Default.AllSkyUseMinHourAngleEast;
+            AllSkyUseMaxHourAngleWest = Properties.Settings.Default.AllSkyUseMaxHourAngleWest;
+            AllSkyMinHourAngleEast = Properties.Settings.Default.AllSkyMinHourAngleEast;
+            AllSkyMaxHourAngleWest = Properties.Settings.Default.AllSkyMaxHourAngleWest;
 
             Properties.Settings.Default.PropertyChanged += SettingsChanged;
 
-            this.profileService = profileService;
             this.cameraMediator = cameraMediator;
 
             AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
         }
 
-        public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator) {
+        public CreateAllSkyModel(CreateAllSkyModel copyMe) : this(copyMe.cameraMediator) {
             CopyMetaData(copyMe);
-        }
-
-        [JsonProperty]
-        public bool DoFullArc {
-            get => doFullArc;
-            set {
-                doFullArc = value;
-                RaisePropertyChanged();
-            }
         }
 
         [JsonProperty]
@@ -142,25 +138,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
             appm = new AppmApi.AppmApi();
-            var target = Utility.Utility.FindDsoInfo(this.Parent);
 
-            if (target == null) {
-                throw new SequenceEntityFailedException("No DSO has been defined");
-            }
-
-            target.Coordinates = target.Coordinates.Transform(Epoch.JNOW);
-
-            if (target.Coordinates.Dec > 85d || target.Coordinates.Dec < -85d) {
-                Logger.Info($"The target's declination of {target.Coordinates.DecString} is too close to the pole to create a meaningful model. Skipping model creation.");
-                return;
-            }
-
-            var decArcParams = CalculateDecArcParameters(target);
-
-            Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={(decArcParams.WestHaLimit - Math.Abs(decArcParams.EastHaLimit)):0.00}");
-            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
-
-            var config = new AppmApi.AppmMeasurementConfiguration() {
+            var config = new AppmApi.AppmMeasurementConfiguration {
                 SetSlewRate = AppmSetSlewRate,
                 SlewRate = AppmSlewRate,
                 SlewSettleTime = AppmSlewSettleTime,
@@ -168,24 +147,20 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 ZenithSyncDistance = AppmZenithSyncDistance,
                 UseMinAltitude = AppmUseMinAltitude,
                 MinAltitude = AppmMinAltitude,
-                UseMaxDeclination = true,
-                UseMinDeclination = true,
-                UseMaxHourAngleWest = true,
-                UseMinHourAngleEast = true,
-                CreateEastPoints = true,
-                CreateWestPoints = true,
-                UseMeridianLimits = true,
-                UseHorizonLimits = true,
-                RightAscensionOffset = 0,
-                DeclinationSpacing = decArcParams.DecSpacing,
-                MaxDeclination = decArcParams.NorthDecLimit,
-                MinDeclination = decArcParams.SouthDecLimit,
-                DeclinationOffset = decArcParams.DecOffset,
-                RightAscensionSpacing = decArcParams.RaSpacing,
-                MinHourAngleEast = decArcParams.EastHaLimit,
-                MaxHourAngleWest = decArcParams.WestHaLimit,
-                PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit
-                    ? decArcParams.PolarPointOrderingStrategy : DecArcPointOrderingStrategy,
+
+                CreateEastPoints = AllSkyCreateEastPoints,
+                CreateWestPoints = AllSkyCreateWestPoints,
+                UseMeridianLimits = AllSkyUseMeridianLimits,
+                UseHorizonLimits = AllSkyUseHorizonLimits,
+                DeclinationSpacing = AllSkyDeclinationSpacing,
+                DeclinationOffset = AllSkyDeclinationOffset,
+                UseMinDeclination = AllSkyUseMinDeclination,
+                UseMaxDeclination = AllSkyUseMaxDeclination,
+                RightAscensionSpacing = AllSkyRightAscensionSpacing,
+                RightAscensionOffset = AllSkyRightAscensionOffset,
+                UseMinHourAngleEast = AllSkyUseMinHourAngleEast,
+                UseMaxHourAngleWest = AllSkyUseMaxHourAngleWest,
+                PointOrderingStrategy = AllSkyPointOrderingStrategy,
             };
 
             var request = new AppmApi.AppmMeasurementConfigurationRequest() {
@@ -269,15 +244,13 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         }
 
         public override object Clone() {
-            return new CreateDecArcModel(this) {
-                DoFullArc = DoFullArc,
-                ManualMode = ManualMode,
+            return new CreateAllSkyModel(this) {
                 DoNotExit = DoNotExit,
             };
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={APPMExePath}, Settings={APPMSettingsPath}";
+            return $"Category: {Category}, Item: {nameof(CreateAllSkyModel)}, ManualMode: {ManualMode}, DotNotExit: {DoNotExit}, Exe Path: {APPMExePath}, Settings: {APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -285,16 +258,8 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         public bool Validate() {
             var i = new List<string>();
 
-            if (AppmFileVersion < minVersion) {
-                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {minVersion} or higher");
-            }
-
             if (!cameraMediator.GetInfo().Connected) {
                 i.Add($"Camera is not connected");
-            }
-
-            if (Utility.Utility.FindDsoInfo(this.Parent) == null) {
-                i.Add("No DSO has been defined");
             }
 
             if (string.IsNullOrEmpty(APPMExePath) || !File.Exists(APPMExePath)) {
@@ -305,71 +270,16 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                 i.Add("Invalid location for APPM settings file");
             }
 
+            if (AppmFileVersion < minVersion) {
+                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {minVersion} or higher");
+            }
+
             if (i != Issues) {
                 Issues = i;
                 RaisePropertyChanged("Issues");
             }
 
             return i.Count == 0;
-        }
-
-        private Process RunAPPM() {
-            Process[] proc = Process.GetProcessesByName("ApPointMapper");
-
-            if (proc.Length > 0) {
-                Logger.Info($"ApPointMapper.exe is already running as PID {proc[0].Id}");
-                return proc[0];
-            }
-
-            List<string> args = new List<string>();
-
-            if (DoNotExit) {
-                args.Add("-dontexit");
-            }
-
-            if (File.Exists(APPMSettingsPath)) {
-                args.Add($"-s{APPMSettingsPath}");
-            }
-
-            var appm = new ProcessStartInfo(APPMExePath) {
-                Arguments = string.Join(" ", args.ToArray())
-            };
-
-            Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
-            return Process.Start(appm);
-        }
-
-        private double CurrentHourAngle(DeepSkyObject target) {
-            // We want HA in terms of -12..12, not 0..24
-            return ((AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTimeNow(profileService.ActiveProfile.AstrometrySettings.Longitude), target.Coordinates.RA) + 36) % 24) - 12;
-        }
-
-        private DecArcParameters CalculateDecArcParameters(DeepSkyObject target) {
-            var decArcParams = new DecArcParameters() {
-                ArcQuantity = DecArcQuantity,
-                DecSpacing = DecArcDecSpacing,
-                RaSpacing = DecArcRaSpacing,
-                PointOrderingStrategy = DecArcPointOrderingStrategy,
-                PolarPointOrderingStrategy = DecArcPolarPointOrderingStrategy,
-                PolarProximityLimit = DecArcPolarProximityLimit,
-            };
-
-            decArcParams.TargetHa = CurrentHourAngle(target);
-            decArcParams.EastHaLimit = DoFullArc ? -12d : Math.Round(Math.Max(decArcParams.TargetHa - decArcParams.HaLeadIn, -12), 2);
-
-            decArcParams.TargetDec = (int)Math.Round(target.Coordinates.Dec);
-
-            if (decArcParams.ArcQuantity == 1) {
-                decArcParams.DecSpacing = 1;
-                decArcParams.NorthDecLimit = decArcParams.SouthDecLimit = decArcParams.TargetDec;
-            } else {
-                var totalSpan = (decArcParams.ArcQuantity - 1) * decArcParams.DecSpacing;
-                decArcParams.SouthDecLimit = Math.Max(-85, (int)Math.Round(target.Coordinates.Dec - (totalSpan / 2)));
-                decArcParams.NorthDecLimit = Math.Min(85, decArcParams.SouthDecLimit + totalSpan);
-                decArcParams.DecOffset = decArcParams.SouthDecLimit % decArcParams.DecSpacing;
-            }
-
-            return decArcParams;
         }
 
         private async void WaitForMappingStatus(string status, CancellationToken ct) {
@@ -403,6 +313,7 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
         private string APPMExePath { get; set; }
         private string APPMSettingsPath { get; set; }
+        private Version AppmFileVersion { get; set; }
 
         private bool AppmSetSlewRate { get; set; }
         private int AppmSlewRate { get; set; }
@@ -412,15 +323,49 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
         private bool AppmUseMinAltitude { get; set; }
         private int AppmMinAltitude { get; set; }
 
-        private int DecArcRaSpacing { get; set; }
-        private int DecArcDecSpacing { get; set; }
-        private double DecArcHourAngleLeadIn { get; set; }
-        private int DecArcQuantity { get; set; }
-        private int DecArcPointOrderingStrategy { get; set; }
-        private int DecArcPolarPointOrderingStrategy { get; set; }
-        private int DecArcPolarProximityLimit { get; set; }
+        private bool AllSkyCreateWestPoints { get; set; }
+        private bool AllSkyCreateEastPoints { get; set; }
+        private bool AllSkyUseMeridianLimits { get; set; }
+        private bool AllSkyUseHorizonLimits { get; set; }
+        private int AllSkyPointOrderingStrategy { get; set; }
+        private int AllSkyDeclinationSpacing { get; set; }
+        private int AllSkyDeclinationOffset { get; set; }
+        private bool AllSkyUseMinDeclination { get; set; }
+        private bool AllSkyUseMaxDeclination { get; set; }
+        private int AllSkyMinDeclination { get; set; }
+        private int AllSkyMaxDeclination { get; set; }
+        private int AllSkyRightAscensionSpacing { get; set; }
+        private int AllSkyRightAscensionOffset { get; set; }
+        private bool AllSkyUseMinHourAngleEast { get; set; }
+        private bool AllSkyUseMaxHourAngleWest { get; set; }
+        private double AllSkyMinHourAngleEast { get; set; }
+        private double AllSkyMaxHourAngleWest { get; set; }
 
-        private Version AppmFileVersion { get; set; }
+        private Process RunAPPM() {
+            Process[] proc = Process.GetProcessesByName("ApPointMapper");
+
+            if (proc.Length > 0) {
+                Logger.Info($"ApPointMapper.exe is already running as PID {proc[0].Id}");
+                return proc[0];
+            }
+
+            List<string> args = new List<string>();
+
+            if (DoNotExit) {
+                args.Add("-dontexit");
+            }
+
+            if (File.Exists(APPMSettingsPath)) {
+                args.Add($"-s{APPMSettingsPath}");
+            }
+
+            var appm = new ProcessStartInfo(APPMExePath) {
+                Arguments = string.Join(" ", args.ToArray())
+            };
+
+            Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
+            return Process.Start(appm);
+        }
 
         private void SettingsChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
@@ -430,6 +375,10 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
 
                 case "APPMSettingsPath":
                     APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
+                    break;
+
+                case "AppmSetSlewRate":
+                    AppmSetSlewRate = Properties.Settings.Default.AppmSetSlewRate;
                     break;
 
                 case "AppmSlewRate":
@@ -456,51 +405,74 @@ namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
                     AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
                     break;
 
-                case "DecArcRaSpacing":
-                    DecArcRaSpacing = Properties.Settings.Default.DecArcRaSpacing;
+                case "AllSkyCreateWestPoints":
+                    AllSkyCreateWestPoints = Properties.Settings.Default.AllSkyCreateWestPoints;
                     break;
 
-                case "DecArcDecSpacing":
-                    DecArcDecSpacing = Properties.Settings.Default.DecArcDecSpacing;
+                case "AllSkyCreateEastPoints":
+                    AllSkyCreateEastPoints = Properties.Settings.Default.AllSkyCreateEastPoints;
                     break;
 
-                case "DecArcQuantity":
-                    DecArcQuantity = Properties.Settings.Default.DecArcQuantity;
+                case "AllSkyUseMeridianLimits":
+                    AllSkyUseMeridianLimits = Properties.Settings.Default.AllSkyUseMeridianLimits;
                     break;
 
-                case "DecArcHourAngleLeadIn":
-                    DecArcHourAngleLeadIn = Properties.Settings.Default.DecArcHourAngleLeadIn;
+                case "AllSkyUseHorizonLimits":
+                    AllSkyUseHorizonLimits = Properties.Settings.Default.AllSkyUseHorizonLimits;
                     break;
 
-                case "DecArcPointOrderingStrategy":
-                    DecArcPointOrderingStrategy = Properties.Settings.Default.DecArcPointOrderingStrategy;
+                case "AllSkyPointOrderingStrategy":
+                    AllSkyPointOrderingStrategy = Properties.Settings.Default.AllSkyPointOrderingStrategy;
                     break;
 
-                case "DecArcPolarPointOrderingStrategy":
-                    DecArcPolarPointOrderingStrategy = Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
+                case "AllSkyDeclinationSpacing":
+                    AllSkyDeclinationSpacing = Properties.Settings.Default.AllSkyDeclinationSpacing;
                     break;
 
-                case "DecArcPolarProximityLimit":
-                    DecArcPolarProximityLimit = Properties.Settings.Default.DecArcPolarProximityLimit;
+                case "AllSkyDeclinationOffset":
+                    AllSkyDeclinationOffset = Properties.Settings.Default.AllSkyDeclinationOffset;
+                    break;
+
+                case "AllSkyUseMinDeclination":
+                    AllSkyUseMinDeclination = Properties.Settings.Default.AllSkyUseMinDeclination;
+                    break;
+
+                case "AllSkyUseMaxDeclination":
+                    AllSkyUseMaxDeclination = Properties.Settings.Default.AllSkyUseMaxDeclination;
+                    break;
+
+                case "AllSkyMinDeclination":
+                    AllSkyMinDeclination = Properties.Settings.Default.AllSkyMinDeclination;
+                    break;
+
+                case "AllSkyMaxDeclination":
+                    AllSkyMaxDeclination = Properties.Settings.Default.AllSkyMaxDeclination;
+                    break;
+
+                case "AllSkyRightAscensionSpacing":
+                    AllSkyRightAscensionSpacing = Properties.Settings.Default.AllSkyRightAscensionSpacing;
+                    break;
+
+                case "AllSkyRightAscensionOffset":
+                    AllSkyRightAscensionOffset = Properties.Settings.Default.AllSkyRightAscensionOffset;
+                    break;
+
+                case "AllSkyUseMinHourAngleEast":
+                    AllSkyUseMinHourAngleEast = Properties.Settings.Default.AllSkyUseMinHourAngleEast;
+                    break;
+
+                case "AllSkyUseMaxHourAngleWest":
+                    AllSkyUseMaxHourAngleWest = Properties.Settings.Default.AllSkyUseMaxHourAngleWest;
+                    break;
+
+                case "AllSkyMinHourAngleEast":
+                    AllSkyMinHourAngleEast = Properties.Settings.Default.AllSkyMinHourAngleEast;
+                    break;
+
+                case "AllSkyMaxHourAngleWest":
+                    AllSkyMaxHourAngleWest = Properties.Settings.Default.AllSkyMaxHourAngleWest;
                     break;
             }
-        }
-
-        private class DecArcParameters {
-            public int TargetDec { get; set; } = 0;
-            public int NorthDecLimit { get; set; } = 0;
-            public int SouthDecLimit { get; set; } = 0;
-            public int DecOffset { get; set; } = 0;
-            public int ArcQuantity { get; set; } = 0;
-            public int DecSpacing { get; set; } = 0;
-            public int RaSpacing { get; set; } = 0;
-            public double TargetHa { get; set; } = 0;
-            public double EastHaLimit { get; set; } = -12;
-            public double WestHaLimit { get; set; } = 12;
-            public double HaLeadIn { get; set; } = 0;
-            public int PointOrderingStrategy { get; set; } = 0;
-            public int PolarPointOrderingStrategy { get; set; } = 0;
-            public int PolarProximityLimit { get; set; } = 0;
         }
     }
 }

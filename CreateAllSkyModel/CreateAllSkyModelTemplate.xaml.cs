@@ -13,12 +13,12 @@
 using System.ComponentModel.Composition;
 using System.Windows;
 
-namespace DaleGhent.NINA.AstroPhysics {
+namespace DaleGhent.NINA.AstroPhysics.CreateAllSkyModel {
 
     [Export(typeof(ResourceDictionary))]
-    public partial class Options : ResourceDictionary {
+    public partial class CreateAllSkyModelTemplate : ResourceDictionary {
 
-        public Options() {
+        public CreateAllSkyModelTemplate() {
             InitializeComponent();
         }
     }

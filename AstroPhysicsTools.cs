@@ -10,8 +10,8 @@
 
 #endregion "copyright"
 
-using DaleGhent.NINA.AstroPhysics.Utility;
 using NINA.Core.Utility;
+using NINA.Core.Utility.Notification;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
 using NINA.Profile.Interfaces;
@@ -21,6 +21,8 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace DaleGhent.NINA.AstroPhysics {
@@ -40,6 +42,70 @@ namespace DaleGhent.NINA.AstroPhysics {
             APPMSettingsPathDialogCommand = new RelayCommand(OpenAPPMSettingsPathDialog);
             APPMMapPathDialoggCommand = new RelayCommand(OpenAPPMMapPathDialog);
             ApccExePathDialogCommand = new RelayCommand(OpenApccExePathDialog);
+            ImportAppmMeasurementConfigCommand = new AsyncCommand<bool>(() => Task.Run(ImportAppmMeasurementConfig));
+        }
+
+        public bool AppmSetSlewRate {
+            get => Properties.Settings.Default.AppmSetSlewRate;
+            set {
+                Properties.Settings.Default.AppmSetSlewRate = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AppmSlewRate {
+            get => Properties.Settings.Default.AppmSlewRate;
+            set {
+                Properties.Settings.Default.AppmSlewRate = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AppmSlewSettleTime {
+            get => Properties.Settings.Default.AppmSlewSettleTime;
+            set {
+                Properties.Settings.Default.AppmSlewSettleTime = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public double AppmZenithSafetyDistance {
+            get => Properties.Settings.Default.AppmZenithSafetyDistance;
+            set {
+                Properties.Settings.Default.AppmZenithSafetyDistance = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public double AppmZenithSyncDistance {
+            get => Properties.Settings.Default.AppmZenithSyncDistance;
+            set {
+                Properties.Settings.Default.AppmZenithSyncDistance = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AppmUseMinAltitude {
+            get => Properties.Settings.Default.AppmUseMinAltitude;
+            set {
+                Properties.Settings.Default.AppmUseMinAltitude = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AppmMinAltitude {
+            get => Properties.Settings.Default.AppmMinAltitude;
+            set {
+                Properties.Settings.Default.AppmMinAltitude = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
         }
 
         public string APPMExePath {
@@ -107,6 +173,13 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
         }
 
+        public IList<string> PointOrderingStrategyList => Utility.Utility.PointOrderingStrategyList;
+
+        /*
+         * Create Dec Arcy Model properties
+         *
+         */
+
         public int DecArcRaSpacing {
             get => Properties.Settings.Default.DecArcRaSpacing;
             set {
@@ -156,8 +229,6 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
         }
 
-        public IList<string> PointOrderingStrategyList => Utility.Utility.PointOrderingStrategyList;
-
         public int DecArcPointOrderingStrategy {
             get => Properties.Settings.Default.DecArcPointOrderingStrategy;
             set {
@@ -184,6 +255,168 @@ namespace DaleGhent.NINA.AstroPhysics {
                 RaisePropertyChanged();
             }
         }
+
+        /*
+         * Create All Sky Model properties
+         *
+         */
+
+        public bool AllSkyCreateWestPoints {
+            get => Properties.Settings.Default.AllSkyCreateWestPoints;
+            set {
+                Properties.Settings.Default.AllSkyCreateWestPoints = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AllSkyCreateEastPoints {
+            get => Properties.Settings.Default.AllSkyCreateEastPoints;
+            set {
+                Properties.Settings.Default.AllSkyCreateEastPoints = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AllSkyUseMeridianLimits {
+            get => Properties.Settings.Default.AllSkyUseMeridianLimits;
+            set {
+                Properties.Settings.Default.AllSkyUseMeridianLimits = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AllSkyUseHorizonLimits {
+            get => Properties.Settings.Default.AllSkyUseHorizonLimits;
+            set {
+                Properties.Settings.Default.AllSkyUseHorizonLimits = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AllSkyPointOrderingStrategy {
+            get => Properties.Settings.Default.AllSkyPointOrderingStrategy;
+            set {
+                Properties.Settings.Default.AllSkyPointOrderingStrategy = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AllSkyDeclinationSpacing {
+            get => Properties.Settings.Default.AllSkyDeclinationSpacing;
+            set {
+                Properties.Settings.Default.AllSkyDeclinationSpacing = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AllSkyDeclinationOffset {
+            get => Properties.Settings.Default.AllSkyDeclinationOffset;
+            set {
+                Properties.Settings.Default.AllSkyDeclinationOffset = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AllSkyUseMinDeclination {
+            get => Properties.Settings.Default.AllSkyUseMinDeclination;
+            set {
+                Properties.Settings.Default.AllSkyUseMinDeclination = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AllSkyUseMaxDeclination {
+            get => Properties.Settings.Default.AllSkyUseMaxDeclination;
+            set {
+                Properties.Settings.Default.AllSkyUseMaxDeclination = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AllSkyMinDeclination {
+            get => Properties.Settings.Default.AllSkyMinDeclination;
+            set {
+                Properties.Settings.Default.AllSkyMinDeclination = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AllSkyMaxDeclination {
+            get => Properties.Settings.Default.AllSkyMaxDeclination;
+            set {
+                Properties.Settings.Default.AllSkyMaxDeclination = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AllSkyRightAscensionSpacing {
+            get => Properties.Settings.Default.AllSkyRightAscensionSpacing;
+            set {
+                Properties.Settings.Default.AllSkyRightAscensionSpacing = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AllSkyRightAscensionOffset {
+            get => Properties.Settings.Default.AllSkyRightAscensionOffset;
+            set {
+                Properties.Settings.Default.AllSkyRightAscensionOffset = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AllSkyUseMinHourAngleEast {
+            get => Properties.Settings.Default.AllSkyUseMinHourAngleEast;
+            set {
+                Properties.Settings.Default.AllSkyUseMinHourAngleEast = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AllSkyUseMaxHourAngleWest {
+            get => Properties.Settings.Default.AllSkyUseMaxHourAngleWest;
+            set {
+                Properties.Settings.Default.AllSkyUseMaxHourAngleWest = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public double AllSkyMinHourAngleEast {
+            get => Properties.Settings.Default.AllSkyMinHourAngleEast;
+            set {
+                Properties.Settings.Default.AllSkyMinHourAngleEast = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public double AllSkyMaxHourAngleWest {
+            get => Properties.Settings.Default.AllSkyMaxHourAngleWest;
+            set {
+                Properties.Settings.Default.AllSkyMaxHourAngleWest = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        /*
+         * Button controls
+         */
 
         private void OpenAPPMExePathDialog(object obj) {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog {
@@ -213,7 +446,7 @@ namespace DaleGhent.NINA.AstroPhysics {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog {
                 FileName = string.Empty,
                 InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Astro-Physics\APPM"),
-                Filter = "APPM Mapping File|*.csv"
+                Filter = "APPM Point Map File|*.csv"
             };
 
             if (dialog.ShowDialog() == true) {
@@ -233,10 +466,51 @@ namespace DaleGhent.NINA.AstroPhysics {
             }
         }
 
+        private bool ImportAppmMeasurementConfig() {
+            var appm = new AppmApi.AppmApi();
+
+            try {
+                var config = appm.GetConfiguration(CancellationToken.None).Result.Configuration;
+
+                AppmSetSlewRate = config.SetSlewRate;
+                AppmSlewRate = config.SlewRate;
+                AppmSlewSettleTime = config.SlewSettleTime;
+                AppmZenithSafetyDistance = config.ZenithSafetyDistance;
+                AppmZenithSyncDistance = config.ZenithSyncDistance;
+                AppmUseMinAltitude = config.UseMinAltitude;
+                AppmMinAltitude = config.MinAltitude;
+
+                AllSkyCreateEastPoints = config.CreateEastPoints;
+                AllSkyCreateWestPoints = config.CreateWestPoints;
+                AllSkyUseMeridianLimits = config.UseMeridianLimits;
+                AllSkyUseHorizonLimits = config.UseHorizonLimits;
+                AllSkyDeclinationSpacing = config.DeclinationSpacing;
+                AllSkyDeclinationOffset = config.DeclinationOffset;
+                AllSkyUseMinDeclination = config.UseMinDeclination;
+                AllSkyUseMaxDeclination = config.UseMaxDeclination;
+                AllSkyMinDeclination = config.MinDeclination;
+                AllSkyMaxDeclination = config.MaxDeclination;
+                AllSkyRightAscensionSpacing = config.RightAscensionSpacing;
+                AllSkyRightAscensionOffset = config.RightAscensionOffset;
+                AllSkyUseMinHourAngleEast = config.UseMinHourAngleEast;
+                AllSkyUseMaxHourAngleWest = config.UseMaxHourAngleWest;
+                AllSkyPointOrderingStrategy = config.PointOrderingStrategy;
+
+                Logger.Info("Imported APPM measurement settings");
+            } catch (Exception ex) {
+                Logger.Error($"Failed to import configuration from APPM: {ex.GetType()}: {ex.Message}");
+                Notification.ShowError("Failed to import APPM measurement settings. Is APPM running?");
+                return false;
+            }
+
+            return true;
+        }
+
         public ICommand APPMExePathDialogCommand { get; private set; }
         public ICommand APPMSettingsPathDialogCommand { get; private set; }
         public ICommand APPMMapPathDialoggCommand { get; private set; }
         public ICommand ApccExePathDialogCommand { get; private set; }
+        public ICommand ImportAppmMeasurementConfigCommand { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -1,0 +1,99 @@
+﻿<!--
+    Copyright Dale Ghent <daleg@elemental.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/
+-->
+<ResourceDictionary
+    x:Class="DaleGhent.NINA.AstroPhysics.CreateAllSkyModel.CreateAllSkyModelTemplate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:DaleGhent.NINA.AstroPhysics.CreateAllSkyModel"
+    xmlns:mini="clr-namespace:NINA.View.Sequencer.MiniSequencer;assembly=NINA.Sequencer"
+    xmlns:nina="clr-namespace:NINA.View.Sequencer;assembly=NINA.Sequencer">
+    <GeometryGroup x:Key="AllSky_SVG">
+        <PathGeometry Figures="M 582.86,291.233C 582.86,452.187 452.38,582.667 291.427,582.667C 130.479,582.667 2.03451e-005,452.187 2.03451e-005,291.233C 2.03451e-005,130.285 130.479,-0.193359 291.427,-0.193359C 452.38,-0.193359 582.86,130.285 582.86,291.233 Z " />
+        <PathGeometry Figures="M 532.86,291.233C 532.86,424.572 424.765,532.667 291.427,532.667C 158.093,532.667 50,424.572 50,291.233C 50,157.9 158.093,49.8066 291.427,49.8066C 424.765,49.8066 532.86,157.9 532.86,291.233 Z " />
+        <PathGeometry Figures="M 471.427,291.233C 471.427,390.645 390.839,471.233 291.427,471.233C 192.016,471.233 111.427,390.645 111.427,291.233C 111.427,191.823 192.016,111.233 291.427,111.233C 390.839,111.233 471.427,191.823 471.427,291.233 Z " />
+        <PathGeometry Figures="M 411.427,291.233C 411.427,357.509 357.703,411.233 291.427,411.233C 225.156,411.233 171.427,357.509 171.427,291.233C 171.427,224.963 225.156,171.233 291.427,171.233C 357.703,171.233 411.427,224.963 411.427,291.233 Z " />
+    </GeometryGroup>
+
+    <DataTemplate DataType="{x:Type local:CreateAllSkyModel}">
+        <nina:SequenceBlockView DataContext="{Binding}">
+            <nina:SequenceBlockView.SequenceItemContent>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Text>Manual mode</TextBlock.Text>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                                If on, this instruction will launch APPM but not automatically start the modeling run. This will allow you to review the model before it is ran. Because this does not run APPM in automatic mode, you will also need to manually connect APPM to the mount, camera, and any dome devices prior to also manually starting the run.
+                                <LineBreak />
+                                The instruction finishes when APPM exits.
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <CheckBox
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding ManualMode, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
+
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Text>Keep APPM open</TextBlock.Text>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                            Keeps APPM open after it completes the modeling run. Useful for reviewing the run after its completion.
+                            <LineBreak />
+                            IMPORTANT: The sequence will be prevented from progressing until APPM is closed!
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <CheckBox
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding DoNotExit, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </nina:SequenceBlockView.SequenceItemContent>
+        </nina:SequenceBlockView>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DaleGhent.NINA.AstroPhysics.CreateAllSkyModel.CreateAllSkyModel_Mini">
+        <mini:MiniSequenceItem>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="Status:" />
+                <TextBlock
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding MappingRunState}" />
+
+                <TextBlock
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="|" />
+
+                <TextBlock
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="Points:" />
+                <TextBlock
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding CurrentPoint}" />
+                <TextBlock
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="/" />
+                <TextBlock
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding TotalPoints}" />
+            </StackPanel>
+        </mini:MiniSequenceItem>
+    </DataTemplate>
+</ResourceDictionary>

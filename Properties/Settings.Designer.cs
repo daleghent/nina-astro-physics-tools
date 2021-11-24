@@ -214,5 +214,293 @@ namespace DaleGhent.NINA.AstroPhysics.Properties {
                 this["DecArcPolarPointOrderingStrategy"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyCreateWestPoints {
+            get {
+                return ((bool)(this["AllSkyCreateWestPoints"]));
+            }
+            set {
+                this["AllSkyCreateWestPoints"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyCreateEastPoints {
+            get {
+                return ((bool)(this["AllSkyCreateEastPoints"]));
+            }
+            set {
+                this["AllSkyCreateEastPoints"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AppmSetSlewRate {
+            get {
+                return ((bool)(this["AppmSetSlewRate"]));
+            }
+            set {
+                this["AppmSetSlewRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("900")]
+        public int AppmSlewRate {
+            get {
+                return ((int)(this["AppmSlewRate"]));
+            }
+            set {
+                this["AppmSlewRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int AppmSlewSettleTime {
+            get {
+                return ((int)(this["AppmSlewSettleTime"]));
+            }
+            set {
+                this["AppmSlewSettleTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyUseMeridianLimits {
+            get {
+                return ((bool)(this["AllSkyUseMeridianLimits"]));
+            }
+            set {
+                this["AllSkyUseMeridianLimits"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyUseHorizonLimits {
+            get {
+                return ((bool)(this["AllSkyUseHorizonLimits"]));
+            }
+            set {
+                this["AllSkyUseHorizonLimits"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double AppmZenithSafetyDistance {
+            get {
+                return ((double)(this["AppmZenithSafetyDistance"]));
+            }
+            set {
+                this["AppmZenithSafetyDistance"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public double AppmZenithSyncDistance {
+            get {
+                return ((double)(this["AppmZenithSyncDistance"]));
+            }
+            set {
+                this["AppmZenithSyncDistance"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int AllSkyPointOrderingStrategy {
+            get {
+                return ((int)(this["AllSkyPointOrderingStrategy"]));
+            }
+            set {
+                this["AllSkyPointOrderingStrategy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int AllSkyDeclinationSpacing {
+            get {
+                return ((int)(this["AllSkyDeclinationSpacing"]));
+            }
+            set {
+                this["AllSkyDeclinationSpacing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int AllSkyDeclinationOffset {
+            get {
+                return ((int)(this["AllSkyDeclinationOffset"]));
+            }
+            set {
+                this["AllSkyDeclinationOffset"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyUseMinDeclination {
+            get {
+                return ((bool)(this["AllSkyUseMinDeclination"]));
+            }
+            set {
+                this["AllSkyUseMinDeclination"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyUseMaxDeclination {
+            get {
+                return ((bool)(this["AllSkyUseMaxDeclination"]));
+            }
+            set {
+                this["AllSkyUseMaxDeclination"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-85")]
+        public int AllSkyMinDeclination {
+            get {
+                return ((int)(this["AllSkyMinDeclination"]));
+            }
+            set {
+                this["AllSkyMinDeclination"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("85")]
+        public int AllSkyMaxDeclination {
+            get {
+                return ((int)(this["AllSkyMaxDeclination"]));
+            }
+            set {
+                this["AllSkyMaxDeclination"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int AllSkyRightAscensionSpacing {
+            get {
+                return ((int)(this["AllSkyRightAscensionSpacing"]));
+            }
+            set {
+                this["AllSkyRightAscensionSpacing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyUseMinHourAngleEast {
+            get {
+                return ((bool)(this["AllSkyUseMinHourAngleEast"]));
+            }
+            set {
+                this["AllSkyUseMinHourAngleEast"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllSkyUseMaxHourAngleWest {
+            get {
+                return ((bool)(this["AllSkyUseMaxHourAngleWest"]));
+            }
+            set {
+                this["AllSkyUseMaxHourAngleWest"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-6")]
+        public double AllSkyMinHourAngleEast {
+            get {
+                return ((double)(this["AllSkyMinHourAngleEast"]));
+            }
+            set {
+                this["AllSkyMinHourAngleEast"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public double AllSkyMaxHourAngleWest {
+            get {
+                return ((double)(this["AllSkyMaxHourAngleWest"]));
+            }
+            set {
+                this["AllSkyMaxHourAngleWest"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AppmUseMinAltitude {
+            get {
+                return ((bool)(this["AppmUseMinAltitude"]));
+            }
+            set {
+                this["AppmUseMinAltitude"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int AppmMinAltitude {
+            get {
+                return ((int)(this["AppmMinAltitude"]));
+            }
+            set {
+                this["AppmMinAltitude"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int AllSkyRightAscensionOffset {
+            get {
+                return ((int)(this["AllSkyRightAscensionOffset"]));
+            }
+            set {
+                this["AllSkyRightAscensionOffset"] = value;
+            }
+        }
     }
 }
