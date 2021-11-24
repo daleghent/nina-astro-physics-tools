@@ -173,7 +173,7 @@
                                     VerticalAlignment="Center"
                                     Width="140">
                                     <TextBlock.Text>APPM setings file</TextBlock.Text>
-                                    <TextBlock.ToolTip>OPTIONAL: The location of an APPM settings file if not using the default</TextBlock.ToolTip>
+                                    <TextBlock.ToolTip>OPTIONAL: The location of an APPM settings file if not using the default. These settings are primarily on the Run tab in APPM.</TextBlock.ToolTip>
                                 </TextBlock>
 
                                 <TextBox
