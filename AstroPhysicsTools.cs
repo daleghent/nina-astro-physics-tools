@@ -25,7 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace DaleGhent.NINA.AstroPhysics {
+namespace DaleGhent.NINA.AstroPhysicsTools {
 
     [Export(typeof(IPluginManifest))]
     public class AstroPhysicsTools : PluginBase, ISettings, INotifyPropertyChanged {

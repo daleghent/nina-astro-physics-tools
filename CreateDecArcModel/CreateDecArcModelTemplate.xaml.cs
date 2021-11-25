@@ -13,7 +13,7 @@
 using System.ComponentModel.Composition;
 using System.Windows;
 
-namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
+namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
     [Export(typeof(ResourceDictionary))]
     public partial class CreateDecArcModelTemplate : ResourceDictionary {

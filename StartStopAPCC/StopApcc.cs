@@ -24,7 +24,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DaleGhent.NINA.AstroPhysics {
+namespace DaleGhent.NINA.AstroPhysicsTools {
     /*
      * Disabled for now. There's no way for us to know if we can safely kill APCC
      * Perhaps there will be a way in the future.

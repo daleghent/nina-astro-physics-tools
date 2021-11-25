@@ -19,7 +19,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DaleGhent.NINA.AstroPhysics.AppmApi {
+namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
 
     public class AppmApi {
         private string host;

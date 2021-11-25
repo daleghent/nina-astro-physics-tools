@@ -13,7 +13,7 @@
 using System.ComponentModel.Composition;
 using System.Windows;
 
-namespace DaleGhent.NINA.AstroPhysics {
+namespace DaleGhent.NINA.AstroPhysicsTools {
 
     [Export(typeof(ResourceDictionary))]
     public partial class StartStopApccTemplate : ResourceDictionary {

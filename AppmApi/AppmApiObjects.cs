@@ -13,7 +13,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace DaleGhent.NINA.AstroPhysics.AppmApi {
+namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
 
     public class AppmPointCountResult {
 

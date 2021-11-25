@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DaleGhent.NINA.AstroPhysics.Properties {
+namespace DaleGhent.NINA.AstroPhysicsTools.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

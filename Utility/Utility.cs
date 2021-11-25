@@ -14,7 +14,7 @@ using NINA.Astrometry;
 using NINA.Sequencer.Container;
 using System.Collections.Generic;
 
-namespace DaleGhent.NINA.AstroPhysics.Utility {
+namespace DaleGhent.NINA.AstroPhysicsTools.Utility {
 
     public class Utility {
 

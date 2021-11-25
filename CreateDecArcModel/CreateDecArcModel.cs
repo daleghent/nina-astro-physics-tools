@@ -29,7 +29,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DaleGhent.NINA.AstroPhysics.CreateDecArcModel {
+namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
     [ExportMetadata("Name", "Create Dec Arc Model (BETA)")]
     [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended dec arc model creation")]

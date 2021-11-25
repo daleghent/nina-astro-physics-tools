@@ -26,7 +26,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DaleGhent.NINA.AstroPhysics {
+namespace DaleGhent.NINA.AstroPhysicsTools {
 
     [ExportMetadata("Name", "Start APCC")]
     [ExportMetadata("Description", "Starts APCC and connects NINA to the ASCOM driver")]

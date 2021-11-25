@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 // [MANDATORY] The following GUID is used as a unique identifier of the plugin
-[assembly: Guid("684FC0AA-49AD-4157-AF9F-D30521101332")]
+[assembly: Guid("99688A5D-BD28-4D8D-80D5-3D4192BB987D")]
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin

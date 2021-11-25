@@ -6,11 +6,11 @@
     file, You can obtain one at http://mozilla.org/MPL/2.0/
 -->
 <ResourceDictionary
-    x:Class="DaleGhent.NINA.AstroPhysics.Options"
+    x:Class="DaleGhent.NINA.AstroPhysicsTools.Options"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ninactrl="clr-namespace:NINACustomControlLibrary;assembly=NINACustomControlLibrary"
-    xmlns:util="clr-namespace:DaleGhent.NINA.AstroPhysics.Utility"
+    xmlns:util="clr-namespace:DaleGhent.NINA.AstroPhysicsTools.Utility"
     xmlns:rules="clr-namespace:NINA.Core.Utility.ValidationRules;assembly=NINA.Core">
     <DataTemplate x:Key="Astro-Physics Tools_Options">
         <TabControl TabStripPlacement="Top" Height="Auto">
