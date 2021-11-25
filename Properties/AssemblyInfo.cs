@@ -52,6 +52,8 @@ using System.Runtime.InteropServices;
 //[Optional] An in-depth description of your plugin
 [assembly: AssemblyMetadata("LongDescription", @"Astro-Physics Tools is a collection of Advanced Sequencer instructions that are designed for use with [Astro-Physics](https://www.astro-physics.com/) mounts and [APCC Pro](https://www.astro-physics.com/apcc).
 
+## **NOTE: THIS PLUGIN IS IN BETA AND CURRENTLY REQUIRES A BETA VERSION OF APCC PRO TO FUNCTION. PLEASE REFER TO THIS PLUGIN'S WEBSITE FOR FURTHER INFORMATION** ##
+
 # Requirements #
 
 * NINA 2.0
