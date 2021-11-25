@@ -12,9 +12,11 @@
 
 using Newtonsoft.Json;
 using NINA.Core.Model;
+using NINA.Core.Model.Equipment;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Equipment.Interfaces.Mediator;
+using NINA.Profile.Interfaces;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.Validations;
 using System;
@@ -42,12 +44,15 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
         private int currentPoint = 0;
         private string mappingRunState = "Unknown";
         private AppmApi.AppmApi appm = null;
+        private IProfileService profileService;
         private ICameraMediator cameraMediator;
+        private IFilterWheelMediator filterWheelMediator;
+        private IGuiderMediator guiderMediator;
 
         private readonly Version minVersion = new Version(1, 9, 2, 3);
 
         [ImportingConstructor]
-        public CreateAllSkyModel(ICameraMediator cameraMediator) {
+        public CreateAllSkyModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator) {
             APPMExePath = Properties.Settings.Default.APPMExePath;
             APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
 
@@ -79,12 +84,15 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
 
             Properties.Settings.Default.PropertyChanged += SettingsChanged;
 
+            this.profileService = profileService;
             this.cameraMediator = cameraMediator;
+            this.filterWheelMediator = filterWheelMediator;
+            this.guiderMediator = guiderMediator;
 
             AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
         }
 
-        public CreateAllSkyModel(CreateAllSkyModel copyMe) : this(copyMe.cameraMediator) {
+        public CreateAllSkyModel(CreateAllSkyModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator) {
             CopyMetaData(copyMe);
         }
 
@@ -137,6 +145,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             CancellationTokenSource updateStatusTaskCts = new CancellationTokenSource();
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
+            FilterInfo currentFilter = null;
+            bool stoppedGuiding = false;
             appm = new AppmApi.AppmApi();
 
             var config = new AppmApi.AppmMeasurementConfiguration {
@@ -166,6 +176,15 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             var request = new AppmApi.AppmMeasurementConfigurationRequest() {
                 Configuration = config,
             };
+
+            if (guiderMediator.GetInfo().Connected) {
+                stoppedGuiding = await guiderMediator.StopGuiding(ct);
+            }
+
+            if (filterWheelMediator.GetInfo().Connected) {
+                currentFilter = filterWheelMediator.GetInfo().SelectedFilter;
+                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct);
+            }
 
             var proc = RunAPPM();
 
@@ -232,6 +251,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
 
                 updateStatusTaskCts.Dispose();
                 proc.Dispose();
+
+                if (filterWheelMediator.GetInfo().Connected) {
+                    await filterWheelMediator.ChangeFilter(currentFilter, ct);
+                }
+
+                if (guiderMediator.GetInfo().Connected && stoppedGuiding) {
+                    await guiderMediator.StartGuiding(false, progress, ct);
+                }
             }
 
             MappingRunState = "Completed";
