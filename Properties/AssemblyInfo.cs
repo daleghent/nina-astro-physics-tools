@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.0.0.2001")]
+[assembly: AssemblyFileVersion("2.0.0.2001")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("Astro-Physics Tools")]
@@ -63,7 +63,7 @@ using System.Runtime.InteropServices;
 * Start APCC
     * Starts APCC and connects NINA to the Astro-Physics ASCOM driver. Assumes that APCC's **Auto-Connect** setting is selected in both the **Mount** and **AP V2 Driver** option areas in the Setup tab
 * Create All-Sky Model
-    * A sequence instruction that will run Astro-Physics Point Mapper (APPM) in an automated mode. When ran, APPM will use its existing default settings to run an all-sky point mapping session and will load the results into APCC Pro when complete. If the default settings and point map are not desired, an APPM settings or a point map file may be optionally specified below in this plugin's settings.
+    * Automatically runs an all-sky model session based on the configured parameters
 * Create Dec Arc Model
     * Automatically generates a dec arc model based on several parameters for the target that the instruction is subordinate to
 
