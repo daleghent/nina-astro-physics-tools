@@ -32,7 +32,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
     [ExportMetadata("Name", "Create All-Sky Model")]
     [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended all-sky model creation. A point map file must be configured under this plugin's Options > All-Sky Parameters")]
     [ExportMetadata("Icon", "AllSky_SVG")]
-    [ExportMetadata("Category", "Astro-Physics Tools")]
+    [ExportMetadata("Category", "Astro-Physics Tools (Beta)")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateAllSkyModel : SequenceItem, IValidatable, INotifyPropertyChanged {
