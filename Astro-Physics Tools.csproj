@@ -149,17 +149,18 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-			if not exist "%25localappdata%25\NINA\Plugins" (
-			echo "Creating $(PlatformName) Plugins folder"
-			mkdir  "%25localappdata%25\NINA\Plugins"
-			)
-			if not exist "%25localappdata%25\NINA\Plugin\$(TargetName)" (
-			echo "Creating $(PlatformName) Plugins $(TargetName) folder"
-			mkdir  "%25localappdata%25\NINA\Plugins\$(TargetName)"
-			)
+if not exist "%25localappdata%25\NINA\Plugins" (
+    echo "Creating $(PlatformName) Plugins folder"
+    mkdir  "%25localappdata%25\NINA\Plugins"
+)
 
-			echo "Copying $(PlatformName) $(TargetFileName)"
-			xcopy "$(TargetPath)" "%25localappdata%25\NINA\Plugins\$(TargetName)" /h/i/c/k/e/r/y
-		</PostBuildEvent>
+if not exist "%25localappdata%25\NINA\Plugin\$(TargetName)" ( 
+    echo "Creating $(PlatformName) Plugins $(TargetName) folder"
+    mkdir  "%25localappdata%25\NINA\Plugins\$(TargetName)"
+)
+
+echo "Copying $(PlatformName) $(TargetFileName)"
+xcopy "$(TargetPath)" "%25localappdata%25\NINA\Plugins\$(TargetName)" /h/i/c/k/e/r/y
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
