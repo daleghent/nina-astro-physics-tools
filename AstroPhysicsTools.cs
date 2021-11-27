@@ -108,6 +108,24 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             }
         }
 
+        public bool AppmUseMeridianLimits {
+            get => Properties.Settings.Default.AppmUseMeridianLimits;
+            set {
+                Properties.Settings.Default.AppmUseMeridianLimits = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AppmUseHorizonLimits {
+            get => Properties.Settings.Default.AppmUseHorizonLimits;
+            set {
+                Properties.Settings.Default.AppmUseHorizonLimits = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
         public string APPMExePath {
             get => Properties.Settings.Default.APPMExePath;
             set {
@@ -274,24 +292,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             get => Properties.Settings.Default.AllSkyCreateEastPoints;
             set {
                 Properties.Settings.Default.AllSkyCreateEastPoints = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool AllSkyUseMeridianLimits {
-            get => Properties.Settings.Default.AllSkyUseMeridianLimits;
-            set {
-                Properties.Settings.Default.AllSkyUseMeridianLimits = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool AllSkyUseHorizonLimits {
-            get => Properties.Settings.Default.AllSkyUseHorizonLimits;
-            set {
-                Properties.Settings.Default.AllSkyUseHorizonLimits = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
@@ -479,11 +479,11 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
                 AppmZenithSyncDistance = config.ZenithSyncDistance;
                 AppmUseMinAltitude = config.UseMinAltitude;
                 AppmMinAltitude = config.MinAltitude;
+                AppmUseMeridianLimits = config.UseMeridianLimits;
+                AppmUseHorizonLimits = config.UseHorizonLimits;
 
                 AllSkyCreateEastPoints = config.CreateEastPoints;
                 AllSkyCreateWestPoints = config.CreateWestPoints;
-                AllSkyUseMeridianLimits = config.UseMeridianLimits;
-                AllSkyUseHorizonLimits = config.UseHorizonLimits;
                 AllSkyDeclinationSpacing = config.DeclinationSpacing;
                 AllSkyDeclinationOffset = config.DeclinationOffset;
                 AllSkyUseMinDeclination = config.UseMinDeclination;

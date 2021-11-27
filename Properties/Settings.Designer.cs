@@ -278,24 +278,24 @@ namespace DaleGhent.NINA.AstroPhysicsTools.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AllSkyUseMeridianLimits {
+        public bool AppmUseMeridianLimits {
             get {
-                return ((bool)(this["AllSkyUseMeridianLimits"]));
+                return ((bool)(this["AppmUseMeridianLimits"]));
             }
             set {
-                this["AllSkyUseMeridianLimits"] = value;
+                this["AppmUseMeridianLimits"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AllSkyUseHorizonLimits {
+        public bool AppmUseHorizonLimits {
             get {
-                return ((bool)(this["AllSkyUseHorizonLimits"]));
+                return ((bool)(this["AppmUseHorizonLimits"]));
             }
             set {
-                this["AllSkyUseHorizonLimits"] = value;
+                this["AppmUseHorizonLimits"] = value;
             }
         }
         

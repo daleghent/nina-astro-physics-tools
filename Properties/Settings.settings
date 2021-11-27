@@ -65,10 +65,10 @@
     <Setting Name="AppmSlewSettleTime" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="AllSkyUseMeridianLimits" Type="System.Boolean" Scope="User">
+    <Setting Name="AppmUseMeridianLimits" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="AllSkyUseHorizonLimits" Type="System.Boolean" Scope="User">
+    <Setting Name="AppmUseHorizonLimits" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AppmZenithSafetyDistance" Type="System.Double" Scope="User">

@@ -42,6 +42,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
+                                        <RowDefinition />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock
@@ -75,6 +76,20 @@
                                         StepSize="1"
                                         Unit="s"
                                         Value="{Binding AppmSlewSettleTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Margin="0,0,0,5"
+                                        VerticalAlignment="Center"
+                                        Text="Use meridian limits" />
+                                    <CheckBox
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="0,5,0,5"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        IsChecked="{Binding AppmUseMeridianLimits, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
 
                                 <Grid Margin="25,0,0,0">
@@ -83,6 +98,7 @@
                                         <ColumnDefinition Width="110" />
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
+                                        <RowDefinition />
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
@@ -120,6 +136,20 @@
                                         Precision="2"
                                         Unit="°"
                                         Value="{Binding AppmZenithSyncDistance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Margin="0,0,0,5"
+                                        VerticalAlignment="Center"
+                                        Text="Use horizon limits" />
+                                    <CheckBox
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="0,5,0,5"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        IsChecked="{Binding AppmUseHorizonLimits, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </StackPanel>
                         </GroupBox>
@@ -532,7 +562,6 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition />
-                                    <RowDefinition />
                                 </Grid.RowDefinitions>
 
                                 <TextBlock
@@ -562,22 +591,6 @@
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Left"
                                     IsChecked="{Binding AllSkyCreateWestPoints, UpdateSourceTrigger=PropertyChanged}" />
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Grid.Row="2"
-                                    Margin="0,0,0,5"
-                                    VerticalAlignment="Center"
-                                    Text="Point ordering strategy" />
-                                <ComboBox
-                                    Grid.Column="1"
-                                    Grid.Row="2"
-                                    MinWidth="175"
-                                    Margin="0,5,0,5"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Left"
-                                    ItemsSource="{Binding PointOrderingStrategyList}"
-                                    SelectedIndex="{Binding AllSkyPointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
 
                             <Grid Margin="25,0,0,0">
@@ -588,7 +601,6 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition />
-                                    <RowDefinition />
                                 </Grid.RowDefinitions>
 
                                 <TextBlock
@@ -596,28 +608,16 @@
                                     Grid.Row="0"
                                     Margin="0,0,0,5"
                                     VerticalAlignment="Center"
-                                    Text="Use meridian limits" />
-                                <CheckBox
+                                    Text="Point ordering strategy" />
+                                <ComboBox
                                     Grid.Column="1"
                                     Grid.Row="0"
+                                    MinWidth="175"
                                     Margin="0,5,0,5"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Left"
-                                    IsChecked="{Binding AllSkyUseMeridianLimits, UpdateSourceTrigger=PropertyChanged}" />
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Grid.Row="1"
-                                    Margin="0,0,0,5"
-                                    VerticalAlignment="Center"
-                                    Text="Use horizon limits" />
-                                <CheckBox
-                                    Grid.Column="1"
-                                    Grid.Row="1"
-                                    Margin="0,5,0,5"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Left"
-                                    IsChecked="{Binding AllSkyUseHorizonLimits, UpdateSourceTrigger=PropertyChanged}" />
+                                    ItemsSource="{Binding PointOrderingStrategyList}"
+                                    SelectedIndex="{Binding AllSkyPointOrderingStrategy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
                         </StackPanel>
                     </GroupBox>

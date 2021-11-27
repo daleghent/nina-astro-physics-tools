@@ -1,30 +1,10 @@
 ﻿# Astro-Physics Tools
 
-## 1.4.0.0 - 2021-11-??
-* Plugin renamed to **Astro-Physics Tools** - same great taste, all-new flavor. But, really, the original name was a mouthful.
-* **New:** Beta of the new **Create Dec Arc Model** instruction
-* **Breaking change:** Removed the **Create APPM Model** instruction and replaced it with **Create All-Sky Model**. Users who utilized the **Create APPM Model** instruction in their sequences and wish to continue to create all-sky models out of their sequences should [review the documentation](https://daleghent.com/astro-physics-tools#create-all-sky-model) on its replacement instruction, **Create All-Sky Model**.
-* Moved **APPM Map File** setting to a new **All-Sky Parameters** Options tab because it's relevant only for all-sky model creation
+## 0.2.0.0 - 2021-11-26
+* Moved Meridian and Horizon Limits setting to General Settings and both are now considered in the all-sky and dec arc instructions
+
+## 0.1.0.0 - 2021-11-25
+* **New:** **Create Dec Arc Model** instruction
+* **New:** **Create All-Sky Model** instruction
 * Instructions now check to make sure a camera is connected in NINA (for APPM's use) and raise a validation warning if one is not
 * Minimum supported NINA version is now 2.0 Beta 4
-
-## 1.3.5.0 - 2021-10-27
-* Updated the settings save routine to use the new safe multi-instance method in 1.11 build 172
-
-## 1.3.0.0 - 2021-9-1
-* Added instruction: Start APCC
-    - Starts APCC and connects NINA to the Astro-Physics ASCOM driver. Requires the following:
-        * **Auto-Connect** is selected in APCC's Setup tab for both the **Mount** and **AP V2 Driver**
-        * The **Astro-Physics GTO V2 Mount** driver is already selected and saved in the active NINA profile
-
-## 1.2.0.0 - unreleased
-* Updated plugin description to markdown format
-* Minimum supported NINA version is now 1.11 build 125
-
-## 1.1.0.0 - 2021-8-1
-* Minimum supported NINA version is now 1.11 build 116
-
-## 1.0.0.1 - 2021-6-29
-
-* Initial release
-* Added Instruction: Create APPM Model

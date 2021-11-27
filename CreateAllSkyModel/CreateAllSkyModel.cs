@@ -63,11 +63,11 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             AppmZenithSyncDistance = Properties.Settings.Default.AppmZenithSyncDistance;
             AppmUseMinAltitude = Properties.Settings.Default.AppmUseMinAltitude;
             AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
+            AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
+            AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
 
             AllSkyCreateWestPoints = Properties.Settings.Default.AllSkyCreateWestPoints;
             AllSkyCreateEastPoints = Properties.Settings.Default.AllSkyCreateEastPoints;
-            AllSkyUseMeridianLimits = Properties.Settings.Default.AllSkyUseMeridianLimits;
-            AllSkyUseHorizonLimits = Properties.Settings.Default.AllSkyUseHorizonLimits;
             AllSkyPointOrderingStrategy = Properties.Settings.Default.AllSkyPointOrderingStrategy;
             AllSkyDeclinationSpacing = Properties.Settings.Default.AllSkyDeclinationSpacing;
             AllSkyDeclinationOffset = Properties.Settings.Default.AllSkyDeclinationOffset;
@@ -160,8 +160,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
 
                 CreateEastPoints = AllSkyCreateEastPoints,
                 CreateWestPoints = AllSkyCreateWestPoints,
-                UseMeridianLimits = AllSkyUseMeridianLimits,
-                UseHorizonLimits = AllSkyUseHorizonLimits,
+                UseMeridianLimits = AppmUseMeridianLimits,
+                UseHorizonLimits = AppmUseHorizonLimits,
                 DeclinationSpacing = AllSkyDeclinationSpacing,
                 DeclinationOffset = AllSkyDeclinationOffset,
                 UseMinDeclination = AllSkyUseMinDeclination,
@@ -333,11 +333,11 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
         private double AppmZenithSyncDistance { get; set; }
         private bool AppmUseMinAltitude { get; set; }
         private int AppmMinAltitude { get; set; }
+        private bool AppmUseMeridianLimits { get; set; }
+        private bool AppmUseHorizonLimits { get; set; }
 
         private bool AllSkyCreateWestPoints { get; set; }
         private bool AllSkyCreateEastPoints { get; set; }
-        private bool AllSkyUseMeridianLimits { get; set; }
-        private bool AllSkyUseHorizonLimits { get; set; }
         private int AllSkyPointOrderingStrategy { get; set; }
         private int AllSkyDeclinationSpacing { get; set; }
         private int AllSkyDeclinationOffset { get; set; }
@@ -416,20 +416,20 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
                     AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
                     break;
 
+                case "AppmUseMeridianLimits":
+                    AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
+                    break;
+
+                case "AppmUseHorizonLimits":
+                    AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
+                    break;
+
                 case "AllSkyCreateWestPoints":
                     AllSkyCreateWestPoints = Properties.Settings.Default.AllSkyCreateWestPoints;
                     break;
 
                 case "AllSkyCreateEastPoints":
                     AllSkyCreateEastPoints = Properties.Settings.Default.AllSkyCreateEastPoints;
-                    break;
-
-                case "AllSkyUseMeridianLimits":
-                    AllSkyUseMeridianLimits = Properties.Settings.Default.AllSkyUseMeridianLimits;
-                    break;
-
-                case "AllSkyUseHorizonLimits":
-                    AllSkyUseHorizonLimits = Properties.Settings.Default.AllSkyUseHorizonLimits;
                     break;
 
                 case "AllSkyPointOrderingStrategy":

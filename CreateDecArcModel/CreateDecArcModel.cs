@@ -65,6 +65,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             AppmZenithSyncDistance = Properties.Settings.Default.AppmZenithSyncDistance;
             AppmUseMinAltitude = Properties.Settings.Default.AppmUseMinAltitude;
             AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
+            AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
+            AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
 
             DecArcRaSpacing = Properties.Settings.Default.DecArcRaSpacing;
             DecArcDecSpacing = Properties.Settings.Default.DecArcDecSpacing;
@@ -182,8 +184,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 UseMinHourAngleEast = true,
                 CreateEastPoints = true,
                 CreateWestPoints = true,
-                UseMeridianLimits = true,
-                UseHorizonLimits = true,
+                UseMeridianLimits = AppmUseMeridianLimits,
+                UseHorizonLimits = AppmUseHorizonLimits,
                 RightAscensionOffset = 0,
                 DeclinationSpacing = decArcParams.DecSpacing,
                 MaxDeclination = decArcParams.NorthDecLimit,
@@ -420,6 +422,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         private double AppmZenithSyncDistance { get; set; }
         private bool AppmUseMinAltitude { get; set; }
         private int AppmMinAltitude { get; set; }
+        private bool AppmUseMeridianLimits { get; set; }
+        private bool AppmUseHorizonLimits { get; set; }
 
         private int DecArcRaSpacing { get; set; }
         private int DecArcDecSpacing { get; set; }
@@ -463,6 +467,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
                 case "AppmMinAltitude":
                     AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
+                    break;
+
+                case "AppmUseMeridianLimits":
+                    AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
+                    break;
+
+                case "AppmUseHorizonLimits":
+                    AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
                     break;
 
                 case "DecArcRaSpacing":
