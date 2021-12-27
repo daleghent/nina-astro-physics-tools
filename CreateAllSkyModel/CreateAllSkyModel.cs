@@ -89,7 +89,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             this.filterWheelMediator = filterWheelMediator;
             this.guiderMediator = guiderMediator;
 
-            AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
+            if (File.Exists(APPMExePath)) {
+                AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
+            }
         }
 
         public CreateAllSkyModel(CreateAllSkyModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator) {
