@@ -20,7 +20,7 @@
     </GeometryGroup>
 
     <DataTemplate DataType="{x:Type local:CreateDecArcModel}">
-        <nina:SequenceBlockView DataContext="{Binding}">
+        <nina:SequenceBlockView>
             <nina:SequenceBlockView.SequenceItemContent>
                 <StackPanel Orientation="Horizontal">
 
