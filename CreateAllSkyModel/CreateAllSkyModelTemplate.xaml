@@ -12,6 +12,7 @@
     xmlns:local="clr-namespace:DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel"
     xmlns:mini="clr-namespace:NINA.View.Sequencer.MiniSequencer;assembly=NINA.Sequencer"
     xmlns:nina="clr-namespace:NINA.View.Sequencer;assembly=NINA.Sequencer">
+
     <GeometryGroup x:Key="AllSky_SVG">
         <PathGeometry Figures="M 582.86,291.233C 582.86,452.187 452.38,582.667 291.427,582.667C 130.479,582.667 2.03451e-005,452.187 2.03451e-005,291.233C 2.03451e-005,130.285 130.479,-0.193359 291.427,-0.193359C 452.38,-0.193359 582.86,130.285 582.86,291.233 Z " />
         <PathGeometry Figures="M 532.86,291.233C 532.86,424.572 424.765,532.667 291.427,532.667C 158.093,532.667 50,424.572 50,291.233C 50,157.9 158.093,49.8066 291.427,49.8066C 424.765,49.8066 532.86,157.9 532.86,291.233 Z " />

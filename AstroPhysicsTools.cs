@@ -14,6 +14,7 @@ using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
+using NINA.Profile;
 using NINA.Profile.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,18 +25,35 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Settings = DaleGhent.NINA.AstroPhysicsTools.Properties.Settings;
 
 namespace DaleGhent.NINA.AstroPhysicsTools {
 
     [Export(typeof(IPluginManifest))]
-    public class AstroPhysicsTools : PluginBase, ISettings, INotifyPropertyChanged {
+    public class AstroPhysicsTools : PluginBase, INotifyPropertyChanged {
+        private IPluginOptionsAccessor pluginSettings;
+        private IProfileService profileService;
 
         [ImportingConstructor]
-        public AstroPhysicsTools() {
-            if (Properties.Settings.Default.UpgradeSettings) {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.UpgradeSettings = false;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+        public AstroPhysicsTools(IProfileService profileService) {
+            if (Settings.Default.UpgradeSettings) {
+                Settings.Default.Upgrade();
+                Settings.Default.UpgradeSettings = false;
+                CoreUtil.SaveSettings(Settings.Default);
+            }
+
+            this.pluginSettings = new PluginOptionsAccessor(profileService, Guid.Parse(this.Identifier));
+            this.profileService = profileService;
+
+            profileService.ProfileChanged += ProfileService_ProfileChanged;
+
+            if (!Settings.Default.ApToolsMigratedProfiles.Contains(profileService.ActiveProfile.Id.ToString()) && !ApToolsProfileMigrated) {
+                Logger.Info($"Migrating app settings to NINA profile {profileService.ActiveProfile.Name} ({profileService.ActiveProfile.Id})");
+                MigrateSettingsToProfile();
+
+                ApToolsProfileMigrated = true;
+                Settings.Default.ApToolsMigratedProfiles.Add(profileService.ActiveProfile.Id.ToString());
+                CoreUtil.SaveSettings(Settings.Default);
             }
 
             APPMExePathDialogCommand = new RelayCommand(OpenAPPMExePathDialog);
@@ -45,148 +63,135 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             ImportAppmMeasurementConfigCommand = new AsyncCommand<bool>(() => Task.Run(ImportAppmMeasurementConfig));
         }
 
-        public bool AppmSetSlewRate {
-            get => Properties.Settings.Default.AppmSetSlewRate;
+        public override Task Teardown() {
+            profileService.ProfileChanged -= ProfileService_ProfileChanged;
+            return base.Teardown();
+        }
+
+        public bool ApToolsProfileMigrated {
+            get => pluginSettings.GetValueBoolean(nameof(ApToolsProfileMigrated), false);
             set {
-                Properties.Settings.Default.AppmSetSlewRate = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(ApToolsProfileMigrated), value);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool AppmSetSlewRate {
+            get => pluginSettings.GetValueBoolean(nameof(AppmSetSlewRate), Settings.Default.AppmSetSlewRate);
+            set {
+                pluginSettings.SetValueBoolean(nameof(AppmSetSlewRate), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AppmSlewRate {
-            get => Properties.Settings.Default.AppmSlewRate;
+            get => pluginSettings.GetValueInt32(nameof(AppmSlewRate), Settings.Default.AppmSlewRate);
             set {
-                Properties.Settings.Default.AppmSlewRate = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AppmSlewRate), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AppmSlewSettleTime {
-            get => Properties.Settings.Default.AppmSlewSettleTime;
+            get => pluginSettings.GetValueInt32(nameof(AppmSlewSettleTime), Settings.Default.AppmSlewSettleTime);
             set {
-                Properties.Settings.Default.AppmSlewSettleTime = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AppmSlewSettleTime), value);
                 RaisePropertyChanged();
             }
         }
 
         public double AppmZenithSafetyDistance {
-            get => Properties.Settings.Default.AppmZenithSafetyDistance;
+            get => pluginSettings.GetValueDouble(nameof(AppmZenithSafetyDistance), Settings.Default.AppmZenithSafetyDistance);
             set {
-                Properties.Settings.Default.AppmZenithSafetyDistance = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueDouble(nameof(AppmZenithSafetyDistance), value);
                 RaisePropertyChanged();
             }
         }
 
         public double AppmZenithSyncDistance {
-            get => Properties.Settings.Default.AppmZenithSyncDistance;
+            get => pluginSettings.GetValueDouble(nameof(AppmZenithSyncDistance), Settings.Default.AppmZenithSyncDistance);
             set {
-                Properties.Settings.Default.AppmZenithSyncDistance = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueDouble(nameof(AppmZenithSyncDistance), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AppmUseMinAltitude {
-            get => Properties.Settings.Default.AppmUseMinAltitude;
+            get => pluginSettings.GetValueBoolean(nameof(AppmUseMinAltitude), Settings.Default.AppmUseMinAltitude);
             set {
-                Properties.Settings.Default.AppmUseMinAltitude = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AppmUseMinAltitude), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AppmMinAltitude {
-            get => Properties.Settings.Default.AppmMinAltitude;
+            get => pluginSettings.GetValueInt32(nameof(AppmMinAltitude), Settings.Default.AppmMinAltitude);
             set {
-                Properties.Settings.Default.AppmMinAltitude = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AppmMinAltitude), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AppmUseMeridianLimits {
-            get => Properties.Settings.Default.AppmUseMeridianLimits;
+            get => pluginSettings.GetValueBoolean(nameof(AppmUseMeridianLimits), Settings.Default.AppmUseMeridianLimits);
             set {
-                Properties.Settings.Default.AppmUseMeridianLimits = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AppmUseMeridianLimits), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AppmUseHorizonLimits {
-            get => Properties.Settings.Default.AppmUseHorizonLimits;
+            get => pluginSettings.GetValueBoolean(nameof(AppmUseHorizonLimits), Settings.Default.AppmUseHorizonLimits);
             set {
-                Properties.Settings.Default.AppmUseHorizonLimits = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AppmUseHorizonLimits), value);
                 RaisePropertyChanged();
             }
         }
 
         public string APPMExePath {
-            get => Properties.Settings.Default.APPMExePath;
+            get => pluginSettings.GetValueString(nameof(APPMExePath), Settings.Default.APPMExePath);
             set {
-                Properties.Settings.Default.APPMExePath = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueString(nameof(APPMExePath), value);
                 RaisePropertyChanged();
             }
         }
 
         public string APPMSettingsPath {
-            get => Properties.Settings.Default.APPMSettingsPath;
+            get => pluginSettings.GetValueString(nameof(APPMSettingsPath), Settings.Default.APPMSettingsPath);
             set {
-                Properties.Settings.Default.APPMSettingsPath = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueString(nameof(APPMSettingsPath), value);
                 RaisePropertyChanged();
             }
         }
 
         public string APPMMapPath {
-            get => Properties.Settings.Default.APPMMapPath;
+            get => pluginSettings.GetValueString(nameof(APPMMapPath), Settings.Default.APPMMapPath);
             set {
-                Properties.Settings.Default.APPMMapPath = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueString(nameof(APPMMapPath), value);
                 RaisePropertyChanged();
             }
         }
 
         public string ApccExePath {
-            get {
-                if (string.IsNullOrEmpty(Properties.Settings.Default.ApccExePath)) {
-                    // Find APCC Pro first, then look for Standard
-                    if (File.Exists(Properties.Settings.Default.ApccDefaultProPath)) {
-                        ApccExePath = Properties.Settings.Default.ApccDefaultProPath;
-                    } else if (File.Exists(Properties.Settings.Default.ApccDefaultStandardPath)) {
-                        ApccExePath = Properties.Settings.Default.ApccDefaultStandardPath;
-                    }
-                }
-
-                return Properties.Settings.Default.ApccExePath;
-            }
+            get => pluginSettings.GetValueString(nameof(ApccExePath), Settings.Default.ApccDefaultProPath);
             set {
-                Properties.Settings.Default.ApccExePath = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueString(nameof(ApccExePath), value);
                 RaisePropertyChanged();
             }
         }
 
         public uint ApccStartupTimeout {
-            get => Properties.Settings.Default.ApccStartupTimeout;
+            get => pluginSettings.GetValueUInt32(nameof(ApccStartupTimeout), Settings.Default.ApccStartupTimeout);
             set {
-                Properties.Settings.Default.ApccStartupTimeout = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueUInt32(nameof(ApccStartupTimeout), value);
                 RaisePropertyChanged();
             }
         }
 
         public uint ApccDriverConnectTimeout {
-            get => Properties.Settings.Default.ApccDriverConnectTimeout;
+            get => pluginSettings.GetValueUInt32(nameof(ApccDriverConnectTimeout), Settings.Default.ApccDriverConnectTimeout);
             set {
-                Properties.Settings.Default.ApccDriverConnectTimeout = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueUInt32(nameof(ApccDriverConnectTimeout), value);
                 RaisePropertyChanged();
             }
         }
@@ -199,40 +204,37 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
          */
 
         public int DecArcRaSpacing {
-            get => Properties.Settings.Default.DecArcRaSpacing;
+            get => pluginSettings.GetValueInt32(nameof(DecArcRaSpacing), Settings.Default.DecArcRaSpacing);
             set {
-                Properties.Settings.Default.DecArcRaSpacing = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(DecArcRaSpacing), value);
                 RaisePropertyChanged();
             }
         }
 
         public int DecArcDecSpacing {
-            get => Properties.Settings.Default.DecArcDecSpacing;
+            get => pluginSettings.GetValueInt32(nameof(DecArcDecSpacing), Settings.Default.DecArcDecSpacing);
             set {
-                Properties.Settings.Default.DecArcDecSpacing = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(DecArcDecSpacing), value);
                 RaisePropertyChanged();
             }
         }
 
         public int DecArcQuantity {
-            get => Properties.Settings.Default.DecArcQuantity;
+            get => pluginSettings.GetValueInt32(nameof(DecArcQuantity), Settings.Default.DecArcQuantity);
             set {
-                Properties.Settings.Default.DecArcQuantity = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(DecArcQuantity), value);
                 RaisePropertyChanged();
             }
         }
 
         public double DecArcHourAngleLeadIn {
             get {
-                HoursToDegrees = 15 * Properties.Settings.Default.DecArcHourAngleLeadIn;
-                return Properties.Settings.Default.DecArcHourAngleLeadIn;
+                var decArcHourAngleLeadIn = pluginSettings.GetValueDouble(nameof(DecArcHourAngleLeadIn), Settings.Default.DecArcHourAngleLeadIn);
+                HoursToDegrees = 15 * decArcHourAngleLeadIn;
+                return decArcHourAngleLeadIn;
             }
             set {
-                Properties.Settings.Default.DecArcHourAngleLeadIn = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueDouble(nameof(DecArcHourAngleLeadIn), value);
                 RaisePropertyChanged();
             }
         }
@@ -248,28 +250,25 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         }
 
         public int DecArcPointOrderingStrategy {
-            get => Properties.Settings.Default.DecArcPointOrderingStrategy;
+            get => pluginSettings.GetValueInt32(nameof(DecArcPointOrderingStrategy), Settings.Default.DecArcPointOrderingStrategy);
             set {
-                Properties.Settings.Default.DecArcPointOrderingStrategy = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(DecArcPointOrderingStrategy), value);
                 RaisePropertyChanged();
             }
         }
 
         public int DecArcPolarPointOrderingStrategy {
-            get => Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
+            get => pluginSettings.GetValueInt32(nameof(DecArcPolarPointOrderingStrategy), Settings.Default.DecArcPolarPointOrderingStrategy);
             set {
-                Properties.Settings.Default.DecArcPolarPointOrderingStrategy = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(DecArcPolarPointOrderingStrategy), value);
                 RaisePropertyChanged();
             }
         }
 
         public int DecArcPolarProximityLimit {
-            get => Properties.Settings.Default.DecArcPolarProximityLimit;
+            get => pluginSettings.GetValueInt32(nameof(DecArcPolarProximityLimit), Settings.Default.DecArcPolarProximityLimit);
             set {
-                Properties.Settings.Default.DecArcPolarProximityLimit = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(DecArcPolarProximityLimit), value);
                 RaisePropertyChanged();
             }
         }
@@ -280,136 +279,121 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
          */
 
         public bool AllSkyCreateWestPoints {
-            get => Properties.Settings.Default.AllSkyCreateWestPoints;
+            get => pluginSettings.GetValueBoolean(nameof(AllSkyCreateWestPoints), Settings.Default.AllSkyCreateWestPoints);
             set {
-                Properties.Settings.Default.AllSkyCreateWestPoints = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AllSkyCreateWestPoints), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AllSkyCreateEastPoints {
-            get => Properties.Settings.Default.AllSkyCreateEastPoints;
+            get => pluginSettings.GetValueBoolean(nameof(AllSkyCreateEastPoints), Settings.Default.AllSkyCreateEastPoints);
             set {
-                Properties.Settings.Default.AllSkyCreateEastPoints = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AllSkyCreateEastPoints), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AllSkyPointOrderingStrategy {
-            get => Properties.Settings.Default.AllSkyPointOrderingStrategy;
+            get => pluginSettings.GetValueInt32(nameof(AllSkyPointOrderingStrategy), Settings.Default.AllSkyPointOrderingStrategy);
             set {
-                Properties.Settings.Default.AllSkyPointOrderingStrategy = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AllSkyPointOrderingStrategy), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AllSkyDeclinationSpacing {
-            get => Properties.Settings.Default.AllSkyDeclinationSpacing;
+            get => pluginSettings.GetValueInt32(nameof(AllSkyDeclinationSpacing), Settings.Default.AllSkyDeclinationSpacing);
             set {
-                Properties.Settings.Default.AllSkyDeclinationSpacing = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AllSkyDeclinationSpacing), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AllSkyDeclinationOffset {
-            get => Properties.Settings.Default.AllSkyDeclinationOffset;
+            get => pluginSettings.GetValueInt32(nameof(AllSkyDeclinationOffset), Settings.Default.AllSkyDeclinationOffset);
             set {
-                Properties.Settings.Default.AllSkyDeclinationOffset = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AllSkyDeclinationOffset), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AllSkyUseMinDeclination {
-            get => Properties.Settings.Default.AllSkyUseMinDeclination;
+            get => pluginSettings.GetValueBoolean(nameof(AllSkyUseMinDeclination), Settings.Default.AllSkyUseMinDeclination);
             set {
-                Properties.Settings.Default.AllSkyUseMinDeclination = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AllSkyUseMinDeclination), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AllSkyUseMaxDeclination {
-            get => Properties.Settings.Default.AllSkyUseMaxDeclination;
+            get => pluginSettings.GetValueBoolean(nameof(AllSkyUseMaxDeclination), Settings.Default.AllSkyUseMaxDeclination);
             set {
-                Properties.Settings.Default.AllSkyUseMaxDeclination = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AllSkyUseMaxDeclination), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AllSkyMinDeclination {
-            get => Properties.Settings.Default.AllSkyMinDeclination;
+            get => pluginSettings.GetValueInt32(nameof(AllSkyMinDeclination), Settings.Default.AllSkyMinDeclination);
             set {
-                Properties.Settings.Default.AllSkyMinDeclination = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AllSkyMinDeclination), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AllSkyMaxDeclination {
-            get => Properties.Settings.Default.AllSkyMaxDeclination;
+            get => pluginSettings.GetValueInt32(nameof(AllSkyMaxDeclination), Settings.Default.AllSkyMaxDeclination);
             set {
-                Properties.Settings.Default.AllSkyMaxDeclination = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AllSkyMaxDeclination), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AllSkyRightAscensionSpacing {
-            get => Properties.Settings.Default.AllSkyRightAscensionSpacing;
+            get => pluginSettings.GetValueInt32(nameof(AllSkyRightAscensionSpacing), Settings.Default.AllSkyRightAscensionSpacing);
             set {
-                Properties.Settings.Default.AllSkyRightAscensionSpacing = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AllSkyRightAscensionSpacing), value);
                 RaisePropertyChanged();
             }
         }
 
         public int AllSkyRightAscensionOffset {
-            get => Properties.Settings.Default.AllSkyRightAscensionOffset;
+            get => pluginSettings.GetValueInt32(nameof(AllSkyRightAscensionOffset), Settings.Default.AllSkyRightAscensionOffset);
             set {
-                Properties.Settings.Default.AllSkyRightAscensionOffset = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueInt32(nameof(AllSkyRightAscensionOffset), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AllSkyUseMinHourAngleEast {
-            get => Properties.Settings.Default.AllSkyUseMinHourAngleEast;
+            get => pluginSettings.GetValueBoolean(nameof(AllSkyUseMinHourAngleEast), Settings.Default.AllSkyUseMinHourAngleEast);
             set {
-                Properties.Settings.Default.AllSkyUseMinHourAngleEast = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AllSkyUseMinHourAngleEast), value);
                 RaisePropertyChanged();
             }
         }
 
         public bool AllSkyUseMaxHourAngleWest {
-            get => Properties.Settings.Default.AllSkyUseMaxHourAngleWest;
+            get => pluginSettings.GetValueBoolean(nameof(AllSkyUseMaxHourAngleWest), Settings.Default.AllSkyUseMaxHourAngleWest);
             set {
-                Properties.Settings.Default.AllSkyUseMaxHourAngleWest = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueBoolean(nameof(AllSkyUseMaxHourAngleWest), value);
                 RaisePropertyChanged();
             }
         }
 
         public double AllSkyMinHourAngleEast {
-            get => Properties.Settings.Default.AllSkyMinHourAngleEast;
+            get => pluginSettings.GetValueDouble(nameof(AllSkyMinHourAngleEast), Settings.Default.AllSkyMinHourAngleEast);
             set {
-                Properties.Settings.Default.AllSkyMinHourAngleEast = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueDouble(nameof(AllSkyMinHourAngleEast), value);
                 RaisePropertyChanged();
             }
         }
 
         public double AllSkyMaxHourAngleWest {
-            get => Properties.Settings.Default.AllSkyMaxHourAngleWest;
+            get => pluginSettings.GetValueDouble(nameof(AllSkyMaxHourAngleWest), Settings.Default.AllSkyMaxHourAngleWest);
             set {
-                Properties.Settings.Default.AllSkyMaxHourAngleWest = value;
-                CoreUtil.SaveSettings(Properties.Settings.Default);
+                pluginSettings.SetValueDouble(nameof(AllSkyMaxHourAngleWest), value);
                 RaisePropertyChanged();
             }
         }
@@ -512,7 +496,55 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         public ICommand ApccExePathDialogCommand { get; private set; }
         public ICommand ImportAppmMeasurementConfigCommand { get; private set; }
 
+        private void ProfileService_ProfileChanged(object sender, EventArgs e) {
+            RaiseAllPropertiesChanged();
+        }
+
+        private void MigrateSettingsToProfile() {
+            AppmSetSlewRate = Settings.Default.AppmSetSlewRate;
+            AppmSlewRate = Settings.Default.AppmSlewRate;
+            AppmSlewSettleTime = Settings.Default.AppmSlewSettleTime;
+            AppmZenithSafetyDistance = Settings.Default.AppmZenithSafetyDistance;
+            AppmUseMinAltitude = Settings.Default.AppmUseMinAltitude;
+            AppmMinAltitude = Settings.Default.AppmMinAltitude;
+            AppmUseMeridianLimits = Settings.Default.AppmUseMeridianLimits;
+            AppmUseHorizonLimits = Settings.Default.AppmUseHorizonLimits;
+
+            AllSkyCreateEastPoints = Settings.Default.AllSkyCreateEastPoints;
+            AllSkyCreateWestPoints = Settings.Default.AllSkyCreateWestPoints;
+            AllSkyDeclinationSpacing = Settings.Default.AllSkyDeclinationSpacing;
+            AllSkyDeclinationOffset = Settings.Default.AllSkyDeclinationOffset;
+            AllSkyUseMinDeclination = Settings.Default.AllSkyUseMinDeclination;
+            AllSkyUseMaxDeclination = Settings.Default.AllSkyUseMaxDeclination;
+            AllSkyMinDeclination = Settings.Default.AllSkyMinDeclination;
+            AllSkyMaxDeclination = Settings.Default.AllSkyMaxDeclination;
+            AllSkyRightAscensionSpacing = Settings.Default.AllSkyRightAscensionSpacing;
+            AllSkyRightAscensionOffset = Settings.Default.AllSkyRightAscensionOffset;
+            AllSkyUseMinHourAngleEast = Settings.Default.AllSkyUseMinHourAngleEast;
+            AllSkyUseMaxHourAngleWest = Settings.Default.AllSkyUseMaxHourAngleWest;
+            AllSkyPointOrderingStrategy = Settings.Default.AllSkyPointOrderingStrategy;
+
+            DecArcRaSpacing = Settings.Default.DecArcRaSpacing;
+            DecArcDecSpacing = Settings.Default.DecArcDecSpacing;
+            DecArcQuantity = Settings.Default.DecArcQuantity;
+            DecArcHourAngleLeadIn = Settings.Default.DecArcHourAngleLeadIn;
+            DecArcPointOrderingStrategy = Settings.Default.DecArcPointOrderingStrategy;
+            DecArcPolarPointOrderingStrategy = Settings.Default.DecArcPolarPointOrderingStrategy;
+            DecArcPolarProximityLimit = Settings.Default.DecArcPolarProximityLimit;
+
+            APPMExePath = Settings.Default.APPMExePath;
+            APPMSettingsPath = Settings.Default.APPMSettingsPath;
+            APPMMapPath = Settings.Default.APPMMapPath;
+            ApccExePath = Settings.Default.ApccExePath;
+            ApccStartupTimeout = Settings.Default.ApccStartupTimeout;
+            ApccDriverConnectTimeout = Settings.Default.ApccDriverConnectTimeout;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaiseAllPropertiesChanged() {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+        }
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

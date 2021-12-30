@@ -12,6 +12,7 @@
     xmlns:local="clr-namespace:DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel"
     xmlns:mini="clr-namespace:NINA.View.Sequencer.MiniSequencer;assembly=NINA.Sequencer"
     xmlns:nina="clr-namespace:NINA.View.Sequencer;assembly=NINA.Sequencer">
+
     <GeometryGroup x:Key="DecArc_SVG">
         <PathGeometry Figures="M 72.1667,420L 1.52588e-005,420L 1.52588e-005,310.458L 72.1667,310.458L 72.1667,323.396L 14.5625,323.396L 14.5625,353.417L 72.1667,353.417L 72.1667,366.375L 14.5625,366.375L 14.5625,407.042L 72.1667,407.042L 72.1667,420 Z " />
         <PathGeometry Figures="M 468.97,307.542L 439.741,420L 422.907,420L 399.262,326.646L 376.157,420L 359.699,420L 329.949,307.542L 345.262,307.542L 368.907,401.042L 392.178,307.542L 407.345,307.542L 430.845,401.958L 454.324,307.542L 468.97,307.542 Z " />
