@@ -1,5 +1,8 @@
 ﻿# Astro-Physics Tools
 
+## 0.4.0.0 - ???
+* Converted plugin to use new options system. This allows for settings to be saved to the NINA profile, allowing for different profiles to have unique settings and parameters
+
 ## 0.3.0.0 - 2021-12-26
 * Prevent plugin load failure on systems that don't have APCC Pro installed
 * Removed unnecessary WPF data context bindings that just love to hold on to memory when they really should not be doing that. Bad bindings! BAD!
