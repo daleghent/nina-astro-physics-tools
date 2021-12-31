@@ -72,28 +72,28 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
         public string Cw { get; set; }
 
         [JsonProperty]
-        public string HourAngle { get; set; }
+        public double HourAngle { get; set; }
 
         [JsonProperty]
-        public string Ra { get; set; }
+        public double Ra { get; set; }
 
         [JsonProperty]
-        public string Dec { get; set; }
+        public double Dec { get; set; }
 
         [JsonProperty]
         public string Status { get; set; }
 
         [JsonProperty]
-        public string RaDelta { get; set; }
+        public double RaDelta { get; set; }
 
         [JsonProperty]
-        public string DecDelta { get; set; }
+        public double DecDelta { get; set; }
 
         [JsonProperty]
-        public string RaSolved { get; set; }
+        public double RaSolved { get; set; }
 
         [JsonProperty]
-        public string DecSolved { get; set; }
+        public double DecSolved { get; set; }
 
         [JsonProperty]
         public double Temperature { get; set; }
