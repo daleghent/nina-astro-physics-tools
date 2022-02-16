@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © 2021 Dale Ghent")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
-[assembly: AssemblyMetadata("MinimumApplicationVersion", "2.0.0.2021")]
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "2.0.0.2045")]
 
 // The license your plugin code is using
 [assembly: AssemblyMetadata("License", "MPL-2.0")]
@@ -52,13 +52,14 @@ using System.Runtime.InteropServices;
 //[Optional] An in-depth description of your plugin
 [assembly: AssemblyMetadata("LongDescription", @"Astro-Physics Tools is a collection of Advanced Sequencer instructions that are designed for use with [Astro-Physics](https://www.astro-physics.com/) mounts and [APCC Pro](https://www.astro-physics.com/apcc).
 
-## **NOTE: THIS PLUGIN IS IN BETA AND CURRENTLY REQUIRES A BETA VERSION OF APCC PRO TO FUNCTION. PLEASE REFER TO THIS PLUGIN'S WEBSITE FOR FURTHER INFORMATION** ##
-
 # Requirements #
 
 * NINA 2.0
 * APCC Pro 1.9.2.3 or later
+* APCC Pro licence that enables the **NINA Camera Support**, **Dec Arc Tracking**, and **ASTAP Plate-solving** features
 * The **Enable Server** setting is **On** in NINA's options (refer to Options > General)
+
+Refer to the **Help > View/Update License Subscription** menu in APCC Pro for details on your installation's licensed features.
 
 # Provided functions #
 

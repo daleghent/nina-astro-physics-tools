@@ -35,7 +35,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
     [ExportMetadata("Name", "Create Dec Arc Model")]
     [ExportMetadata("Description", "Runs Astro-Physics Point Mapper (APPM) in automatic mode for unattended dec arc model creation")]
     [ExportMetadata("Icon", "DecArc_SVG")]
-    [ExportMetadata("Category", "Astro-Physics Tools (Beta)")]
+    [ExportMetadata("Category", "Astro-Physics Tools")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateDecArcModel : SequenceItem, IValidatable, INotifyPropertyChanged {
