@@ -1,7 +1,8 @@
 ﻿# Astro-Physics Tools
 
 ## 0.4.0.0 - ???
-* Converted plugin to use new options system. This allows for settings to be saved to the NINA profile, allowing for different profiles to have unique settings and parameters
+* Converted plugin to use NINA's new managed plugin options system. This allows for settings to be saved to the NINA profile which means different profiles can have unique settings and parameters
+* Minimum supported NINA version is now 2.0 Beta 45
 
 ## 0.3.0.0 - 2021-12-26
 * Prevent plugin load failure on systems that don't have APCC Pro installed
