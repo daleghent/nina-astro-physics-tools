@@ -1,6 +1,7 @@
 ﻿# Astro-Physics Tools
 
-## 0.4.0.0 - ???
+## 0.4.0.0 - 2022-02-17
+* Removed "beta" designation
 * Converted plugin to use NINA's new managed plugin options system. This allows for settings to be saved to the NINA profile. This means different profiles can have unique settings and parameters
 * Minimum supported NINA version is now 2.0 Beta 45
 
