@@ -11,6 +11,7 @@
 #endregion "copyright"
 
 using NINA.Astrometry;
+using NINA.Astrometry.Interfaces;
 using NINA.Sequencer.Container;
 using System.Collections.Generic;
 
@@ -18,8 +19,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.Utility {
 
     public class Utility {
 
-        public static DeepSkyObject FindDsoInfo(ISequenceContainer container) {
-            DeepSkyObject target = null;
+        public static IDeepSkyObject FindDsoInfo(ISequenceContainer container) {
+            IDeepSkyObject target = null;
             ISequenceContainer acontainer = container;
 
             while (acontainer != null) {

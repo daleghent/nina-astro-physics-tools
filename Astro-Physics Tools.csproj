@@ -115,31 +115,31 @@
       <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="NINA.Astrometry">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.Core">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.Equipment">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.Image">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.PlateSolving">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.Plugin">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.Profile">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.Sequencer">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
     <PackageReference Include="NINA.WPF.Base">
-      <Version>2.0.0.2045-beta</Version>
+      <Version>2.0.0.2050-preview3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

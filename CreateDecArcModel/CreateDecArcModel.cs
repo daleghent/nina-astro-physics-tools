@@ -12,6 +12,7 @@
 
 using Newtonsoft.Json;
 using NINA.Astrometry;
+using NINA.Astrometry.Interfaces;
 using NINA.Core.Model;
 using NINA.Core.Model.Equipment;
 using NINA.Core.Utility;
@@ -364,12 +365,12 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             return Process.Start(appm);
         }
 
-        private double CurrentHourAngle(DeepSkyObject target) {
+        private double CurrentHourAngle(IDeepSkyObject target) {
             // We want HA in terms of -12..12, not 0..24
             return ((AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTimeNow(profileService.ActiveProfile.AstrometrySettings.Longitude), target.Coordinates.RA) + 36) % 24) - 12;
         }
 
-        private DecArcParameters CalculateDecArcParameters(DeepSkyObject target) {
+        private DecArcParameters CalculateDecArcParameters(IDeepSkyObject target) {
             var decArcParams = new DecArcParameters() {
                 ArcQuantity = DecArcQuantity,
                 DecSpacing = DecArcDecSpacing,
