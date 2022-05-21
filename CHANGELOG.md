@@ -1,5 +1,8 @@
 ﻿# Astro-Physics Tools
 
+## 0.6.0.0 - 2022-05-21
+* Fixed validations for **Start APCC**
+
 ## 0.5.0.0 - 2022-03-13
 * Updated to support changes to DSO containers in NINA 2.0 beta 50
 * Minimum supported NINA version is now 2.0 Beta 50

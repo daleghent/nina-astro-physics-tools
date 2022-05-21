@@ -88,14 +88,18 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
 
         public bool Validate() {
-            bool passes = true;
+            var i = new List<string>();
 
             if (string.IsNullOrEmpty(ApccExePath) || !File.Exists(ApccExePath)) {
-                Issues.Add("Invalid location for AstroPhysicsCommandCenter.exe");
-                passes = false;
+                i.Add("Invalid location for AstroPhysicsCommandCenter.exe");
             }
 
-            return passes;
+            if (i != Issues) {
+                Issues = i;
+                RaisePropertyChanged("Issues");
+            }
+
+            return i.Count == 0;
         }
 
         private string ApccExePath { get; set; }
