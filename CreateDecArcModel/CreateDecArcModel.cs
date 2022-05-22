@@ -10,6 +10,7 @@
 
 #endregion "copyright"
 
+using DaleGhent.NINA.AstroPhysicsTools.Interfaces;
 using Newtonsoft.Json;
 using NINA.Astrometry;
 using NINA.Astrometry.Interfaces;
@@ -47,49 +48,26 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         private int currentPoint = 0;
         private string mappingRunState = "Unknown";
         private AppmApi.AppmApi appm = null;
-        private IProfileService profileService;
-        private ICameraMediator cameraMediator;
-        private IFilterWheelMediator filterWheelMediator;
-        private IGuiderMediator guiderMediator;
-
-        private readonly Version minVersion = new Version(1, 9, 2, 3);
+        private readonly IProfileService profileService;
+        private readonly ICameraMediator cameraMediator;
+        private readonly IFilterWheelMediator filterWheelMediator;
+        private readonly IGuiderMediator guiderMediator;
+        private readonly IAstroPhysicsToolsOptions options;
 
         [ImportingConstructor]
-        public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator) {
-            APPMExePath = Properties.Settings.Default.APPMExePath;
-            APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
-
-            AppmSetSlewRate = Properties.Settings.Default.AppmSetSlewRate;
-            AppmSlewRate = Properties.Settings.Default.AppmSlewRate;
-            AppmSlewSettleTime = Properties.Settings.Default.AppmSlewSettleTime;
-            AppmZenithSafetyDistance = Properties.Settings.Default.AppmZenithSafetyDistance;
-            AppmZenithSyncDistance = Properties.Settings.Default.AppmZenithSyncDistance;
-            AppmUseMinAltitude = Properties.Settings.Default.AppmUseMinAltitude;
-            AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
-            AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
-            AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
-
-            DecArcRaSpacing = Properties.Settings.Default.DecArcRaSpacing;
-            DecArcDecSpacing = Properties.Settings.Default.DecArcDecSpacing;
-            DecArcHourAngleLeadIn = Properties.Settings.Default.DecArcHourAngleLeadIn;
-            DecArcQuantity = Properties.Settings.Default.DecArcQuantity;
-            DecArcPointOrderingStrategy = Properties.Settings.Default.DecArcPointOrderingStrategy;
-            DecArcPolarPointOrderingStrategy = Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
-            DecArcPolarProximityLimit = Properties.Settings.Default.DecArcPolarProximityLimit;
-
-            Properties.Settings.Default.PropertyChanged += SettingsChanged;
-
+        public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator, IAstroPhysicsToolsOptions options) {
             this.profileService = profileService;
             this.cameraMediator = cameraMediator;
             this.filterWheelMediator = filterWheelMediator;
             this.guiderMediator = guiderMediator;
+            this.options = options;
 
-            if (File.Exists(APPMExePath)) {
-                AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
+            if (File.Exists(options.APPMExePath)) {
+                AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(options.APPMExePath).ProductVersion);
             }
         }
 
-        public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator) {
+        public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator, copyMe.options) {
             CopyMetaData(copyMe);
         }
 
@@ -171,24 +149,24 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             var decArcParams = CalculateDecArcParameters(target);
 
             Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={(decArcParams.WestHaLimit - Math.Abs(decArcParams.EastHaLimit)):0.00}");
-            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
+            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={options.DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
 
             var config = new AppmApi.AppmMeasurementConfiguration() {
-                SetSlewRate = AppmSetSlewRate,
-                SlewRate = AppmSlewRate,
-                SlewSettleTime = AppmSlewSettleTime,
-                ZenithSafetyDistance = AppmZenithSafetyDistance,
-                ZenithSyncDistance = AppmZenithSyncDistance,
-                UseMinAltitude = AppmUseMinAltitude,
-                MinAltitude = AppmMinAltitude,
+                SetSlewRate = options.AppmSetSlewRate,
+                SlewRate = options.AppmSlewRate,
+                SlewSettleTime = options.AppmSlewSettleTime,
+                ZenithSafetyDistance = options.AppmZenithSafetyDistance,
+                ZenithSyncDistance = options.AppmZenithSyncDistance,
+                UseMinAltitude = options.AppmUseMinAltitude,
+                MinAltitude = options.AppmMinAltitude,
                 UseMaxDeclination = true,
                 UseMinDeclination = true,
                 UseMaxHourAngleWest = true,
                 UseMinHourAngleEast = true,
                 CreateEastPoints = true,
                 CreateWestPoints = true,
-                UseMeridianLimits = AppmUseMeridianLimits,
-                UseHorizonLimits = AppmUseHorizonLimits,
+                UseMeridianLimits = options.AppmUseMeridianLimits,
+                UseHorizonLimits = options.AppmUseHorizonLimits,
                 RightAscensionOffset = 0,
                 DeclinationSpacing = decArcParams.DecSpacing,
                 MaxDeclination = decArcParams.NorthDecLimit,
@@ -198,7 +176,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 MinHourAngleEast = decArcParams.EastHaLimit,
                 MaxHourAngleWest = decArcParams.WestHaLimit,
                 PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit
-                    ? decArcParams.PolarPointOrderingStrategy : DecArcPointOrderingStrategy,
+                    ? decArcParams.PolarPointOrderingStrategy : options.DecArcPointOrderingStrategy,
             };
 
             var request = new AppmApi.AppmMeasurementConfigurationRequest() {
@@ -303,7 +281,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={APPMExePath}, Settings={APPMSettingsPath}";
+            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={options.APPMExePath}, Settings={options.APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -311,8 +289,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         public bool Validate() {
             var i = new List<string>();
 
-            if (AppmFileVersion < minVersion) {
-                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {minVersion} or higher");
+            if (AppmFileVersion < AstroPhysicsTools.MinAppmVersion) {
+                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {AstroPhysicsTools.MinAppmVersion} or higher");
             }
 
             if (!cameraMediator.GetInfo().Connected) {
@@ -323,11 +301,11 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 i.Add("No DSO has been defined");
             }
 
-            if (string.IsNullOrEmpty(APPMExePath) || !File.Exists(APPMExePath)) {
+            if (string.IsNullOrEmpty(options.APPMExePath) || !File.Exists(options.APPMExePath)) {
                 i.Add("Invalid location for ApPointMapper.exe");
             }
 
-            if (!string.IsNullOrEmpty(APPMSettingsPath) && !File.Exists(APPMSettingsPath)) {
+            if (!string.IsNullOrEmpty(options.APPMSettingsPath) && !File.Exists(options.APPMSettingsPath)) {
                 i.Add("Invalid location for APPM settings file");
             }
 
@@ -353,11 +331,11 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 args.Add("-dontexit");
             }
 
-            if (File.Exists(APPMSettingsPath)) {
-                args.Add($"-s{APPMSettingsPath}");
+            if (File.Exists(options.APPMSettingsPath)) {
+                args.Add($"-s{options.APPMSettingsPath}");
             }
 
-            var appm = new ProcessStartInfo(APPMExePath) {
+            var appm = new ProcessStartInfo(options.APPMExePath) {
                 Arguments = string.Join(" ", args.ToArray())
             };
 
@@ -372,12 +350,12 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
         private DecArcParameters CalculateDecArcParameters(IDeepSkyObject target) {
             var decArcParams = new DecArcParameters() {
-                ArcQuantity = DecArcQuantity,
-                DecSpacing = DecArcDecSpacing,
-                RaSpacing = DecArcRaSpacing,
-                PointOrderingStrategy = DecArcPointOrderingStrategy,
-                PolarPointOrderingStrategy = DecArcPolarPointOrderingStrategy,
-                PolarProximityLimit = DecArcPolarProximityLimit,
+                ArcQuantity = options.DecArcQuantity,
+                DecSpacing = options.DecArcDecSpacing,
+                RaSpacing = options.DecArcRaSpacing,
+                PointOrderingStrategy = options.DecArcPointOrderingStrategy,
+                PolarPointOrderingStrategy = options.DecArcPolarPointOrderingStrategy,
+                PolarProximityLimit = options.DecArcPolarProximityLimit,
             };
 
             decArcParams.TargetHa = CurrentHourAngle(target);
@@ -415,100 +393,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
         }
 
-        private string APPMExePath { get; set; }
-        private string APPMSettingsPath { get; set; }
-
-        private bool AppmSetSlewRate { get; set; }
-        private int AppmSlewRate { get; set; }
-        private int AppmSlewSettleTime { get; set; }
-        private double AppmZenithSafetyDistance { get; set; }
-        private double AppmZenithSyncDistance { get; set; }
-        private bool AppmUseMinAltitude { get; set; }
-        private int AppmMinAltitude { get; set; }
-        private bool AppmUseMeridianLimits { get; set; }
-        private bool AppmUseHorizonLimits { get; set; }
-
-        private int DecArcRaSpacing { get; set; }
-        private int DecArcDecSpacing { get; set; }
-        private double DecArcHourAngleLeadIn { get; set; }
-        private int DecArcQuantity { get; set; }
-        private int DecArcPointOrderingStrategy { get; set; }
-        private int DecArcPolarPointOrderingStrategy { get; set; }
-        private int DecArcPolarProximityLimit { get; set; }
-
         private Version AppmFileVersion { get; set; }
-
-        private void SettingsChanged(object sender, PropertyChangedEventArgs e) {
-            switch (e.PropertyName) {
-                case "APPMExePath":
-                    APPMExePath = Properties.Settings.Default.APPMExePath;
-                    break;
-
-                case "APPMSettingsPath":
-                    APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
-                    break;
-
-                case "AppmSlewRate":
-                    AppmSlewRate = Properties.Settings.Default.AppmSlewRate;
-                    break;
-
-                case "AppmSlewSettleTime":
-                    AppmSlewSettleTime = Properties.Settings.Default.AppmSlewSettleTime;
-                    break;
-
-                case "AppmZenithSafetyDistance":
-                    AppmZenithSafetyDistance = Properties.Settings.Default.AppmZenithSafetyDistance;
-                    break;
-
-                case "AppmZenithSyncDistance":
-                    AppmZenithSyncDistance = Properties.Settings.Default.AppmZenithSyncDistance;
-                    break;
-
-                case "AppmUseMinAltitude":
-                    AppmUseMinAltitude = Properties.Settings.Default.AppmUseMinAltitude;
-                    break;
-
-                case "AppmMinAltitude":
-                    AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
-                    break;
-
-                case "AppmUseMeridianLimits":
-                    AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
-                    break;
-
-                case "AppmUseHorizonLimits":
-                    AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
-                    break;
-
-                case "DecArcRaSpacing":
-                    DecArcRaSpacing = Properties.Settings.Default.DecArcRaSpacing;
-                    break;
-
-                case "DecArcDecSpacing":
-                    DecArcDecSpacing = Properties.Settings.Default.DecArcDecSpacing;
-                    break;
-
-                case "DecArcQuantity":
-                    DecArcQuantity = Properties.Settings.Default.DecArcQuantity;
-                    break;
-
-                case "DecArcHourAngleLeadIn":
-                    DecArcHourAngleLeadIn = Properties.Settings.Default.DecArcHourAngleLeadIn;
-                    break;
-
-                case "DecArcPointOrderingStrategy":
-                    DecArcPointOrderingStrategy = Properties.Settings.Default.DecArcPointOrderingStrategy;
-                    break;
-
-                case "DecArcPolarPointOrderingStrategy":
-                    DecArcPolarPointOrderingStrategy = Properties.Settings.Default.DecArcPolarPointOrderingStrategy;
-                    break;
-
-                case "DecArcPolarProximityLimit":
-                    DecArcPolarProximityLimit = Properties.Settings.Default.DecArcPolarProximityLimit;
-                    break;
-            }
-        }
 
         private class DecArcParameters {
             public int TargetDec { get; set; } = 0;

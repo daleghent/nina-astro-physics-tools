@@ -53,9 +53,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AstroPhysicsTools.cs" />
+    <Compile Include="AstroPhysicsToolsOptions.cs" />
     <Compile Include="CreateDecArcModel\CreateDecArcModel.cs" />
     <Compile Include="CreateDecArcModel\CreateDecArcModelTemplate.xaml.cs">
       <DependentUpon>CreateDecArcModelTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Interfaces\IAstroPhysicsToolsOptions.cs" />
+    <Compile Include="Resources\OptionsDataTemplates.xaml.cs">
+      <DependentUpon>OptionsDataTemplates.xaml</DependentUpon>
     </Compile>
     <Compile Include="StartStopAPCC\StopApcc.cs" />
     <Compile Include="StartStopAPCC\StartApcc.cs" />
@@ -88,6 +93,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="CreateDecArcModel\CreateDecArcModelTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\OptionsDataTemplates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

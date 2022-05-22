@@ -10,6 +10,7 @@
 
 #endregion "copyright"
 
+using DaleGhent.NINA.AstroPhysicsTools.Interfaces;
 using Newtonsoft.Json;
 using NINA.Core.Model;
 using NINA.Core.Model.Equipment;
@@ -44,57 +45,26 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
         private int currentPoint = 0;
         private string mappingRunState = "Unknown";
         private AppmApi.AppmApi appm = null;
-        private IProfileService profileService;
-        private ICameraMediator cameraMediator;
-        private IFilterWheelMediator filterWheelMediator;
-        private IGuiderMediator guiderMediator;
-
-        private readonly Version minVersion = new Version(1, 9, 2, 3);
+        private readonly IProfileService profileService;
+        private readonly ICameraMediator cameraMediator;
+        private readonly IFilterWheelMediator filterWheelMediator;
+        private readonly IGuiderMediator guiderMediator;
+        private readonly IAstroPhysicsToolsOptions options;
 
         [ImportingConstructor]
-        public CreateAllSkyModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator) {
-            APPMExePath = Properties.Settings.Default.APPMExePath;
-            APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
-
-            AppmSetSlewRate = Properties.Settings.Default.AppmSetSlewRate;
-            AppmSlewRate = Properties.Settings.Default.AppmSlewRate;
-            AppmSlewSettleTime = Properties.Settings.Default.AppmSlewSettleTime;
-            AppmZenithSafetyDistance = Properties.Settings.Default.AppmZenithSafetyDistance;
-            AppmZenithSyncDistance = Properties.Settings.Default.AppmZenithSyncDistance;
-            AppmUseMinAltitude = Properties.Settings.Default.AppmUseMinAltitude;
-            AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
-            AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
-            AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
-
-            AllSkyCreateWestPoints = Properties.Settings.Default.AllSkyCreateWestPoints;
-            AllSkyCreateEastPoints = Properties.Settings.Default.AllSkyCreateEastPoints;
-            AllSkyPointOrderingStrategy = Properties.Settings.Default.AllSkyPointOrderingStrategy;
-            AllSkyDeclinationSpacing = Properties.Settings.Default.AllSkyDeclinationSpacing;
-            AllSkyDeclinationOffset = Properties.Settings.Default.AllSkyDeclinationOffset;
-            AllSkyUseMinDeclination = Properties.Settings.Default.AllSkyUseMinDeclination;
-            AllSkyUseMaxDeclination = Properties.Settings.Default.AllSkyUseMaxDeclination;
-            AllSkyMinDeclination = Properties.Settings.Default.AllSkyMinDeclination;
-            AllSkyMaxDeclination = Properties.Settings.Default.AllSkyMaxDeclination;
-            AllSkyRightAscensionSpacing = Properties.Settings.Default.AllSkyRightAscensionSpacing;
-            AllSkyRightAscensionOffset = Properties.Settings.Default.AllSkyRightAscensionOffset;
-            AllSkyUseMinHourAngleEast = Properties.Settings.Default.AllSkyUseMinHourAngleEast;
-            AllSkyUseMaxHourAngleWest = Properties.Settings.Default.AllSkyUseMaxHourAngleWest;
-            AllSkyMinHourAngleEast = Properties.Settings.Default.AllSkyMinHourAngleEast;
-            AllSkyMaxHourAngleWest = Properties.Settings.Default.AllSkyMaxHourAngleWest;
-
-            Properties.Settings.Default.PropertyChanged += SettingsChanged;
-
+        public CreateAllSkyModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator, IAstroPhysicsToolsOptions options) {
             this.profileService = profileService;
             this.cameraMediator = cameraMediator;
             this.filterWheelMediator = filterWheelMediator;
             this.guiderMediator = guiderMediator;
+            this.options = options;
 
-            if (File.Exists(APPMExePath)) {
-                AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(APPMExePath).ProductVersion);
+            if (File.Exists(options.APPMExePath)) {
+                AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(options.APPMExePath).ProductVersion);
             }
         }
 
-        public CreateAllSkyModel(CreateAllSkyModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator) {
+        public CreateAllSkyModel(CreateAllSkyModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator, copyMe.options) {
             CopyMetaData(copyMe);
         }
 
@@ -143,6 +113,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             }
         }
 
+        private Version AppmFileVersion { get; set; }
+
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
             CancellationTokenSource updateStatusTaskCts = new CancellationTokenSource();
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
@@ -152,27 +124,27 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             appm = new AppmApi.AppmApi();
 
             var config = new AppmApi.AppmMeasurementConfiguration {
-                SetSlewRate = AppmSetSlewRate,
-                SlewRate = AppmSlewRate,
-                SlewSettleTime = AppmSlewSettleTime,
-                ZenithSafetyDistance = AppmZenithSafetyDistance,
-                ZenithSyncDistance = AppmZenithSyncDistance,
-                UseMinAltitude = AppmUseMinAltitude,
-                MinAltitude = AppmMinAltitude,
+                SetSlewRate = options.AppmSetSlewRate,
+                SlewRate = options.AppmSlewRate,
+                SlewSettleTime = options.AppmSlewSettleTime,
+                ZenithSafetyDistance = options.AppmZenithSafetyDistance,
+                ZenithSyncDistance = options.AppmZenithSyncDistance,
+                UseMinAltitude = options.AppmUseMinAltitude,
+                MinAltitude = options.AppmMinAltitude,
 
-                CreateEastPoints = AllSkyCreateEastPoints,
-                CreateWestPoints = AllSkyCreateWestPoints,
-                UseMeridianLimits = AppmUseMeridianLimits,
-                UseHorizonLimits = AppmUseHorizonLimits,
-                DeclinationSpacing = AllSkyDeclinationSpacing,
-                DeclinationOffset = AllSkyDeclinationOffset,
-                UseMinDeclination = AllSkyUseMinDeclination,
-                UseMaxDeclination = AllSkyUseMaxDeclination,
-                RightAscensionSpacing = AllSkyRightAscensionSpacing,
-                RightAscensionOffset = AllSkyRightAscensionOffset,
-                UseMinHourAngleEast = AllSkyUseMinHourAngleEast,
-                UseMaxHourAngleWest = AllSkyUseMaxHourAngleWest,
-                PointOrderingStrategy = AllSkyPointOrderingStrategy,
+                CreateEastPoints = options.AllSkyCreateEastPoints,
+                CreateWestPoints = options.AllSkyCreateWestPoints,
+                UseMeridianLimits = options.AppmUseMeridianLimits,
+                UseHorizonLimits = options.AppmUseHorizonLimits,
+                DeclinationSpacing = options.AllSkyDeclinationSpacing,
+                DeclinationOffset = options.AllSkyDeclinationOffset,
+                UseMinDeclination = options.AllSkyUseMinDeclination,
+                UseMaxDeclination = options.AllSkyUseMaxDeclination,
+                RightAscensionSpacing = options.AllSkyRightAscensionSpacing,
+                RightAscensionOffset = options.AllSkyRightAscensionOffset,
+                UseMinHourAngleEast = options.AllSkyUseMinHourAngleEast,
+                UseMaxHourAngleWest = options.AllSkyUseMaxHourAngleWest,
+                PointOrderingStrategy = options.AllSkyPointOrderingStrategy,
             };
 
             var request = new AppmApi.AppmMeasurementConfigurationRequest() {
@@ -275,7 +247,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateAllSkyModel)}, ManualMode: {ManualMode}, DotNotExit: {DoNotExit}, Exe Path: {APPMExePath}, Settings: {APPMSettingsPath}";
+            return $"Category: {Category}, Item: {nameof(CreateAllSkyModel)}, ManualMode: {ManualMode}, DotNotExit: {DoNotExit}, Exe Path: {options.APPMExePath}, Settings: {options.APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -287,16 +259,16 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
                 i.Add($"Camera is not connected");
             }
 
-            if (string.IsNullOrEmpty(APPMExePath) || !File.Exists(APPMExePath)) {
+            if (string.IsNullOrEmpty(options.APPMExePath) || !File.Exists(options.APPMExePath)) {
                 i.Add("Invalid location for ApPointMapper.exe");
             }
 
-            if (!string.IsNullOrEmpty(APPMSettingsPath) && !File.Exists(APPMSettingsPath)) {
+            if (!string.IsNullOrEmpty(options.APPMSettingsPath) && !File.Exists(options.APPMSettingsPath)) {
                 i.Add("Invalid location for APPM settings file");
             }
 
-            if (AppmFileVersion < minVersion) {
-                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {minVersion} or higher");
+            if (AppmFileVersion < AstroPhysicsTools.MinAppmVersion) {
+                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {AstroPhysicsTools.MinAppmVersion} or higher");
             }
 
             if (i != Issues) {
@@ -324,36 +296,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             }
         }
 
-        private string APPMExePath { get; set; }
-        private string APPMSettingsPath { get; set; }
-        private Version AppmFileVersion { get; set; }
-
-        private bool AppmSetSlewRate { get; set; }
-        private int AppmSlewRate { get; set; }
-        private int AppmSlewSettleTime { get; set; }
-        private double AppmZenithSafetyDistance { get; set; }
-        private double AppmZenithSyncDistance { get; set; }
-        private bool AppmUseMinAltitude { get; set; }
-        private int AppmMinAltitude { get; set; }
-        private bool AppmUseMeridianLimits { get; set; }
-        private bool AppmUseHorizonLimits { get; set; }
-
-        private bool AllSkyCreateWestPoints { get; set; }
-        private bool AllSkyCreateEastPoints { get; set; }
-        private int AllSkyPointOrderingStrategy { get; set; }
-        private int AllSkyDeclinationSpacing { get; set; }
-        private int AllSkyDeclinationOffset { get; set; }
-        private bool AllSkyUseMinDeclination { get; set; }
-        private bool AllSkyUseMaxDeclination { get; set; }
-        private int AllSkyMinDeclination { get; set; }
-        private int AllSkyMaxDeclination { get; set; }
-        private int AllSkyRightAscensionSpacing { get; set; }
-        private int AllSkyRightAscensionOffset { get; set; }
-        private bool AllSkyUseMinHourAngleEast { get; set; }
-        private bool AllSkyUseMaxHourAngleWest { get; set; }
-        private double AllSkyMinHourAngleEast { get; set; }
-        private double AllSkyMaxHourAngleWest { get; set; }
-
         private Process RunAPPM() {
             Process[] proc = Process.GetProcessesByName("ApPointMapper");
 
@@ -368,124 +310,16 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
                 args.Add("-dontexit");
             }
 
-            if (File.Exists(APPMSettingsPath)) {
-                args.Add($"-s{APPMSettingsPath}");
+            if (File.Exists(options.APPMSettingsPath)) {
+                args.Add($"-s{options.APPMSettingsPath}");
             }
 
-            var appm = new ProcessStartInfo(APPMExePath) {
+            var appm = new ProcessStartInfo(options.APPMExePath) {
                 Arguments = string.Join(" ", args.ToArray())
             };
 
             Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
             return Process.Start(appm);
-        }
-
-        private void SettingsChanged(object sender, PropertyChangedEventArgs e) {
-            switch (e.PropertyName) {
-                case "APPMExePath":
-                    APPMExePath = Properties.Settings.Default.APPMExePath;
-                    break;
-
-                case "APPMSettingsPath":
-                    APPMSettingsPath = Properties.Settings.Default.APPMSettingsPath;
-                    break;
-
-                case "AppmSetSlewRate":
-                    AppmSetSlewRate = Properties.Settings.Default.AppmSetSlewRate;
-                    break;
-
-                case "AppmSlewRate":
-                    AppmSlewRate = Properties.Settings.Default.AppmSlewRate;
-                    break;
-
-                case "AppmSlewSettleTime":
-                    AppmSlewSettleTime = Properties.Settings.Default.AppmSlewSettleTime;
-                    break;
-
-                case "AppmZenithSafetyDistance":
-                    AppmZenithSafetyDistance = Properties.Settings.Default.AppmZenithSafetyDistance;
-                    break;
-
-                case "AppmZenithSyncDistance":
-                    AppmZenithSyncDistance = Properties.Settings.Default.AppmZenithSyncDistance;
-                    break;
-
-                case "AppmUseMinAltitude":
-                    AppmUseMinAltitude = Properties.Settings.Default.AppmUseMinAltitude;
-                    break;
-
-                case "AppmMinAltitude":
-                    AppmMinAltitude = Properties.Settings.Default.AppmMinAltitude;
-                    break;
-
-                case "AppmUseMeridianLimits":
-                    AppmUseMeridianLimits = Properties.Settings.Default.AppmUseMeridianLimits;
-                    break;
-
-                case "AppmUseHorizonLimits":
-                    AppmUseHorizonLimits = Properties.Settings.Default.AppmUseHorizonLimits;
-                    break;
-
-                case "AllSkyCreateWestPoints":
-                    AllSkyCreateWestPoints = Properties.Settings.Default.AllSkyCreateWestPoints;
-                    break;
-
-                case "AllSkyCreateEastPoints":
-                    AllSkyCreateEastPoints = Properties.Settings.Default.AllSkyCreateEastPoints;
-                    break;
-
-                case "AllSkyPointOrderingStrategy":
-                    AllSkyPointOrderingStrategy = Properties.Settings.Default.AllSkyPointOrderingStrategy;
-                    break;
-
-                case "AllSkyDeclinationSpacing":
-                    AllSkyDeclinationSpacing = Properties.Settings.Default.AllSkyDeclinationSpacing;
-                    break;
-
-                case "AllSkyDeclinationOffset":
-                    AllSkyDeclinationOffset = Properties.Settings.Default.AllSkyDeclinationOffset;
-                    break;
-
-                case "AllSkyUseMinDeclination":
-                    AllSkyUseMinDeclination = Properties.Settings.Default.AllSkyUseMinDeclination;
-                    break;
-
-                case "AllSkyUseMaxDeclination":
-                    AllSkyUseMaxDeclination = Properties.Settings.Default.AllSkyUseMaxDeclination;
-                    break;
-
-                case "AllSkyMinDeclination":
-                    AllSkyMinDeclination = Properties.Settings.Default.AllSkyMinDeclination;
-                    break;
-
-                case "AllSkyMaxDeclination":
-                    AllSkyMaxDeclination = Properties.Settings.Default.AllSkyMaxDeclination;
-                    break;
-
-                case "AllSkyRightAscensionSpacing":
-                    AllSkyRightAscensionSpacing = Properties.Settings.Default.AllSkyRightAscensionSpacing;
-                    break;
-
-                case "AllSkyRightAscensionOffset":
-                    AllSkyRightAscensionOffset = Properties.Settings.Default.AllSkyRightAscensionOffset;
-                    break;
-
-                case "AllSkyUseMinHourAngleEast":
-                    AllSkyUseMinHourAngleEast = Properties.Settings.Default.AllSkyUseMinHourAngleEast;
-                    break;
-
-                case "AllSkyUseMaxHourAngleWest":
-                    AllSkyUseMaxHourAngleWest = Properties.Settings.Default.AllSkyUseMaxHourAngleWest;
-                    break;
-
-                case "AllSkyMinHourAngleEast":
-                    AllSkyMinHourAngleEast = Properties.Settings.Default.AllSkyMinHourAngleEast;
-                    break;
-
-                case "AllSkyMaxHourAngleWest":
-                    AllSkyMaxHourAngleWest = Properties.Settings.Default.AllSkyMaxHourAngleWest;
-                    break;
-            }
         }
     }
 }

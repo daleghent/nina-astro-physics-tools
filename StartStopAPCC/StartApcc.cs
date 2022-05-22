@@ -10,6 +10,7 @@
 
 #endregion "copyright"
 
+using DaleGhent.NINA.AstroPhysicsTools.Interfaces;
 using Newtonsoft.Json;
 using NINA.Core.Model;
 using NINA.Core.Utility;
@@ -35,18 +36,16 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class StartApcc : SequenceItem, IValidatable {
-        private ITelescopeMediator telescopeMediator;
+        private readonly ITelescopeMediator telescopeMediator;
+        private readonly IAstroPhysicsToolsOptions options;
 
         [ImportingConstructor]
-        public StartApcc(ITelescopeMediator telescopeMediator) {
+        public StartApcc(ITelescopeMediator telescopeMediator, IAstroPhysicsToolsOptions options) {
             this.telescopeMediator = telescopeMediator;
-
-            ApccExePath = Properties.Settings.Default.ApccExePath;
-            ApccStartupTimeout = Properties.Settings.Default.ApccStartupTimeout;
-            ApccDriverConnectTimeout = Properties.Settings.Default.ApccDriverConnectTimeout;
+            this.options = options;
         }
 
-        private StartApcc(StartApcc copyMe) : this(copyMe.telescopeMediator) {
+        private StartApcc(StartApcc copyMe) : this(copyMe.telescopeMediator, copyMe.options) {
             CopyMetaData(copyMe);
         }
 
@@ -59,9 +58,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
                 Logger.Info($"APCC is already running!");
             }
 
-            for (int i = 0; i < ApccStartupTimeout; i++) {
+            for (int i = 0; i < options.ApccStartupTimeout; i++) {
                 if (Process.GetProcessesByName("AstroPhysicsV2 Driver").Length > 0) {
-                    await Task.Delay(TimeSpan.FromSeconds(ApccDriverConnectTimeout));
+                    await Task.Delay(TimeSpan.FromSeconds(options.ApccDriverConnectTimeout));
                     break;
                 } else {
                     await Task.Delay(TimeSpan.FromSeconds(1));
@@ -90,7 +89,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         public bool Validate() {
             var i = new List<string>();
 
-            if (string.IsNullOrEmpty(ApccExePath) || !File.Exists(ApccExePath)) {
+            if (string.IsNullOrEmpty(options.ApccExePath) || !File.Exists(options.ApccExePath)) {
                 i.Add("Invalid location for AstroPhysicsCommandCenter.exe");
             }
 
@@ -102,16 +101,12 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             return i.Count == 0;
         }
 
-        private string ApccExePath { get; set; }
-        private uint ApccStartupTimeout { get; set; }
-        private uint ApccDriverConnectTimeout { get; set; }
-
         private void RunApcc() {
-            var appm = new ProcessStartInfo(ApccExePath);
+            var appm = new ProcessStartInfo(options.ApccExePath);
 
             try {
                 var cmd = Process.Start(appm);
-                Logger.Info($"{ApccExePath} started with PID {cmd.Id}");
+                Logger.Info($"{options.ApccExePath} started with PID {cmd.Id}");
             } catch (Exception ex) {
                 throw new SequenceEntityFailedException(ex.Message);
             }
