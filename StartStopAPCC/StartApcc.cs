@@ -40,6 +40,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         private readonly IAstroPhysicsToolsOptions options;
 
         [ImportingConstructor]
+        public StartApcc(ITelescopeMediator telescopeMediator) : this(telescopeMediator, AstroPhysicsTools.AstroPhysicsToolsOptions) {
+        }
+
         public StartApcc(ITelescopeMediator telescopeMediator, IAstroPhysicsToolsOptions options) {
             this.telescopeMediator = telescopeMediator;
             this.options = options;

@@ -55,6 +55,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         private readonly IAstroPhysicsToolsOptions options;
 
         [ImportingConstructor]
+        public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator) : this(profileService, cameraMediator, filterWheelMediator, guiderMediator, AstroPhysicsTools.AstroPhysicsToolsOptions){
+        }
+
         public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator, IAstroPhysicsToolsOptions options) {
             this.profileService = profileService;
             this.cameraMediator = cameraMediator;
