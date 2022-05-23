@@ -145,7 +145,10 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             target.Coordinates = target.Coordinates.Transform(Epoch.JNOW);
 
             if (target.Coordinates.Dec > 85d || target.Coordinates.Dec < -85d) {
-                Logger.Info($"The target's declination of {target.Coordinates.DecString} is too close to the pole to create a meaningful model. Skipping model creation.");
+                string message = $"The target's declination of {target.Coordinates.DecString} is too close to the pole to create a meaningful model. Skipping model creation.";
+                Logger.Warning(message);
+                Notification.ShowWarning(message);
+
                 return;
             }
 
