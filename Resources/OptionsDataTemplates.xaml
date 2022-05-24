@@ -16,7 +16,7 @@
     xmlns:util="clr-namespace:DaleGhent.NINA.AstroPhysicsTools.Utility"
     xmlns:rules="clr-namespace:NINA.Core.Utility.ValidationRules;assembly=NINA.Core"
     mc:Ignorable="d">
-    
+
     <DataTemplate x:Key="Astro_Physics_Tools_Options">
 
         <TabControl TabStripPlacement="Top" Height="Auto" d:DataContext="{d:DesignInstance local:AstroPhysicsToolsOptions, IsDesignTimeCreatable=False}">
@@ -220,7 +220,7 @@
                                     <TextBox.Text>
                                         <Binding Path="APPMSettingsPath" UpdateSourceTrigger="LostFocus">
                                             <Binding.ValidationRules>
-                                                <rules:FileExistsRule />
+                                                <rules:FileExistsOrEmptyRule />
                                             </Binding.ValidationRules>
                                         </Binding>
                                     </TextBox.Text>
