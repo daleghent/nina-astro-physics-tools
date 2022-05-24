@@ -20,8 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace DaleGhent.NINA.AstroPhysicsTools {
+
     public class AstroPhysicsToolsOptions : BaseINPC, IAstroPhysicsToolsOptions {
         private readonly IProfileService profileService;
         private readonly IPluginOptionsAccessor pluginOptionsAccessor;
@@ -45,6 +48,12 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
                 Settings.Default.ApToolsMigratedProfiles.Add(this.profileService.ActiveProfile.Id.ToString());
                 CoreUtil.SaveSettings(Settings.Default);
             }
+
+            APPMExePathDialogCommand = new RelayCommand(OpenAPPMExePathDialog);
+            APPMSettingsPathDialogCommand = new RelayCommand(OpenAPPMSettingsPathDialog);
+            APPMMapPathDialoggCommand = new RelayCommand(OpenAPPMMapPathDialog);
+            ApccExePathDialogCommand = new RelayCommand(OpenApccExePathDialog);
+            ImportAppmMeasurementConfigCommand = new AsyncCommand<bool>(() => Task.Run(ImportAppmMeasurementConfig));
         }
 
         public bool ApToolsProfileMigrated {
@@ -514,5 +523,11 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             ApccStartupTimeout = Settings.Default.ApccStartupTimeout;
             ApccDriverConnectTimeout = Settings.Default.ApccDriverConnectTimeout;
         }
+
+        public ICommand APPMExePathDialogCommand { get; private set; }
+        public ICommand APPMSettingsPathDialogCommand { get; private set; }
+        public ICommand APPMMapPathDialoggCommand { get; private set; }
+        public ICommand ApccExePathDialogCommand { get; private set; }
+        public ICommand ImportAppmMeasurementConfigCommand { get; private set; }
     }
 }

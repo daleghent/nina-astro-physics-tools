@@ -17,7 +17,6 @@ using NINA.Plugin.Interfaces;
 using NINA.Profile.Interfaces;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System;
 
 namespace DaleGhent.NINA.AstroPhysicsTools {
@@ -36,12 +35,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             if (AstroPhysicsToolsOptions == null) {
                 AstroPhysicsToolsOptions = new AstroPhysicsToolsOptions(profileService);
             }
-
-            APPMExePathDialogCommand = new RelayCommand(AstroPhysicsToolsOptions.OpenAPPMExePathDialog);
-            APPMSettingsPathDialogCommand = new RelayCommand(AstroPhysicsToolsOptions.OpenAPPMSettingsPathDialog);
-            APPMMapPathDialoggCommand = new RelayCommand(AstroPhysicsToolsOptions.OpenAPPMMapPathDialog);
-            ApccExePathDialogCommand = new RelayCommand(AstroPhysicsToolsOptions.OpenApccExePathDialog);
-            ImportAppmMeasurementConfigCommand = new AsyncCommand<bool>(() => Task.Run(AstroPhysicsToolsOptions.ImportAppmMeasurementConfig));
         }
 
         public override Task Teardown() {
@@ -52,10 +45,5 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         public static Version MinAppmVersion = new Version(1, 9, 2, 3);
 
         public static AstroPhysicsToolsOptions AstroPhysicsToolsOptions { get; private set; }
-        public ICommand APPMExePathDialogCommand { get; private set; }
-        public ICommand APPMSettingsPathDialogCommand { get; private set; }
-        public ICommand APPMMapPathDialoggCommand { get; private set; }
-        public ICommand ApccExePathDialogCommand { get; private set; }
-        public ICommand ImportAppmMeasurementConfigCommand { get; private set; }
     }
 }
