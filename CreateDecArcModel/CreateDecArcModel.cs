@@ -55,7 +55,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         private readonly IAstroPhysicsToolsOptions options;
 
         [ImportingConstructor]
-        public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator) : this(profileService, cameraMediator, filterWheelMediator, guiderMediator, AstroPhysicsTools.AstroPhysicsToolsOptions){
+        public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator) : this(profileService, cameraMediator, filterWheelMediator, guiderMediator, AstroPhysicsTools.AstroPhysicsToolsOptions) {
         }
 
         public CreateDecArcModel(IProfileService profileService, ICameraMediator cameraMediator, IFilterWheelMediator filterWheelMediator, IGuiderMediator guiderMediator, IAstroPhysicsToolsOptions options) {
@@ -374,7 +374,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 decArcParams.NorthDecLimit = decArcParams.SouthDecLimit = decArcParams.TargetDec;
             } else {
                 var totalSpan = (decArcParams.ArcQuantity - 1) * decArcParams.DecSpacing;
-                decArcParams.SouthDecLimit = Math.Max(-85, (int)Math.Round(target.Coordinates.Dec - (totalSpan / 2)));
+                decArcParams.SouthDecLimit = Math.Max(-85, (int)Math.Floor(target.Coordinates.Dec - (totalSpan / 2)));
                 decArcParams.NorthDecLimit = Math.Min(85, decArcParams.SouthDecLimit + totalSpan);
                 decArcParams.DecOffset = decArcParams.SouthDecLimit % decArcParams.DecSpacing;
             }
