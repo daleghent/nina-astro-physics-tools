@@ -1,7 +1,11 @@
 ﻿# Astro-Physics Tools
 
-## 0.6.0.0 - 2022-05-21
+## 1.0.0.0 - 2022-05-25
 * Fixed validations for **Start APCC**
+* Fixed rounding error that, under very specific circumstances, would result in 1 less arc being modeled than desired
+* Fixed settings storage and fully migrated to profile-specific plugin settings
+* The **APPM settings file** parameter may now be completely cleared of any text without gripe or complaint
+* Minimum supported NINA version is now 2.0 Beta 59
 
 ## 0.5.0.0 - 2022-03-13
 * Updated to support changes to DSO containers in NINA 2.0 beta 50
