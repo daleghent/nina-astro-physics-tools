@@ -49,6 +49,7 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                         <RowDefinition />
+                                        <RowDefinition />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock
@@ -56,9 +57,22 @@
                                         Grid.Column="0"
                                         Margin="0,0,0,5"
                                         VerticalAlignment="Center"
+                                        Text="Set slew rate" />
+                                    <CheckBox
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Margin="0,0,0,5"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        IsChecked="{Binding AppmSetSlewRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Margin="0,0,0,5"
+                                        VerticalAlignment="Center"
                                         Text="Slew rate" />
                                     <ninactrl:IntStepperControl
-                                        Grid.Row="0"
+                                        Grid.Row="1"
                                         Grid.Column="1"
                                         Margin="0,0,0,5"
                                         MaxValue="1200"
@@ -68,13 +82,13 @@
                                         Value="{Binding AppmSlewRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <TextBlock
-                                        Grid.Row="1"
+                                        Grid.Row="2"
                                         Grid.Column="0"
                                         Margin="0,0,0,5"
                                         VerticalAlignment="Center"
                                         Text="Slew settle time" />
                                     <ninactrl:IntStepperControl
-                                        Grid.Row="1"
+                                        Grid.Row="2"
                                         Grid.Column="1"
                                         Margin="0,0,0,5"
                                         MaxValue="300"
@@ -84,13 +98,13 @@
                                         Value="{Binding AppmSlewSettleTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <TextBlock
-                                        Grid.Row="2"
+                                        Grid.Row="3"
                                         Grid.Column="0"
                                         Margin="0,0,0,5"
                                         VerticalAlignment="Center"
                                         Text="Use meridian limits" />
                                     <CheckBox
-                                        Grid.Row="2"
+                                        Grid.Row="3"
                                         Grid.Column="1"
                                         Margin="0,5,0,5"
                                         VerticalAlignment="Center"
