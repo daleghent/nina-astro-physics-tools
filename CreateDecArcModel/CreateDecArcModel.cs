@@ -129,19 +129,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         }
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
-            CancellationTokenSource updateStatusTaskCts = new CancellationTokenSource();
+            var updateStatusTaskCts = new CancellationTokenSource();
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
-            FilterInfo currentFilter = null;
+            FilterInfo originalFilter = null;
             bool stoppedGuiding = false;
             appm = new AppmApi.AppmApi();
 
-            var target = Utility.Utility.FindDsoInfo(this.Parent);
-
-            if (target == null) {
-                throw new SequenceEntityFailedException("No DSO has been defined");
-            }
-
+            var target = Utility.Utility.FindDsoInfo(this.Parent) ?? throw new SequenceEntityFailedException("No DSO has been defined");
             target.Coordinates = target.Coordinates.Transform(Epoch.JNOW);
 
             if (target.Coordinates.Dec > 85d || target.Coordinates.Dec < -85d) {
@@ -194,8 +189,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             if (filterWheelMediator.GetInfo().Connected) {
-                currentFilter = filterWheelMediator.GetInfo().SelectedFilter;
-                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct);
+                originalFilter = filterWheelMediator.GetInfo().SelectedFilter;
+                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct, progress);
             }
 
             var proc = RunAPPM();
@@ -265,7 +260,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 proc.Dispose();
 
                 if (filterWheelMediator.GetInfo().Connected) {
-                    await filterWheelMediator.ChangeFilter(currentFilter, ct);
+                    await filterWheelMediator.ChangeFilter(originalFilter, ct, progress);
                 }
 
                 if (guiderMediator.GetInfo().Connected && stoppedGuiding) {
@@ -287,7 +282,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={options.APPMExePath}, Settings={options.APPMSettingsPath}";
+            return $"Category: {Category}, Item: {Name}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={options.APPMExePath}, Settings={options.APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -317,7 +312,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
             if (i != Issues) {
                 Issues = i;
-                RaisePropertyChanged("Issues");
+                RaisePropertyChanged(nameof(Issues));
             }
 
             return i.Count == 0;
@@ -331,7 +326,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 return proc[0];
             }
 
-            List<string> args = new List<string>();
+            var args = new List<string>();
 
             if (DoNotExit) {
                 args.Add("-dontexit");
@@ -355,7 +350,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         }
 
         private DecArcParameters CalculateDecArcParameters(IDeepSkyObject target) {
-            var decArcParams = new DecArcParameters() {
+            var decArcParams = new DecArcParameters {
                 ArcQuantity = options.DecArcQuantity,
                 DecSpacing = options.DecArcDecSpacing,
                 RaSpacing = options.DecArcRaSpacing,
@@ -366,7 +361,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
             decArcParams.TargetHa = CurrentHourAngle(target);
             decArcParams.EastHaLimit = DoFullArc ? -12d : Math.Round(Math.Max(decArcParams.TargetHa - decArcParams.HaLeadIn, -12), 2);
-
             decArcParams.TargetDec = (int)Math.Round(target.Coordinates.Dec);
 
             if (decArcParams.ArcQuantity == 1) {

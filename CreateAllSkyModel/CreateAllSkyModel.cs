@@ -122,7 +122,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             CancellationTokenSource updateStatusTaskCts = new CancellationTokenSource();
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
-            FilterInfo currentFilter = null;
+            FilterInfo originalFilter = null;
             bool stoppedGuiding = false;
             appm = new AppmApi.AppmApi();
 
@@ -159,8 +159,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             }
 
             if (filterWheelMediator.GetInfo().Connected) {
-                currentFilter = filterWheelMediator.GetInfo().SelectedFilter;
-                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct);
+                originalFilter = filterWheelMediator.GetInfo().SelectedFilter;
+                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct, progress);
             }
 
             var proc = RunAPPM();
@@ -230,7 +230,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
                 proc.Dispose();
 
                 if (filterWheelMediator.GetInfo().Connected) {
-                    await filterWheelMediator.ChangeFilter(currentFilter, ct);
+                    await filterWheelMediator.ChangeFilter(originalFilter, ct, progress);
                 }
 
                 if (guiderMediator.GetInfo().Connected && stoppedGuiding) {
@@ -250,7 +250,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateAllSkyModel)}, ManualMode: {ManualMode}, DotNotExit: {DoNotExit}, Exe Path: {options.APPMExePath}, Settings: {options.APPMSettingsPath}";
+            return $"Category: {Category}, Item: {Name}, ManualMode: {ManualMode}, DotNotExit: {DoNotExit}, Exe Path: {options.APPMExePath}, Settings: {options.APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -276,7 +276,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
 
             if (i != Issues) {
                 Issues = i;
-                RaisePropertyChanged("Issues");
+                RaisePropertyChanged(nameof(Issues));
             }
 
             return i.Count == 0;
@@ -307,7 +307,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
                 return proc[0];
             }
 
-            List<string> args = new List<string>();
+            var args = new List<string>();
 
             if (DoNotExit) {
                 args.Add("-dontexit");
