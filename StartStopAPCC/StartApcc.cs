@@ -101,7 +101,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
 
             if (i != Issues) {
                 Issues = i;
-                RaisePropertyChanged("Issues");
+                RaisePropertyChanged(nameof(Issues));
             }
 
             return i.Count == 0;
