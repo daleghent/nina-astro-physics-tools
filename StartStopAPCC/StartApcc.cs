@@ -35,17 +35,12 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
     [ExportMetadata("Category", "Astro-Physics Tools")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
-    public class StartApcc : SequenceItem, IValidatable {
-        private readonly ITelescopeMediator telescopeMediator;
-        private readonly IAstroPhysicsToolsOptions options;
+    public class StartApcc(ITelescopeMediator telescopeMediator, IAstroPhysicsToolsOptions options) : SequenceItem, IValidatable {
+        private readonly ITelescopeMediator telescopeMediator = telescopeMediator;
+        private readonly IAstroPhysicsToolsOptions options = options;
 
         [ImportingConstructor]
         public StartApcc(ITelescopeMediator telescopeMediator) : this(telescopeMediator, AstroPhysicsTools.AstroPhysicsToolsOptions) {
-        }
-
-        public StartApcc(ITelescopeMediator telescopeMediator, IAstroPhysicsToolsOptions options) {
-            this.telescopeMediator = telescopeMediator;
-            this.options = options;
         }
 
         private StartApcc(StartApcc copyMe) : this(copyMe.telescopeMediator, copyMe.options) {
