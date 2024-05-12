@@ -55,18 +55,26 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken token) {
             bool success;
 
-            if (Process.GetProcessesByName("AstroPhysicsCommandCenter").Length == 0) {
-                RunApcc();
-            } else {
-                Logger.Info($"APCC is already running!");
-            }
+            // Support for pre-1.9.7.0 versions of APCC where it would start the A-P ASCOM driver and we would need
+            // to wait for the ASCOM driver to load before directing NINA to use it. This is no longer necessary as of
+            // APCC 1.9.7, where the A-P ASCOM driver will launch APCC if it needs to after NINA invokes the ASCOM driver.
+            var apccVersion = new Version(FileVersionInfo.GetVersionInfo(options.ApccExePath).ProductVersion);
+            Logger.Info($"APCC version: {apccVersion}");
 
-            for (int i = 0; i < options.ApccStartupTimeout; i++) {
-                if (Process.GetProcessesByName("AstroPhysicsV2 Driver").Length > 0) {
-                    await Task.Delay(TimeSpan.FromSeconds(options.ApccDriverConnectTimeout));
-                    break;
+            if (apccVersion < new Version("1.9.7.0")) {
+                if (Process.GetProcessesByName("AstroPhysicsCommandCenter").Length == 0) {
+                    RunApcc();
                 } else {
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    Logger.Info($"APCC is already running!");
+                }
+
+                for (int i = 0; i < options.ApccStartupTimeout; i++) {
+                    if (Process.GetProcessesByName("AstroPhysicsV2 Driver").Length > 0) {
+                        await Task.Delay(TimeSpan.FromSeconds(options.ApccDriverConnectTimeout));
+                        break;
+                    } else {
+                        await Task.Delay(TimeSpan.FromSeconds(1));
+                    }
                 }
             }
 
