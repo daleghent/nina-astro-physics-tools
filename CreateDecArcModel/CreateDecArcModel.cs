@@ -21,6 +21,7 @@ using NINA.Core.Utility.Notification;
 using NINA.Equipment.Interfaces.Mediator;
 using NINA.Profile.Interfaces;
 using NINA.Sequencer.SequenceItem;
+using NINA.Sequencer.Utility.DateTimeProvider;
 using NINA.Sequencer.Validations;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateDecArcModel : SequenceItem, IValidatable, INotifyPropertyChanged {
+        private double hourAngleTail;
         private bool manualMode = false;
         private bool doNotExit = false;
         private bool doFullArc = false;
@@ -68,10 +70,21 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             if (File.Exists(options.APPMExePath)) {
                 AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(options.APPMExePath).ProductVersion);
             }
+
+            hourAngleTail = options.DecArcHourAngleTail;
         }
 
         public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator, copyMe.options) {
             CopyMetaData(copyMe);
+        }
+
+        [JsonProperty]
+        public double HourAngleTail {
+            get => hourAngleTail;
+            set {
+                hourAngleTail = value;
+                RaisePropertyChanged();
+            }
         }
 
         [JsonProperty]
@@ -149,7 +162,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
             var decArcParams = CalculateDecArcParameters(target);
 
-            Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={(decArcParams.WestHaLimit - Math.Abs(decArcParams.EastHaLimit)):0.00}");
+            Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={Math.Abs(decArcParams.WestHaLimit + decArcParams.EastHaLimit):0.00}");
             Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={options.DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
 
             var config = new AppmApi.AppmMeasurementConfiguration() {
@@ -357,11 +370,18 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 PointOrderingStrategy = options.DecArcPointOrderingStrategy,
                 PolarPointOrderingStrategy = options.DecArcPolarPointOrderingStrategy,
                 PolarProximityLimit = options.DecArcPolarProximityLimit,
+                TargetHa = CurrentHourAngle(target),
+                TargetDec = (int)Math.Round(target.Coordinates.Dec)
             };
 
-            decArcParams.TargetHa = CurrentHourAngle(target);
+            var sunRiseTime = AstroUtil.GetSunRiseAndSet(DateTime.Now, profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude).Rise.Value;
+            var targetHaAtSunrise = AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTime(sunRiseTime, profileService.ActiveProfile.AstrometrySettings.Longitude), target.Coordinates.RA);
+            var targetHaAtSunrise12Hr = ((targetHaAtSunrise + 36) % 24) - 12;
+
+            Logger.Debug($"Sunrise Time: {sunRiseTime}, Target HA at sunrise: {targetHaAtSunrise12Hr:0.00}, Target RA: {target.Coordinates.RA:0.00}");
+
+            decArcParams.WestHaLimit = DoFullArc ? 12d : Math.Round(Math.Min(targetHaAtSunrise12Hr + hourAngleTail, 12), 2);
             decArcParams.EastHaLimit = DoFullArc ? -12d : Math.Round(Math.Max(decArcParams.TargetHa - decArcParams.HaLeadIn, -12), 2);
-            decArcParams.TargetDec = (int)Math.Round(target.Coordinates.Dec);
 
             if (decArcParams.ArcQuantity == 1) {
                 decArcParams.DecSpacing = 1;
@@ -407,6 +427,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             public double EastHaLimit { get; set; } = -12;
             public double WestHaLimit { get; set; } = 12;
             public double HaLeadIn { get; set; } = 0;
+            public double HaTail { get; set; } = 0;
             public int PointOrderingStrategy { get; set; } = 0;
             public int PolarPointOrderingStrategy { get; set; } = 0;
             public int PolarProximityLimit { get; set; } = 0;

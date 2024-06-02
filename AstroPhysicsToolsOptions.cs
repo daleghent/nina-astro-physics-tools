@@ -215,26 +215,25 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         }
 
         public double DecArcHourAngleLeadIn {
-            get {
-                var decArcHourAngleLeadIn = pluginOptionsAccessor.GetValueDouble(nameof(DecArcHourAngleLeadIn), 0d);
-                HoursToDegrees = 15 * decArcHourAngleLeadIn;
-                return decArcHourAngleLeadIn;
-            }
+            get => pluginOptionsAccessor.GetValueDouble(nameof(DecArcHourAngleLeadIn), 0d);
             set {
                 pluginOptionsAccessor.SetValueDouble(nameof(DecArcHourAngleLeadIn), value);
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(HaLeadInHoursToDegrees));
             }
         }
 
-        private double hoursToDegrees = double.NaN;
-
-        public double HoursToDegrees {
-            get => hoursToDegrees;
-            private set {
-                hoursToDegrees = value;
+        public double DecArcHourAngleTail {
+            get => pluginOptionsAccessor.GetValueDouble(nameof(DecArcHourAngleTail), 0d);
+            set {
+                pluginOptionsAccessor.SetValueDouble(nameof(DecArcHourAngleTail), value);
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(HaTailHoursToDegrees));
             }
         }
+
+        public double HaLeadInHoursToDegrees => DecArcHourAngleLeadIn * 15;
+        public double HaTailHoursToDegrees => DecArcHourAngleTail * 15;
 
         public int DecArcPointOrderingStrategy {
             get => pluginOptionsAccessor.GetValueInt32(nameof(DecArcPointOrderingStrategy), 0);

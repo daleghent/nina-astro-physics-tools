@@ -474,7 +474,41 @@
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
-                                Text="{Binding HoursToDegrees, StringFormat={}Begins mapping the arcs {0:0.0}° east of the target}" />
+                                Text="{Binding HaLeadInHoursToDegrees, StringFormat={}Begins mapping the arc {0:0.0}° east of the target}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center">
+                                <TextBlock.Text>Hour angle tail</TextBlock.Text>
+                                <TextBlock.ToolTip>End the dec-arc model by the amount of the specified hour or fractional hour past the target's position in the sky at sunrise.</TextBlock.ToolTip>
+                            </TextBlock>
+                            <ninactrl:PrecisionStepperControl
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                MaxValue="12"
+                                MinValue="0"
+                                StepSize="0.1"
+                                Precision="2"
+                                Unit="hours"
+                                Value="{Binding DecArcHourAngleTail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Text="{Binding HaTailHoursToDegrees, StringFormat={}Ends mapping the arc {0:0.0}° west of the target position at sunrise}" />
                         </Grid>
                     </StackPanel>
 
