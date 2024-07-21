@@ -232,7 +232,7 @@
                                     Margin="5,0,0,0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Command="{Binding APPMSettingsPathDialogCommand}">
+                                    Command="{Binding OpenAPPMSettingsPathDialogCommand}">
                                     <Path
                                         Margin="4,17,4,4"
                                         Data="{StaticResource DotsSVG}"
@@ -269,7 +269,7 @@
                                     Margin="5,0,0,0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Command="{Binding APPMExePathDialogCommand}">
+                                    Command="{Binding OpenAPPMExePathDialogCommand}">
                                     <Path
                                         Margin="4,17,4,4"
                                         Data="{StaticResource DotsSVG}"
@@ -306,7 +306,7 @@
                                     Margin="5,0,0,0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Command="{Binding ApccExePathDialogCommand}">
+                                    Command="{Binding OpenApccExePathDialogCommand}">
                                     <Path
                                         Margin="4,17,4,4"
                                         Data="{StaticResource DotsSVG}"

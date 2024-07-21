@@ -10,6 +10,7 @@
 
 #endregion "copyright"
 
+using CommunityToolkit.Mvvm.Input;
 using DaleGhent.NINA.AstroPhysicsTools.Interfaces;
 using Settings = DaleGhent.NINA.AstroPhysicsTools.Properties.Settings;
 using NINA.Core.Utility;
@@ -20,12 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Windows.Input;
 using System.Threading.Tasks;
 
 namespace DaleGhent.NINA.AstroPhysicsTools {
 
-    public class AstroPhysicsToolsOptions : BaseINPC, IAstroPhysicsToolsOptions {
+    public partial class AstroPhysicsToolsOptions : BaseINPC, IAstroPhysicsToolsOptions {
         private readonly IProfileService profileService;
         private readonly IPluginOptionsAccessor pluginOptionsAccessor;
 
@@ -48,12 +48,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
                 Settings.Default.ApToolsMigratedProfiles.Add(this.profileService.ActiveProfile.Id.ToString());
                 CoreUtil.SaveSettings(Settings.Default);
             }
-
-            APPMExePathDialogCommand = new RelayCommand(OpenAPPMExePathDialog);
-            APPMSettingsPathDialogCommand = new RelayCommand(OpenAPPMSettingsPathDialog);
-            APPMMapPathDialoggCommand = new RelayCommand(OpenAPPMMapPathDialog);
-            ApccExePathDialogCommand = new RelayCommand(OpenApccExePathDialog);
-            ImportAppmMeasurementConfigCommand = new AsyncCommand<bool>(() => Task.Run(ImportAppmMeasurementConfig));
         }
 
         public bool ApToolsProfileMigrated {
@@ -184,7 +178,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             }
         }
 
-        public IList<string> PointOrderingStrategyList => Utility.Utility.PointOrderingStrategyList;
+        public static IList<string> PointOrderingStrategyList => Utility.Utility.PointOrderingStrategyList;
 
         /*
          * Create Dec Arc Model properties
@@ -387,8 +381,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
          * Button controls
          */
 
-        internal void OpenAPPMExePathDialog(object obj) {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog {
+        [RelayCommand]
+        private void OpenAPPMExePathDialog(object obj) {
+            var dialog = new Microsoft.Win32.OpenFileDialog {
                 FileName = string.Empty,
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
                 Filter = "Any Program|*.exe"
@@ -399,8 +394,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             }
         }
 
-        internal void OpenAPPMSettingsPathDialog(object obj) {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog {
+        [RelayCommand]
+        private void OpenAPPMSettingsPathDialog(object obj) {
+            var dialog = new Microsoft.Win32.OpenFileDialog {
                 FileName = string.Empty,
                 InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Astro-Physics\APPM"),
                 Filter = "APPM Settings File|*.appm"
@@ -411,8 +407,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             }
         }
 
-        internal void OpenAPPMMapPathDialog(object obj) {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog {
+        [RelayCommand]
+        private void OpenAPPMMapPathDialog(object obj) {
+            var dialog = new Microsoft.Win32.OpenFileDialog {
                 FileName = string.Empty,
                 InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Astro-Physics\APPM"),
                 Filter = "APPM Point Map File|*.csv"
@@ -423,8 +420,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             }
         }
 
-        internal void OpenApccExePathDialog(object obj) {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog {
+        [RelayCommand]
+        private void OpenApccExePathDialog(object obj) {
+            var dialog = new Microsoft.Win32.OpenFileDialog {
                 FileName = string.Empty,
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
                 Filter = "Any Program|*.exe"
@@ -435,11 +433,13 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             }
         }
 
-        internal bool ImportAppmMeasurementConfig() {
+        [RelayCommand]
+        private async Task ImportAppmMeasurementConfig() {
             var appm = new AppmApi.AppmApi();
 
             try {
-                var config = appm.GetConfiguration(CancellationToken.None).Result.Configuration;
+                var configResult = await appm.GetConfiguration(CancellationToken.None);
+                var config = configResult.Configuration;
 
                 AppmSetSlewRate = config.SetSlewRate;
                 AppmSlewRate = config.SlewRate;
@@ -469,10 +469,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             } catch (Exception ex) {
                 Logger.Error($"Failed to import configuration from APPM: {ex.GetType()}: {ex.Message}");
                 Notification.ShowError("Failed to import APPM measurement settings. Is APPM running?");
-                return false;
+                return;
             }
-
-            return true;
         }
 
         private void ProfileService_ProfileChanged(object sender, EventArgs e) {
@@ -522,11 +520,5 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             ApccStartupTimeout = Settings.Default.ApccStartupTimeout;
             ApccDriverConnectTimeout = Settings.Default.ApccDriverConnectTimeout;
         }
-
-        public ICommand APPMExePathDialogCommand { get; private set; }
-        public ICommand APPMSettingsPathDialogCommand { get; private set; }
-        public ICommand APPMMapPathDialoggCommand { get; private set; }
-        public ICommand ApccExePathDialogCommand { get; private set; }
-        public ICommand ImportAppmMeasurementConfigCommand { get; private set; }
     }
 }
