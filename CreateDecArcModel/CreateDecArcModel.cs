@@ -21,7 +21,6 @@ using NINA.Core.Utility.Notification;
 using NINA.Equipment.Interfaces.Mediator;
 using NINA.Profile.Interfaces;
 using NINA.Sequencer.SequenceItem;
-using NINA.Sequencer.Utility.DateTimeProvider;
 using NINA.Sequencer.Validations;
 using System;
 using System.Collections.Generic;
@@ -210,8 +209,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
             try {
                 MappingRunState = appm.WaitForApiInit(ct).Result.Status.MappingRunState;
-                updateStatusTask = UpdateStatus(updateStatusTaskCt);
 
+                updateStatusTask = UpdateStatus(updateStatusTaskCt);
                 var response = appm.SetConfiguration(request, ct);
 
                 if (!response.Result.Success) {
@@ -227,20 +226,22 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 }
 
                 if (!ManualMode) {
-                    if (MappingRunState.Equals("Idle")) {
+                    if (MappingRunState.Equals("Idle", StringComparison.InvariantCultureIgnoreCase)) {
                         await appm.Start(ct);
 
-                        while (!MappingRunState.Equals("Running")) {
+                        while (!MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
                             Logger.Info($"Waiting for MappingRunState=Running");
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
-                        while (MappingRunState.Equals("Running")) {
+                        while (MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
                             Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
                         Logger.Info($"APPM mapping run has finished. MappingRunState={MappingRunState}");
+                        updateStatusTaskCts.Cancel();
+                        updateStatusTask.Wait(ct);
                     }
 
                     if (!DoNotExit) {
@@ -374,7 +375,15 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 TargetDec = (int)Math.Round(target.Coordinates.Dec)
             };
 
-            var sunRiseTime = AstroUtil.GetSunRiseAndSet(DateTime.Now, profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude).Rise.Value;
+            var timeNow = DateTime.Now;
+            var sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow, profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude).Rise.Value;
+
+            // see if we need to use tomorrow's sunrise time instead of today's
+            if (timeNow > sunRiseTime) {
+                sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow.AddDays(1), profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude).Rise.Value;
+                Logger.Debug($"Using tomorrow's sunrise time: {sunRiseTime}");
+            }
+
             var targetHaAtSunrise = AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTime(sunRiseTime, profileService.ActiveProfile.AstrometrySettings.Longitude), target.Coordinates.RA);
             var targetHaAtSunrise12Hr = ((targetHaAtSunrise + 36) % 24) - 12;
 
@@ -396,9 +405,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             return decArcParams;
         }
 
-        private async Task<Task> UpdateStatus(CancellationToken ct) {
+        private async Task UpdateStatus(CancellationToken ct) {
             while (true) {
                 try {
+                    if (ct.IsCancellationRequested) {
+                        Logger.Debug("Cancellation requested. Update task is exiting");
+                        return;
+                    }
+
                     Logger.Debug("Updating APPM stats...");
 
                     var runStatus = await appm.Status(ct);
@@ -408,7 +422,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                     await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 } catch (Exception ex) {
                     Logger.Debug($"Update task is exiting: {ex.GetType()}, {ex.Message}");
-                    return Task.CompletedTask;
+                    return;
                 }
             }
         }
