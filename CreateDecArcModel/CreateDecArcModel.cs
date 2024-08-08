@@ -231,14 +231,19 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
                         while (!MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
                             Logger.Info($"Waiting for MappingRunState=Running");
+                            progress?.Report(new ApplicationStatus { Status = "Waiting for APPM mapping to start" });
+
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
                         while (MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
                             Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
+                            progress?.Report(new ApplicationStatus { Status = $"Mapping point {CurrentPoint} / {TotalPoints}" });
+
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
+                        progress?.Report(new ApplicationStatus { Status = $"Mapping run completed" });
                         Logger.Info($"APPM mapping run has finished. MappingRunState={MappingRunState}");
                         updateStatusTaskCts.Cancel();
                         updateStatusTask.Wait(ct);
@@ -283,6 +288,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             MappingRunState = "Completed";
+            progress?.Report(new ApplicationStatus { Status = string.Empty });
 
             return;
         }
