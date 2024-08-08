@@ -119,7 +119,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
         private Version AppmFileVersion { get; set; }
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
-            CancellationTokenSource updateStatusTaskCts = new CancellationTokenSource();
+            var updateStatusTaskCts = new CancellationTokenSource();
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
             FilterInfo originalFilter = null;
@@ -189,15 +189,22 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
 
                         while (!MappingRunState.Equals("Running")) {
                             Logger.Info($"Waiting for MappingRunState=Running");
+                            progress?.Report(new ApplicationStatus { Status = "Waiting for APPM mapping to start" });
+
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
                         while (MappingRunState.Equals("Running")) {
                             Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
+                            progress?.Report(new ApplicationStatus { Status = $"Mapping point {CurrentPoint} / {TotalPoints}" });
+
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
+                        progress?.Report(new ApplicationStatus { Status = $"Mapping run completed" });
                         Logger.Info($"APPM mapping run has finished. MappingRunState={MappingRunState}");
+                        updateStatusTaskCts.Cancel();
+                        updateStatusTask.Wait(ct);
                     }
 
                     if (!DoNotExit) {
@@ -239,6 +246,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             }
 
             MappingRunState = "Completed";
+            progress?.Report(new ApplicationStatus { Status = string.Empty });
 
             return;
         }
@@ -282,9 +290,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             return i.Count == 0;
         }
 
-        private async Task<Task> UpdateStatus(CancellationToken ct) {
+        private async Task UpdateStatus(CancellationToken ct) {
             while (true) {
                 try {
+                    if (ct.IsCancellationRequested) {
+                        Logger.Debug("Cancellation requested. Update task is exiting");
+                        return;
+                    }
+
                     Logger.Debug("Updating APPM stats...");
 
                     var runStatus = await appm.Status(ct);
@@ -294,7 +307,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
                     await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 } catch (Exception ex) {
                     Logger.Debug($"Update task is exiting: {ex.GetType()}, {ex.Message}");
-                    return Task.CompletedTask;
+                    return;
                 }
             }
         }
