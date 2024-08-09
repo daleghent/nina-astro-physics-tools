@@ -1,5 +1,8 @@
 ﻿# Astro-Physics Tools
 
+## 2.1.1.0 - 2024-08-09
+* No code changes. A small version bump was necessary to address a versioning issue due to a beta of the 2.1.0 release being distributed with a 2.1.0 version number, however the code was differnt. This version bump will get everyone on the latest code.
+
 ## 2.1.0.0 - 2024-08-08
 * **New, Functional change:** The **Create Dec-Arc Model** instruction will now set the westward extent of the declination arc to where the target will be at sunrise. The purpose of this is to avoid modeling the sky all the way to the horizon, some portion of which may be pointless because that is where the target will be after sunrise. A new global and runtime option for adding a "tail" to the arc model in one-tenth of an hour increments has been added to optionally extend the model beyond where the target will be at sunrise. This is akin to the hour angle lead-in option that already exists for the east end of the declination arc. Activating the **Do full arc** runtime option will still cause the arc to be completely modeled from east to west horizon.
 * Mapping progress is now indicated in NINA's progress message area.
