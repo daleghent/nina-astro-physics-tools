@@ -1,7 +1,7 @@
 ﻿#region "copyright"
 
 /*
-    Copyright Dale Ghent <daleg@elemental.org>
+    Copyright (c) 2024 Dale Ghent <daleg@elemental.org>
 
     This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,9 +22,9 @@ using System.Threading.Tasks;
 namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
 
     public class AppmApi {
-        private string host;
-        private int port;
-        private JsonSerializerSettings serializerSettings;
+        private readonly string host;
+        private readonly int port;
+        private readonly JsonSerializerSettings serializerSettings;
 
         public AppmApi(string host = "127.0.0.1", int port = 60011) {
             this.host = host;
@@ -54,7 +54,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             var result = await HttpRequestAsync("/api/MappingRun/Status", null, HttpMethod.Get, ct);
 
             if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMappingRunStatusResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
+                response = JsonConvert.DeserializeObject<AppmMappingRunStatusResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
             }
 
             result.Dispose();
@@ -66,7 +66,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             var result = await HttpRequestAsync("/api/MappingPoints/PointCount", null, HttpMethod.Get, ct);
 
             if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmPointCountResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
+                response = JsonConvert.DeserializeObject<AppmPointCountResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
             }
 
             result.Dispose();
@@ -78,7 +78,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             var result = await HttpRequestAsync("/api/MappingPoints", null, HttpMethod.Get, ct);
 
             if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMappingPointsResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
+                response = JsonConvert.DeserializeObject<AppmMappingPointsResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
             }
 
             result.Dispose();
@@ -90,7 +90,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             var result = await HttpRequestAsync("/api/MappingPoints/Configuration", null, HttpMethod.Get, ct);
 
             if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
+                response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
             }
 
             result.Dispose();
@@ -104,7 +104,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             var result = await HttpRequestAsync("/api/MappingPoints/Configuration", configSer, HttpMethod.Put, ct);
 
             if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync().Result, serializerSettings);
+                response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
             }
 
             result.Dispose();
@@ -121,7 +121,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
                     break;
                 } catch (HttpRequestException) {
                     Logger.Debug($"APPM not yet answering on API; trying again...");
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 }
             }
 
@@ -144,7 +144,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
 
             Logger.Debug($"Request URL: {request.Method} {request.RequestUri}");
             if (request.Method != HttpMethod.Get && request.Method != HttpMethod.Head) {
-                Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync().Result}");
+                Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync(ct).Result}");
             }
 
             var client = new HttpClient();
@@ -152,7 +152,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             client.Dispose();
 
             Logger.Debug($"Response status code: {response.StatusCode}");
-            Logger.Trace($"Response body:{Environment.NewLine}{response.Content?.ReadAsStringAsync().Result}");
+            Logger.Trace($"Response body:{Environment.NewLine}{response.Content?.ReadAsStringAsync(ct).Result}");
 
             return response;
         }
