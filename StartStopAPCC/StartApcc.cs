@@ -87,7 +87,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(StartApcc)}";
+            return $"Category: {Category}, Item: {Name}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
