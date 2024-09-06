@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("2.1.1.0")]
-[assembly: AssemblyFileVersion("2.1.1.0")]
+[assembly: AssemblyVersion("2.2.0.0")]
+[assembly: AssemblyFileVersion("2.2.0.0")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("Astro-Physics Tools")]
@@ -69,6 +69,8 @@ Refer to the **Help > View/Update License Subscription** menu in APCC Pro for de
     * Automatically runs an all-sky model session based on the configured parameters
 * Create Dec Arc Model
     * Automatically generates a dec arc model based on several parameters for the target that the instruction is subordinate to
+* Astro-Physics Park
+    * Permits parking the mount in any one of the five pre-defined Astro-Physics park positions regardless of which one is selected as the default park position
 
 # Getting help #
 

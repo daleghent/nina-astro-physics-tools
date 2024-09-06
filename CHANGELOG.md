@@ -1,5 +1,8 @@
 ﻿# Astro-Physics Tools
 
+## 2.2.0.0 - 2024-09-06
+* **New:** **Astro-Physics Park** instruction. This instruction can be used to send an Astro-Physics mount to any one of its five park positions regardless of which park position is confgured as the default in the A-P ASCOM driver or in APCC. The different park positions are explained in [this](https://astro-physics.info/tech_support/mounts/park-positions-defined.pdf) Astro-Physics support document.
+
 ## 2.1.1.0 - 2024-08-09
 * No code changes. A small version bump was necessary to address a versioning issue due to a beta of the 2.1.0 release being distributed with a 2.1.0 version number, however the code was differnt. This version bump will get everyone on the latest code.
 
