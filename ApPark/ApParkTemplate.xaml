@@ -20,7 +20,7 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center" Text="Position" />
                     <ComboBox
-                        Width="120"
+                        Width="160"
                         Margin="5,0,0,0"
                         VerticalAlignment="Center"
                         SelectedValue="{Binding ParkPosition}"

@@ -32,5 +32,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApPark {
 
         [Description("Park 5")]
         Park5,
+
+        [Description("Current position (Park 0)")]
+        Park0,
     }
 }

@@ -13,7 +13,11 @@
 using NINA.Astrometry;
 using NINA.Astrometry.Interfaces;
 using NINA.Sequencer.Container;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
 namespace DaleGhent.NINA.AstroPhysicsTools.Utility {
 
@@ -33,6 +37,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools.Utility {
             }
 
             return target;
+        }
+
+        public static string GetEnumDescription(Enum value) {
+            FieldInfo fi = value.GetType().GetField(value.ToString());
+
+            return fi.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Any()
+                ? attributes.First().Description
+                : value.ToString();
         }
 
         public static readonly IList<string> PointOrderingStrategyList = new List<string> {
