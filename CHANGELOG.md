@@ -5,6 +5,7 @@
 * Refactored hour angle calculations used in the **Create Dec-Arc Model** instruction.
 * Removed the **Manual Mode** runtime option from the **Create Dec-Arc Model** instruction.
 * Added a **HA lead-in** runtime option to complement the existing **HA tail** option to the **Create Dec-Arc Model** instruction. Its default value is populated from the same option on the main plugin options screen.
+* Fixed several issues around APPM run completion and cancellation being reported incorrectly or causing the plugin to hang.
 
 ## 2.2.0.0 - 2024-09-06
 * **New:** **Astro-Physics Park** instruction. This instruction can be used to send an Astro-Physics mount to any one of its five park positions regardless of which park position is confgured as the default in the A-P ASCOM driver or in APCC. The different park positions are explained in [this](https://astro-physics.info/tech_support/mounts/park-positions-defined.pdf) Astro-Physics support document.
