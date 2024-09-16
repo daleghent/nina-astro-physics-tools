@@ -41,6 +41,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateDecArcModel : SequenceItem, IValidatable, INotifyPropertyChanged {
+        private double hourAngleLeadIn;
         private double hourAngleTail;
         private bool manualMode = false;
         private bool doNotExit = false;
@@ -70,11 +71,21 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(options.APPMExePath).ProductVersion);
             }
 
+            hourAngleLeadIn = options.DecArcHourAngleLeadIn;
             hourAngleTail = options.DecArcHourAngleTail;
         }
 
         public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator, copyMe.options) {
             CopyMetaData(copyMe);
+        }
+
+        [JsonProperty]
+        public double HourAngleLeadIn {
+            get => hourAngleLeadIn;
+            set {
+                hourAngleLeadIn = value;
+                RaisePropertyChanged();
+            }
         }
 
         [JsonProperty]
@@ -379,7 +390,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             var targetHaNow = HourAngle24to12(AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTimeNow(longitude), target.Coordinates.RA));
             var targetHaAtSunrise = targetHaNow + (sunRiseTime - timeNow).TotalHours;
 
-            var decArcStart = targetHaNow - options.DecArcHourAngleLeadIn;
+            var decArcStart = targetHaNow - hourAngleLeadIn;
             var decArcEnd = targetHaAtSunrise + hourAngleTail;
 
             decArcStart = Math.Max(decArcStart, -12d);
