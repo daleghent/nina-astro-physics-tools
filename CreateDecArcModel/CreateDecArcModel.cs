@@ -161,9 +161,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
             var decArcParams = CalculateDecArcParameters(target);
 
-            Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={Math.Abs(decArcParams.WestHaLimit + decArcParams.EastHaLimit):0.00}");
-            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={options.DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
-
             var config = new AppmApi.AppmMeasurementConfiguration() {
                 SetSlewRate = options.AppmSetSlewRate,
                 SlewRate = options.AppmSlewRate,
@@ -186,11 +183,13 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 MinDeclination = decArcParams.SouthDecLimit,
                 DeclinationOffset = decArcParams.DecOffset,
                 RightAscensionSpacing = decArcParams.RaSpacing,
-                MinHourAngleEast = decArcParams.EastHaLimit,
-                MaxHourAngleWest = decArcParams.WestHaLimit,
+                MinHourAngleEast = DoFullArc ? -12d : decArcParams.EastHaLimit,
+                MaxHourAngleWest = DoFullArc ? 12d : decArcParams.WestHaLimit,
                 PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit
                     ? decArcParams.PolarPointOrderingStrategy : options.DecArcPointOrderingStrategy,
             };
+
+            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={config.MaxDeclination:0.00}, S={config.MinDeclination:0.00}, Spread={config.MaxDeclination - config.MinDeclination}, Spacing={options.DecArcDecSpacing}, Offset={config.DeclinationOffset}");
 
             var request = new AppmApi.AppmMeasurementConfigurationRequest() {
                 Configuration = config,
@@ -264,6 +263,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 if (!DoNotExit) {
                     await appm.Close(CancellationToken.None);
                 }
+
+                throw new SequenceEntityFailedException($"{Name} for {target.Name} was cancelled.");
             } catch (SequenceEntityFailedException ex) {
                 Logger.Info($"{ex.Message}");
                 await appm.Close(CancellationToken.None);
@@ -302,7 +303,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {Name}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={options.APPMExePath}, Settings={options.APPMSettingsPath}";
+            return $"Category: {Category}, Item: {Name}, HATail={hourAngleTail:0.00}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={options.APPMExePath}, Settings={options.APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -357,19 +358,37 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             var appm = new ProcessStartInfo(options.APPMExePath) {
-                Arguments = string.Join(" ", args.ToArray())
+                Arguments = string.Join(" ", [.. args])
             };
 
             Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
             return Process.Start(appm);
         }
 
-        private double CurrentHourAngle(IDeepSkyObject target) {
-            // We want HA in terms of -12..12, not 0..24
-            return ((AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTimeNow(profileService.ActiveProfile.AstrometrySettings.Longitude), target.Coordinates.RA) + 36) % 24) - 12;
-        }
-
         private DecArcParameters CalculateDecArcParameters(IDeepSkyObject target) {
+            var latitude = profileService.ActiveProfile.AstrometrySettings.Latitude;
+            var longitude = profileService.ActiveProfile.AstrometrySettings.Longitude;
+
+            var timeNow = DateTime.UtcNow;
+            var sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow, latitude, longitude).Rise.Value;
+
+            if (timeNow > sunRiseTime) {
+                sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow.AddDays(1), latitude, longitude).Rise.Value;
+            }
+
+            var targetHaNow = HourAngle24to12(AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTimeNow(longitude), target.Coordinates.RA));
+            var targetHaAtSunrise = targetHaNow + (sunRiseTime - timeNow).TotalHours;
+
+            var decArcStart = targetHaNow - options.DecArcHourAngleLeadIn;
+            var decArcEnd = targetHaAtSunrise + hourAngleTail;
+
+            decArcStart = Math.Max(decArcStart, -12d);
+            decArcStart = Math.Min(decArcStart, 12d);
+
+            decArcEnd = Math.Max(decArcEnd, -12d);
+            decArcEnd = Math.Min(decArcEnd, 12d);
+
+            // Create paramters object with calculations.
             var decArcParams = new DecArcParameters {
                 ArcQuantity = options.DecArcQuantity,
                 DecSpacing = options.DecArcDecSpacing,
@@ -377,26 +396,10 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 PointOrderingStrategy = options.DecArcPointOrderingStrategy,
                 PolarPointOrderingStrategy = options.DecArcPolarPointOrderingStrategy,
                 PolarProximityLimit = options.DecArcPolarProximityLimit,
-                TargetHa = CurrentHourAngle(target),
-                TargetDec = (int)Math.Round(target.Coordinates.Dec)
+                TargetDec = (int)Math.Round(target.Coordinates.Dec),
+                EastHaLimit = decArcStart,
+                WestHaLimit = decArcEnd,
             };
-
-            var timeNow = DateTime.Now;
-            var sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow, profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude).Rise.Value;
-
-            // see if we need to use tomorrow's sunrise time instead of today's
-            if (timeNow > sunRiseTime) {
-                sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow.AddDays(1), profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude).Rise.Value;
-                Logger.Debug($"Using tomorrow's sunrise time: {sunRiseTime}");
-            }
-
-            var targetHaAtSunrise = AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTime(sunRiseTime, profileService.ActiveProfile.AstrometrySettings.Longitude), target.Coordinates.RA);
-            var targetHaAtSunrise12Hr = ((targetHaAtSunrise + 36) % 24) - 12;
-
-            Logger.Debug($"Sunrise Time: {sunRiseTime}, Target HA at sunrise: {targetHaAtSunrise12Hr:0.00}, Target RA: {target.Coordinates.RA:0.00}");
-
-            decArcParams.WestHaLimit = DoFullArc ? 12d : Math.Round(Math.Min(targetHaAtSunrise12Hr + hourAngleTail, 12), 2);
-            decArcParams.EastHaLimit = DoFullArc ? -12d : Math.Round(Math.Max(decArcParams.TargetHa - decArcParams.HaLeadIn, -12), 2);
 
             if (decArcParams.ArcQuantity == 1) {
                 decArcParams.DecSpacing = 1;
@@ -408,17 +411,28 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 decArcParams.DecOffset = decArcParams.SouthDecLimit % decArcParams.DecSpacing;
             }
 
+            Logger.Info($"Target RA: {target.Coordinates.RAString}, Target Current HA: {targetHaNow:0.00}, Target HA at sunrise: {targetHaAtSunrise:0.00}, Sunrise Time: {sunRiseTime}");
+            Logger.Info($"DecArc HA start: {decArcStart:0.00}, DecArc HA end: {decArcEnd:0.00}, Total DecArc length: {(decArcEnd - decArcStart):0.00} hours");
+
             return decArcParams;
         }
 
-        private async Task UpdateStatus(CancellationToken ct) {
-            while (true) {
-                try {
-                    if (ct.IsCancellationRequested) {
-                        Logger.Debug("Cancellation requested. Update task is exiting");
-                        return;
-                    }
+        // Converts 24h format hour angle to 12h format
+        private static double HourAngle24to12(double ha) {
+            ha %= 24d;
 
+            if (ha < -12d) {
+                ha += 24d;
+            } else if (ha > 12d) {
+                ha -= 24d;
+            }
+
+            return ha;
+        }
+
+        private async Task UpdateStatus(CancellationToken ct) {
+            while (!ct.IsCancellationRequested) {
+                try {
                     Logger.Debug("Updating APPM stats...");
 
                     var runStatus = await appm.Status(ct);
@@ -426,9 +440,13 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                     MappingRunState = runStatus.Status.MappingRunState;
 
                     await Task.Delay(TimeSpan.FromSeconds(1), ct);
-                } catch (Exception ex) {
-                    Logger.Debug($"Update task is exiting: {ex.GetType()}, {ex.Message}");
+                } catch (OperationCanceledException) {
+                    Logger.Debug("Cancellation requested. Update task is exiting");
                     return;
+                } catch (Exception ex) {
+                    Logger.Debug($"Update task failed: {ex.GetType()}, {ex.Message}");
+                    MappingRunState = "Failed";
+                    throw;
                 }
             }
         }
@@ -443,7 +461,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             public int ArcQuantity { get; set; } = 0;
             public int DecSpacing { get; set; } = 0;
             public int RaSpacing { get; set; } = 0;
-            public double TargetHa { get; set; } = 0;
             public double EastHaLimit { get; set; } = -12;
             public double WestHaLimit { get; set; } = 12;
             public double HaLeadIn { get; set; } = 0;
