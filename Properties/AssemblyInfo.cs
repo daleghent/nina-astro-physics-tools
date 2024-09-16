@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("2.2.0.0")]
-[assembly: AssemblyFileVersion("2.2.0.0")]
+[assembly: AssemblyVersion("2.3.0.0")]
+[assembly: AssemblyFileVersion("2.3.0.0")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("Astro-Physics Tools")]
@@ -55,7 +55,7 @@ using System.Runtime.InteropServices;
 # Requirements #
 
 * NINA 3.0
-* APCC Pro 1.9.2.3 or later
+* APCC Pro 1.9.7 or later
 * APCC Pro licence that enables the **NINA Camera Support**, **Dec Arc Tracking**, and **ASTAP Plate-solving** features
 * The **Enable Server** setting is **On** in NINA's options (refer to Options > General)
 
