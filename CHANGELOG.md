@@ -1,7 +1,7 @@
 ﻿# Astro-Physics Tools
 
 ## 2.3.0.0 - 2024-09-15
-* Added **Current position (Park 0)** to the **Astro-Physics Park** instruction. This park the mount at the orientation it is in at the time the instruction is executed.
+* Added **Current position (Park 0)** to the **Astro-Physics Park** instruction. This parks the mount at the orientation it is in at the time the instruction is executed.
 * Refactored hour angle calculations used in the **Create Dec-Arc Model** instruction.
 * Removed the **Manual Mode** runtime option from the **Create Dec-Arc Model** instruction.
 * Added a **HA lead-in** runtime option to complement the existing **HA tail** option to the **Create Dec-Arc Model** instruction. Its default value is populated from the same option on the main plugin options screen.
