@@ -100,6 +100,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApPark {
 
                     progress.Report(new ApplicationStatus() { Status = Loc.Instance["LblSettle"] });
                     await Task.Delay(TimeSpan.FromSeconds(profileService.ActiveProfile.TelescopeSettings.SettleTime), token);
+
+                    // Turn off the motors
+                    telescopeMediator.SendCommandString(":KA");
                 }
             } catch (Exception ex) {
                 Logger.Error($"Failed to park mount: {ex}");
