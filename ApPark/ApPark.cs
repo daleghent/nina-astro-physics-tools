@@ -58,22 +58,19 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApPark {
             try {
                 progress.Report(new ApplicationStatus() { Status = $"Parking at position {Utility.Utility.GetEnumDescription(parkPosition)}" });
 
-                // Stop all axis motion
-                telescopeMediator.SendCommandString(":Q");
+                if (ParkPosition != ApParkPosition.Park0) {
+                    // Stop all axis motion
+                    telescopeMediator.SendCommandString(":Q");
 
-                // Clear ?
-                telescopeMediator.SendCommandString(":RD0.00000");
+                    // Clear ?
+                    telescopeMediator.SendCommandString(":RD0.00000");
 
-                // Turn off tracking
-                telescopeMediator.SendCommandString(":RT9");
+                    // Turn off tracking
+                    telescopeMediator.SendCommandString(":RT9");
 
-                // Clear ?
-                telescopeMediator.SendCommandString(":SM0:00");
+                    // Clear ?
+                    telescopeMediator.SendCommandString(":SM0:00");
 
-                if (ParkPosition == ApParkPosition.Park0) {
-                    // Turn off the motors
-                    telescopeMediator.SendCommandString(":KA");
-                } else {
                     var parkCoordinates = ParkCommand(ParkPosition);
                     Logger.Debug($"Slewing to {ParkPosition}: HA: {parkCoordinates.Ha}, Dec: {parkCoordinates.Dec}");
 
@@ -88,22 +85,22 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApPark {
 
                     // Loop while the mount is slewing.
                     do { await Task.Delay(TimeSpan.FromSeconds(3.5), token); } while (telescopeMediator.GetInfo().Slewing);
-
-                    // Turn off tracking
-                    telescopeMediator.SendCommandString(":RT9");
-
-                    // Stop all axis motion
-                    telescopeMediator.SendCommandString(":Q");
-
-                    // Stop all axis motion
-                    telescopeMediator.SendCommandString(":Q");
-
-                    progress.Report(new ApplicationStatus() { Status = Loc.Instance["LblSettle"] });
-                    await Task.Delay(TimeSpan.FromSeconds(profileService.ActiveProfile.TelescopeSettings.SettleTime), token);
-
-                    // Turn off the motors
-                    telescopeMediator.SendCommandString(":KA");
                 }
+
+                // Turn off tracking
+                telescopeMediator.SendCommandString(":RT9");
+
+                // Stop all axis motion
+                telescopeMediator.SendCommandString(":Q");
+
+                // Stop all axis motion
+                telescopeMediator.SendCommandString(":Q");
+
+                // Turn off the motors
+                telescopeMediator.SendCommandString(":KA");
+
+                progress.Report(new ApplicationStatus() { Status = Loc.Instance["LblSettle"] });
+                await Task.Delay(TimeSpan.FromSeconds(profileService.ActiveProfile.TelescopeSettings.SettleTime), token);
             } catch (Exception ex) {
                 Logger.Error($"Failed to park mount: {ex}");
                 throw new SequenceEntityFailedException("Park operation failed");
