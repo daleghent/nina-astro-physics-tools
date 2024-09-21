@@ -1,5 +1,9 @@
 ﻿# Astro-Physics Tools
 
+## 2.3.1.0 - 2024-09-21
+* Fixed `:KA` command not being issued for non-Park 0 positions after the Park 0 option was added in 2.3.0.0
+* Fixed mount settle time not being observed after parking at Park 0
+
 ## 2.3.0.0 - 2024-09-15
 * Added **Current position (Park 0)** to the **Astro-Physics Park** instruction. This parks the mount at the orientation it is in at the time the instruction is executed.
 * Refactored hour angle calculations used in the **Create Dec-Arc Model** instruction.
