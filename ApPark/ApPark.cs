@@ -121,7 +121,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApPark {
                 goto end;
             }
 
-            if (!telescopeMediator.GetInfo().Name.Equals("AstroPhysics GTO V2 Mount")) {
+            if (!telescopeMediator.GetInfo().Name.Contains("AstroPhysics")) {
                 i.Add($"{Name} is compatible only with Astro-Physics mounts.");
             }
 
