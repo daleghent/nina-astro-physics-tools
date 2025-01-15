@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("2.3.1.0")]
-[assembly: AssemblyFileVersion("2.3.1.0")]
+[assembly: AssemblyVersion("2.3.2.0")]
+[assembly: AssemblyFileVersion("2.3.2.0")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("Astro-Physics Tools")]
@@ -20,10 +20,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Dale Ghent")]
 // The product name that this plugin is part of
 [assembly: AssemblyProduct("Astro-Physics Tools")]
-[assembly: AssemblyCopyright("Copyright © 2024 Dale Ghent")]
+[assembly: AssemblyCopyright("Copyright © 2025 Dale Ghent")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
-[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.1001")]
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.2.0.1001")]
 
 // The license your plugin code is using
 [assembly: AssemblyMetadata("License", "MPL-2.0")]

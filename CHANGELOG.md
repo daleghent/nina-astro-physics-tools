@@ -1,5 +1,8 @@
 ﻿# Astro-Physics Tools
 
+## 2.3.2.0 - 2025-01-15
+* Adjusted **Astro-Physics Park** instruction's validation to account for NINA 3.2 changes regarding driver name handling. No outward functional changes.
+
 ## 2.3.1.0 - 2024-09-21
 * Fixed `:KA` command not being issued for non-Park 0 positions after the Park 0 option was added in 2.3.0.0
 * Fixed mount settle time not being observed after parking at Park 0
