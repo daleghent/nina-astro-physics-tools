@@ -1,5 +1,8 @@
 ﻿# Astro-Physics Tools
 
+## 2.3.2.1 - 2025-01-22
+* Reverted mistaken increment of the Minimum Application Version in the previous release which caused the plugin to be visible only to NINA 3.2.x. No functional change.
+
 ## 2.3.2.0 - 2025-01-15
 * Adjusted **Astro-Physics Park** instruction's validation to account for NINA 3.2 changes regarding driver name handling. No outward functional changes.
 
