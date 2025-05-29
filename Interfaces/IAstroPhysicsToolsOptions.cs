@@ -10,10 +10,10 @@
 
 #endregion "copyright"
 
-using System;
 using System.ComponentModel;
 
 namespace DaleGhent.NINA.AstroPhysicsTools.Interfaces {
+
     public interface IAstroPhysicsToolsOptions : INotifyPropertyChanged {
         /*
          * General settings
@@ -42,6 +42,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.Interfaces {
         int DecArcRaSpacing { get; set; }
         int DecArcDecSpacing { get; set; }
         double DecArcHourAngleLeadIn { get; set; }
+        double DecArcHourAngleTail { get; set; }
         int DecArcQuantity { get; set; }
         int DecArcPointOrderingStrategy { get; set; }
         int DecArcPolarPointOrderingStrategy { get; set; }

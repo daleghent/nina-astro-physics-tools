@@ -11,6 +11,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel"
     xmlns:mini="clr-namespace:NINA.View.Sequencer.MiniSequencer;assembly=NINA.Sequencer"
+    xmlns:converters="clr-namespace:NINA.Core.Utility.Converters;assembly=NINA.Core"
+    xmlns:ninactrl="clr-namespace:NINA.CustomControlLibrary;assembly=NINA.CustomControlLibrary"
     xmlns:nina="clr-namespace:NINA.View.Sequencer;assembly=NINA.Sequencer">
 
     <GeometryGroup x:Key="DecArc_SVG">
@@ -26,10 +28,52 @@
                 <StackPanel Orientation="Horizontal">
 
                     <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Text>HA lead-In</TextBlock.Text>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                            By default, the modeled arc will begin where the target is located. You may extend the arc eastward, behind the target, by increasing this value.
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <ninactrl:PrecisionStepperControl
+                        IsEnabled="{Binding DoFullArc, Converter={StaticResource InverseBooleanConverter}}"
+                        Margin="5,0,0,0"
+                        MaxValue="12"
+                        MinValue="0"
+                        StepSize="0.1"
+                        Precision="2"
+                        Unit="hours"
+                        Value="{Binding HourAngleLeadIn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
+
+                    <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
+
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Text>HA tail</TextBlock.Text>
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                            By default, the modeled arc will end where the target will be at sunrise. You may extend the arc westward by increasing this west hour angle value. Useful if you plan to image the target over many consecutive nights using the same dec-arc model.
+                            <LineBreak />
+                            Targets shift westward in the sky by approximately 4 minutes each day.
+                            </TextBlock>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <ninactrl:PrecisionStepperControl
+                        IsEnabled="{Binding DoFullArc, Converter={StaticResource InverseBooleanConverter}}"
+                        Margin="5,0,0,0"
+                        MaxValue="12"
+                        MinValue="0"
+                        StepSize="0.1"
+                        Precision="2"
+                        Unit="hours"
+                        Value="{Binding HourAngleTail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.F2}}" />
+
+                    <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
+
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
                         <TextBlock.Text>Do full arcs</TextBlock.Text>
                         <TextBlock.ToolTip>
                             <TextBlock>
-                            Forces a model to be made that spans the entire target's declination arc from horizon to horizon. By default, the model will start at the target's current hour angle along its declination arc.
+                            Forces a model to be made that spans the entire target's declination arc from horizon to horizon. By default, the model will start at the target's current hour angle along its declination arc and end the arc model at its position at sunrise.
                             </TextBlock>
                         </TextBlock.ToolTip>
                     </TextBlock>
@@ -37,23 +81,6 @@
                         Margin="5,0,0,0"
                         VerticalAlignment="Center"
                         IsChecked="{Binding DoFullArc, UpdateSourceTrigger=PropertyChanged}" />
-
-                    <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
-
-                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
-                        <TextBlock.Text>Manual mode</TextBlock.Text>
-                        <TextBlock.ToolTip>
-                            <TextBlock>
-                                If on, this instruction will launch APPM but not automatically start the modeling run. This will allow you to review the model before it is ran. Because this does not run APPM in automatic mode, you will also need to manually connect APPM to the mount, camera, and any dome devices prior to also manually starting the run.
-                                <LineBreak />
-                                The instruction finishes when APPM exits.
-                            </TextBlock>
-                        </TextBlock.ToolTip>
-                    </TextBlock>
-                    <CheckBox
-                        Margin="5,0,0,0"
-                        VerticalAlignment="Center"
-                        IsChecked="{Binding ManualMode, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="|" />
 

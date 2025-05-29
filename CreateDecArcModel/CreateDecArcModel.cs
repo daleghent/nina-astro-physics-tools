@@ -1,7 +1,7 @@
 ﻿#region "copyright"
 
 /*
-    Copyright Dale Ghent <daleg@elemental.org>
+    Copyright 2021-2024 Dale Ghent <daleg@elemental.org>
 
     This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,6 +41,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
     public class CreateDecArcModel : SequenceItem, IValidatable, INotifyPropertyChanged {
+        private double hourAngleLeadIn;
+        private double hourAngleTail;
         private bool manualMode = false;
         private bool doNotExit = false;
         private bool doFullArc = false;
@@ -68,10 +70,31 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             if (File.Exists(options.APPMExePath)) {
                 AppmFileVersion = Version.Parse(FileVersionInfo.GetVersionInfo(options.APPMExePath).ProductVersion);
             }
+
+            hourAngleLeadIn = options.DecArcHourAngleLeadIn;
+            hourAngleTail = options.DecArcHourAngleTail;
         }
 
         public CreateDecArcModel(CreateDecArcModel copyMe) : this(copyMe.profileService, copyMe.cameraMediator, copyMe.filterWheelMediator, copyMe.guiderMediator, copyMe.options) {
             CopyMetaData(copyMe);
+        }
+
+        [JsonProperty]
+        public double HourAngleLeadIn {
+            get => hourAngleLeadIn;
+            set {
+                hourAngleLeadIn = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [JsonProperty]
+        public double HourAngleTail {
+            get => hourAngleTail;
+            set {
+                hourAngleTail = value;
+                RaisePropertyChanged();
+            }
         }
 
         [JsonProperty]
@@ -129,19 +152,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         }
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
-            CancellationTokenSource updateStatusTaskCts = new CancellationTokenSource();
+            var updateStatusTaskCts = new CancellationTokenSource();
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
-            FilterInfo currentFilter = null;
+            FilterInfo originalFilter = null;
             bool stoppedGuiding = false;
             appm = new AppmApi.AppmApi();
 
-            var target = Utility.Utility.FindDsoInfo(this.Parent);
-
-            if (target == null) {
-                throw new SequenceEntityFailedException("No DSO has been defined");
-            }
-
+            var target = Utility.Utility.FindDsoInfo(this.Parent) ?? throw new SequenceEntityFailedException("No DSO has been defined");
             target.Coordinates = target.Coordinates.Transform(Epoch.JNOW);
 
             if (target.Coordinates.Dec > 85d || target.Coordinates.Dec < -85d) {
@@ -153,9 +171,6 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             var decArcParams = CalculateDecArcParameters(target);
-
-            Logger.Info($"RA: HourAngleStart={decArcParams.EastHaLimit:0.00}, HourAngleEnd={decArcParams.WestHaLimit:0.00}, Hours={(decArcParams.WestHaLimit - Math.Abs(decArcParams.EastHaLimit)):0.00}");
-            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={decArcParams.NorthDecLimit:0.00}, S={decArcParams.SouthDecLimit:0.00}, Spread={decArcParams.NorthDecLimit - decArcParams.SouthDecLimit}, Spacing={options.DecArcDecSpacing}, Offset={decArcParams.DecOffset}");
 
             var config = new AppmApi.AppmMeasurementConfiguration() {
                 SetSlewRate = options.AppmSetSlewRate,
@@ -179,11 +194,13 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 MinDeclination = decArcParams.SouthDecLimit,
                 DeclinationOffset = decArcParams.DecOffset,
                 RightAscensionSpacing = decArcParams.RaSpacing,
-                MinHourAngleEast = decArcParams.EastHaLimit,
-                MaxHourAngleWest = decArcParams.WestHaLimit,
+                MinHourAngleEast = DoFullArc ? -12d : decArcParams.EastHaLimit,
+                MaxHourAngleWest = DoFullArc ? 12d : decArcParams.WestHaLimit,
                 PointOrderingStrategy = (90 - Math.Abs(decArcParams.TargetDec)) <= decArcParams.PolarProximityLimit
                     ? decArcParams.PolarPointOrderingStrategy : options.DecArcPointOrderingStrategy,
             };
+
+            Logger.Info($"Dec: T={decArcParams.TargetDec:0.00}, N={config.MaxDeclination:0.00}, S={config.MinDeclination:0.00}, Spread={config.MaxDeclination - config.MinDeclination}, Spacing={options.DecArcDecSpacing}, Offset={config.DeclinationOffset}");
 
             var request = new AppmApi.AppmMeasurementConfigurationRequest() {
                 Configuration = config,
@@ -194,16 +211,16 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             if (filterWheelMediator.GetInfo().Connected) {
-                currentFilter = filterWheelMediator.GetInfo().SelectedFilter;
-                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct);
+                originalFilter = filterWheelMediator.GetInfo().SelectedFilter;
+                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct, progress);
             }
 
             var proc = RunAPPM();
 
             try {
                 MappingRunState = appm.WaitForApiInit(ct).Result.Status.MappingRunState;
-                updateStatusTask = UpdateStatus(updateStatusTaskCt);
 
+                updateStatusTask = UpdateStatus(updateStatusTaskCt);
                 var response = appm.SetConfiguration(request, ct);
 
                 if (!response.Result.Success) {
@@ -219,20 +236,27 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 }
 
                 if (!ManualMode) {
-                    if (MappingRunState.Equals("Idle")) {
+                    if (MappingRunState.Equals("Idle", StringComparison.InvariantCultureIgnoreCase)) {
                         await appm.Start(ct);
 
-                        while (!MappingRunState.Equals("Running")) {
+                        while (!MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
                             Logger.Info($"Waiting for MappingRunState=Running");
+                            progress?.Report(new ApplicationStatus { Status = "Waiting for APPM mapping to start" });
+
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
-                        while (MappingRunState.Equals("Running")) {
+                        while (MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
                             Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
+                            progress?.Report(new ApplicationStatus { Status = $"Mapping point {CurrentPoint} / {TotalPoints}" });
+
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
                         }
 
+                        progress?.Report(new ApplicationStatus { Status = $"Mapping run completed" });
                         Logger.Info($"APPM mapping run has finished. MappingRunState={MappingRunState}");
+                        updateStatusTaskCts.Cancel();
+                        updateStatusTask.Wait(ct);
                     }
 
                     if (!DoNotExit) {
@@ -250,6 +274,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 if (!DoNotExit) {
                     await appm.Close(CancellationToken.None);
                 }
+
+                throw new SequenceEntityFailedException($"{Name} for {target.Name} was cancelled.");
             } catch (SequenceEntityFailedException ex) {
                 Logger.Info($"{ex.Message}");
                 await appm.Close(CancellationToken.None);
@@ -265,7 +291,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 proc.Dispose();
 
                 if (filterWheelMediator.GetInfo().Connected) {
-                    await filterWheelMediator.ChangeFilter(currentFilter, ct);
+                    await filterWheelMediator.ChangeFilter(originalFilter, ct, progress);
                 }
 
                 if (guiderMediator.GetInfo().Connected && stoppedGuiding) {
@@ -274,6 +300,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             MappingRunState = "Completed";
+            progress?.Report(new ApplicationStatus { Status = string.Empty });
 
             return;
         }
@@ -287,7 +314,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
         }
 
         public override string ToString() {
-            return $"Category: {Category}, Item: {nameof(CreateDecArcModel)}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={options.APPMExePath}, Settings={options.APPMSettingsPath}";
+            return $"Category: {Category}, Item: {Name}, HATail={hourAngleTail:0.00}, DoFullArc={DoFullArc}, ManualMode={ManualMode}, DotNotExit={DoNotExit}, ExePath={options.APPMExePath}, Settings={options.APPMSettingsPath}";
         }
 
         public IList<string> Issues { get; set; } = new ObservableCollection<string>();
@@ -317,7 +344,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
             if (i != Issues) {
                 Issues = i;
-                RaisePropertyChanged("Issues");
+                RaisePropertyChanged(nameof(Issues));
             }
 
             return i.Count == 0;
@@ -331,7 +358,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 return proc[0];
             }
 
-            List<string> args = new List<string>();
+            var args = new List<string>();
 
             if (DoNotExit) {
                 args.Add("-dontexit");
@@ -342,32 +369,48 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             var appm = new ProcessStartInfo(options.APPMExePath) {
-                Arguments = string.Join(" ", args.ToArray())
+                Arguments = string.Join(" ", [.. args])
             };
 
             Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
             return Process.Start(appm);
         }
 
-        private double CurrentHourAngle(IDeepSkyObject target) {
-            // We want HA in terms of -12..12, not 0..24
-            return ((AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTimeNow(profileService.ActiveProfile.AstrometrySettings.Longitude), target.Coordinates.RA) + 36) % 24) - 12;
-        }
-
         private DecArcParameters CalculateDecArcParameters(IDeepSkyObject target) {
-            var decArcParams = new DecArcParameters() {
+            var latitude = profileService.ActiveProfile.AstrometrySettings.Latitude;
+            var longitude = profileService.ActiveProfile.AstrometrySettings.Longitude;
+
+            var timeNow = DateTime.UtcNow;
+            var sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow, latitude, longitude).Rise.Value;
+
+            if (timeNow > sunRiseTime) {
+                sunRiseTime = AstroUtil.GetSunRiseAndSet(timeNow.AddDays(1), latitude, longitude).Rise.Value;
+            }
+
+            var targetHaNow = HourAngle24to12(AstroUtil.GetHourAngle(AstroUtil.GetLocalSiderealTimeNow(longitude), target.Coordinates.RA));
+            var targetHaAtSunrise = targetHaNow + (sunRiseTime - timeNow).TotalHours;
+
+            var decArcStart = targetHaNow - hourAngleLeadIn;
+            var decArcEnd = targetHaAtSunrise + hourAngleTail;
+
+            decArcStart = Math.Max(decArcStart, -12d);
+            decArcStart = Math.Min(decArcStart, 12d);
+
+            decArcEnd = Math.Max(decArcEnd, -12d);
+            decArcEnd = Math.Min(decArcEnd, 12d);
+
+            // Create paramters object with calculations.
+            var decArcParams = new DecArcParameters {
                 ArcQuantity = options.DecArcQuantity,
                 DecSpacing = options.DecArcDecSpacing,
                 RaSpacing = options.DecArcRaSpacing,
                 PointOrderingStrategy = options.DecArcPointOrderingStrategy,
                 PolarPointOrderingStrategy = options.DecArcPolarPointOrderingStrategy,
                 PolarProximityLimit = options.DecArcPolarProximityLimit,
+                TargetDec = (int)Math.Round(target.Coordinates.Dec),
+                EastHaLimit = decArcStart,
+                WestHaLimit = decArcEnd,
             };
-
-            decArcParams.TargetHa = CurrentHourAngle(target);
-            decArcParams.EastHaLimit = DoFullArc ? -12d : Math.Round(Math.Max(decArcParams.TargetHa - decArcParams.HaLeadIn, -12), 2);
-
-            decArcParams.TargetDec = (int)Math.Round(target.Coordinates.Dec);
 
             if (decArcParams.ArcQuantity == 1) {
                 decArcParams.DecSpacing = 1;
@@ -379,11 +422,27 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 decArcParams.DecOffset = decArcParams.SouthDecLimit % decArcParams.DecSpacing;
             }
 
+            Logger.Info($"Target RA: {target.Coordinates.RAString}, Target Current HA: {targetHaNow:0.00}, Target HA at sunrise: {targetHaAtSunrise:0.00}, Sunrise Time: {sunRiseTime}");
+            Logger.Info($"DecArc HA start: {decArcStart:0.00}, DecArc HA end: {decArcEnd:0.00}, Total DecArc length: {(decArcEnd - decArcStart):0.00} hours");
+
             return decArcParams;
         }
 
-        private async Task<Task> UpdateStatus(CancellationToken ct) {
-            while (true) {
+        // Converts 24h format hour angle to 12h format
+        private static double HourAngle24to12(double ha) {
+            ha %= 24d;
+
+            if (ha < -12d) {
+                ha += 24d;
+            } else if (ha > 12d) {
+                ha -= 24d;
+            }
+
+            return ha;
+        }
+
+        private async Task UpdateStatus(CancellationToken ct) {
+            while (!ct.IsCancellationRequested) {
                 try {
                     Logger.Debug("Updating APPM stats...");
 
@@ -392,9 +451,13 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                     MappingRunState = runStatus.Status.MappingRunState;
 
                     await Task.Delay(TimeSpan.FromSeconds(1), ct);
+                } catch (OperationCanceledException) {
+                    Logger.Debug("Cancellation requested. Update task is exiting");
+                    return;
                 } catch (Exception ex) {
-                    Logger.Debug($"Update task is exiting: {ex.GetType()}, {ex.Message}");
-                    return Task.CompletedTask;
+                    Logger.Debug($"Update task failed: {ex.GetType()}, {ex.Message}");
+                    MappingRunState = "Failed";
+                    throw;
                 }
             }
         }
@@ -409,10 +472,10 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             public int ArcQuantity { get; set; } = 0;
             public int DecSpacing { get; set; } = 0;
             public int RaSpacing { get; set; } = 0;
-            public double TargetHa { get; set; } = 0;
             public double EastHaLimit { get; set; } = -12;
             public double WestHaLimit { get; set; } = 12;
             public double HaLeadIn { get; set; } = 0;
+            public double HaTail { get; set; } = 0;
             public int PointOrderingStrategy { get; set; } = 0;
             public int PolarPointOrderingStrategy { get; set; } = 0;
             public int PolarProximityLimit { get; set; } = 0;
