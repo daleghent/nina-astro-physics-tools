@@ -31,8 +31,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApccApi {
             this.port = port;
 
             serializerSettings = new JsonSerializerSettings() {
-                CheckAdditionalContent = true,
-                MissingMemberHandling = MissingMemberHandling.Error,
+                MissingMemberHandling = MissingMemberHandling.Ignore,
                 Formatting = Formatting.Indented,
             };
         }
