@@ -42,7 +42,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             return base.Teardown();
         }
 
-        public static Version MinAppmVersion = new Version(1, 9, 2, 3);
+        public static Version MinAppmVersion = new("1.9.8.15");
 
         public static AstroPhysicsToolsOptions AstroPhysicsToolsOptions { get; private set; }
     }

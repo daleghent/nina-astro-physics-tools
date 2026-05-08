@@ -82,6 +82,14 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             }
         }
 
+        public int AppmLongSlewExtraSettleTime {
+            get => pluginOptionsAccessor.GetValueInt32(nameof(AppmLongSlewExtraSettleTime), 5);
+            set {
+                pluginOptionsAccessor.SetValueInt32(nameof(AppmLongSlewExtraSettleTime), value);
+                RaisePropertyChanged();
+            }
+        }
+
         public double AppmZenithSafetyDistance {
             get => pluginOptionsAccessor.GetValueDouble(nameof(AppmZenithSafetyDistance), 0d);
             set {
@@ -444,6 +452,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
                 AppmSetSlewRate = config.SetSlewRate;
                 AppmSlewRate = config.SlewRate;
                 AppmSlewSettleTime = config.SlewSettleTime;
+                AppmLongSlewExtraSettleTime = config.LongSlewExtraSettleTime ?? 5;
                 AppmZenithSafetyDistance = config.ZenithSafetyDistance;
                 AppmZenithSyncDistance = config.ZenithSyncDistance;
                 AppmUseMinAltitude = config.UseMinAltitude;

@@ -130,6 +130,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
                 SetSlewRate = options.AppmSetSlewRate,
                 SlewRate = options.AppmSlewRate,
                 SlewSettleTime = options.AppmSlewSettleTime,
+                LongSlewExtraSettleTime = options.AppmLongSlewExtraSettleTime,
                 ZenithSafetyDistance = options.AppmZenithSafetyDistance,
                 ZenithSyncDistance = options.AppmZenithSyncDistance,
                 UseMinAltitude = options.AppmUseMinAltitude,

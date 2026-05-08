@@ -143,6 +143,9 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
         [JsonProperty]
         public int SlewSettleTime { get; set; } = 2;
 
+        [JsonProperty(Required = Required.AllowNull)]
+        public int? LongSlewExtraSettleTime { get; set; } = null;
+
         [JsonProperty]
         public bool UseMeridianLimits { get; set; } = true;
 

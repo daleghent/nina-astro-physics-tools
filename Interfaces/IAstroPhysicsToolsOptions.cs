@@ -28,6 +28,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.Interfaces {
         bool AppmSetSlewRate { get; set; }
         int AppmSlewRate { get; set; }
         int AppmSlewSettleTime { get; set; }
+        int AppmLongSlewExtraSettleTime { get; set; }
         double AppmZenithSafetyDistance { get; set; }
         double AppmZenithSyncDistance { get; set; }
         bool AppmUseMinAltitude { get; set; }
