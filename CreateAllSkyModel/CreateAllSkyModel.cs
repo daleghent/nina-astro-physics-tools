@@ -174,7 +174,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
 
                 if (!response.Result.Success) {
                     throw new SequenceEntityFailedException("Could not set APPM configuration");
-                };
+                }
 
                 TotalPoints = response.Result.PointCount;
 

@@ -10,14 +10,14 @@
 
 #endregion "copyright"
 
-using Settings = DaleGhent.NINA.AstroPhysicsTools.Properties.Settings;
 using NINA.Core.Utility;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
 using NINA.Profile.Interfaces;
+using System;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
-using System;
+using Settings = DaleGhent.NINA.AstroPhysicsTools.Properties.Settings;
 
 namespace DaleGhent.NINA.AstroPhysicsTools {
 
@@ -32,9 +32,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
                 CoreUtil.SaveSettings(Settings.Default);
             }
 
-            if (AstroPhysicsToolsOptions == null) {
-                AstroPhysicsToolsOptions = new AstroPhysicsToolsOptions(profileService);
-            }
+            AstroPhysicsToolsOptions ??= new AstroPhysicsToolsOptions(profileService);
         }
 
         public override Task Teardown() {

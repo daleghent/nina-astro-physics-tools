@@ -12,7 +12,6 @@
 
 using CommunityToolkit.Mvvm.Input;
 using DaleGhent.NINA.AstroPhysicsTools.Interfaces;
-using Settings = DaleGhent.NINA.AstroPhysicsTools.Properties.Settings;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Profile;
@@ -22,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Settings = DaleGhent.NINA.AstroPhysicsTools.Properties.Settings;
 
 namespace DaleGhent.NINA.AstroPhysicsTools {
 

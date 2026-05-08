@@ -226,7 +226,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
 
                 if (!response.Result.Success) {
                     throw new SequenceEntityFailedException("Could not set APPM configuration");
-                };
+                }
 
                 TotalPoints = response.Result.PointCount;
 
@@ -424,7 +424,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             }
 
             Logger.Info($"Target RA: {target.Coordinates.RAString}, Target Current HA: {targetHaNow:0.00}, Target HA at sunrise: {targetHaAtSunrise:0.00}, Sunrise Time: {sunRiseTime}");
-            Logger.Info($"DecArc HA start: {decArcStart:0.00}, DecArc HA end: {decArcEnd:0.00}, Total DecArc length: {(decArcEnd - decArcStart):0.00} hours");
+            Logger.Info($"DecArc HA start: {decArcStart:0.00}, DecArc HA end: {decArcEnd:0.00}, Total DecArc length: {decArcEnd - decArcStart:0.00} hours");
 
             return decArcParams;
         }
