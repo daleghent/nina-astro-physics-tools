@@ -1,5 +1,9 @@
 ﻿# Astro-Physics Tools
 
+## 2.5.0.0	- 2026-05-07
+* Added support for the Long Slew Extra Settle Time option.
+* Minimum required APCC version is now **1.9.8.15**
+
 ## 2.3.2.1 - 2025-01-22
 * Reverted mistaken increment of the Minimum Application Version in the previous release which caused the plugin to be visible only to NINA 3.2.x. No functional change.
 
