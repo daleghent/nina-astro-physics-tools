@@ -280,7 +280,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateAllSkyModel {
             }
 
             if (AppmFileVersion < AstroPhysicsTools.MinAppmVersion) {
-                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {AstroPhysicsTools.MinAppmVersion} or higher");
+                i.Add($"APPM version {AppmFileVersion} is too old. This instruction requires {AstroPhysicsTools.MinAppmVersion} or higher");
             }
 
             if (i != Issues) {

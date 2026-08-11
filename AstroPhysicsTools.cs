@@ -23,6 +23,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
 
     [Export(typeof(IPluginManifest))]
     public class AstroPhysicsTools : PluginBase {
+        private const string minApccVersion = "1.9.8.20";
+        private const string minAppmVersion = "1.9.8.15";
 
         [ImportingConstructor]
         public AstroPhysicsTools(IProfileService profileService) {
@@ -40,7 +42,8 @@ namespace DaleGhent.NINA.AstroPhysicsTools {
             return base.Teardown();
         }
 
-        public static Version MinAppmVersion = new("1.9.8.15");
+        public static Version MinApccVersion = new(minApccVersion);
+        public static Version MinAppmVersion = new(minAppmVersion);
 
         public static AstroPhysicsToolsOptions AstroPhysicsToolsOptions { get; private set; }
     }

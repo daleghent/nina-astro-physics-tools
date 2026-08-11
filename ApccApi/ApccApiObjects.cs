@@ -80,4 +80,46 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApccApi {
         [JsonProperty]
         public string String { get; set; }
     }
+
+    public class ApccMeridianLimits {
+
+        [JsonProperty]
+        public bool Success { get; set; }
+
+        [JsonProperty]
+        public string Result { get; set; }
+
+        [JsonProperty]
+        public double MeridianDelay { get; set; }
+
+        [JsonProperty]
+        public bool MeridianLimitsEnabled { get; set; }
+
+        [JsonProperty]
+        public string MeridianLimitsActionText { get; set; }
+
+        [JsonProperty]
+        public string MeridianLimitsStatusText { get; set; }
+
+        [JsonProperty]
+        public bool MeridianLimitsLimitToMeridian { get; set; }
+
+        [JsonProperty]
+        public bool MeridianLimitsEastCwUpSlewsEnabled { get; set; }
+
+        [JsonProperty]
+        public bool MeridianLimitsWestCwUpSlewsEnabled { get; set; }
+
+        [JsonProperty]
+        public double MeridianLimitsFlipOffsetMinutes { get; set; }
+
+        [JsonProperty]
+        public double MeridianLimitsFlipOffsetPaddingMinutes { get; set; }
+
+        [JsonProperty]
+        public double MeridianLimitsEastHours { get; set; }
+
+        [JsonProperty]
+        public double MeridianLimitsWestHours { get; set; }
+    }
 }

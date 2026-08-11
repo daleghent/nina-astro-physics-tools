@@ -141,7 +141,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
                 request.Content = new StringContent(body, Encoding.UTF8, "application/json");
             }
 
-            Logger.Debug($"Request URL: {request.Method} {request.RequestUri}");
+            Logger.Trace($"Request URL: {request.Method} {request.RequestUri}");
             if (request.Method != HttpMethod.Get && request.Method != HttpMethod.Head) {
                 Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync(ct).Result}");
             }
@@ -150,7 +150,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             var response = await client.SendAsync(request, ct);
             client.Dispose();
 
-            Logger.Debug($"Response status code: {response.StatusCode}");
+            Logger.Trace($"Response status code: {response.StatusCode}");
             Logger.Trace($"Response body:{Environment.NewLine}{response.Content?.ReadAsStringAsync(ct).Result}");
 
             return response;

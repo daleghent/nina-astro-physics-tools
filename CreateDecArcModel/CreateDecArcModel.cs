@@ -324,7 +324,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             var i = new List<string>();
 
             if (AppmFileVersion < AstroPhysicsTools.MinAppmVersion) {
-                i.Add($"APCC Pro/APPM version {AppmFileVersion} is too old. This instruction requires {AstroPhysicsTools.MinAppmVersion} or higher");
+                i.Add($"APPM version {AppmFileVersion} is too old. This instruction requires {AstroPhysicsTools.MinAppmVersion} or higher");
             }
 
             if (!cameraMediator.GetInfo().Connected) {
