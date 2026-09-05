@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -155,8 +156,10 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             var updateStatusTaskCts = new CancellationTokenSource();
             CancellationToken updateStatusTaskCt = updateStatusTaskCts.Token;
             Task updateStatusTask = null;
+            Process proc = null;
             FilterInfo originalFilter = null;
             bool stoppedGuiding = false;
+            bool ownsProcess = false;
             appm = new AppmApi.AppmApi();
 
             var target = Utility.Utility.FindDsoInfo(this.Parent) ?? throw new SequenceEntityFailedException("No DSO has been defined");
@@ -211,60 +214,60 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 stoppedGuiding = await guiderMediator.StopGuiding(ct);
             }
 
-            if (filterWheelMediator.GetInfo().Connected) {
-                originalFilter = filterWheelMediator.GetInfo().SelectedFilter;
-                await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct, progress);
-            }
-
-            var proc = RunAPPM();
-
             try {
-                MappingRunState = appm.WaitForApiInit(ct).Result.Status.MappingRunState;
+                if (filterWheelMediator.GetInfo().Connected) {
+                    originalFilter = filterWheelMediator.GetInfo().SelectedFilter;
+                    await filterWheelMediator.ChangeFilter(profileService.ActiveProfile.PlateSolveSettings.Filter, ct, progress);
+                }
+
+                proc = RunAPPM(out ownsProcess);
+
+                MappingRunState = (await appm.WaitForApiInit(ct)).Status.MappingRunState;
 
                 updateStatusTask = UpdateStatus(updateStatusTaskCt);
-                var response = appm.SetConfiguration(request, ct);
+                var response = await appm.SetConfiguration(request, ct);
 
-                if (!response.Result.Success) {
+                if (!response.Success) {
                     throw new SequenceEntityFailedException("Could not set APPM configuration");
                 }
 
-                TotalPoints = response.Result.PointCount;
+                TotalPoints = response.PointCount;
 
                 if (TotalPoints == 0) {
                     Logger.Warning($"Total point count is {TotalPoints}. Exiting without running model");
                     Notification.ShowWarning($"The point count for this mapping run is {TotalPoints}. The mapping run will not start. This is not an error, but it's perhaps not what you intended.");
-                    throw new OperationCanceledException("Not enough points to model");
+                    throw new SequenceEntityFailedException("Not enough points to model");
                 }
 
                 if (!ManualMode) {
-                    if (MappingRunState.Equals("Idle", StringComparison.InvariantCultureIgnoreCase)) {
+                    if (MappingRunState.Equals("Idle", StringComparison.OrdinalIgnoreCase)) {
                         await appm.Start(ct);
 
-                        while (!MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
+                        while (!MappingRunState.Equals("Running", StringComparison.OrdinalIgnoreCase)) {
                             Logger.Info($"Waiting for MappingRunState=Running");
                             progress?.Report(new ApplicationStatus { Status = "Waiting for APPM mapping to start" });
 
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                            ThrowIfStatusTaskFaulted(updateStatusTask);
                         }
 
-                        while (MappingRunState.Equals("Running", StringComparison.InvariantCultureIgnoreCase)) {
+                        while (MappingRunState.Equals("Running", StringComparison.OrdinalIgnoreCase)) {
                             Logger.Info($"Mapping points progress: {CurrentPoint} / {TotalPoints}");
                             progress?.Report(new ApplicationStatus { Status = $"Mapping point {CurrentPoint} / {TotalPoints}" });
 
                             await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                            ThrowIfStatusTaskFaulted(updateStatusTask);
                         }
 
                         progress?.Report(new ApplicationStatus { Status = $"Mapping run completed" });
                         Logger.Info($"APPM mapping run has finished. MappingRunState={MappingRunState}");
-                        updateStatusTaskCts.Cancel();
-                        updateStatusTask.Wait(ct);
                     }
 
                     if (!DoNotExit) {
                         await appm.Close(ct);
                     }
-                } else {
-                    proc.WaitForExit();
+                } else if (proc != null) {
+                    await proc.WaitForExitAsync(ct);
                 }
             } catch (OperationCanceledException) {
                 Logger.Info($"Cancellation requested");
@@ -283,20 +286,29 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 MappingRunState = "Failed";
                 throw;
             } finally {
+                updateStatusTaskCts.Cancel();
+
                 if (updateStatusTask != null) {
-                    updateStatusTaskCts.Cancel();
-                    updateStatusTask.Dispose();
+                    try {
+                        await updateStatusTask;
+                    } catch (Exception ex) {
+                        Logger.Debug($"Status update task ended with {ex.GetType()}: {ex.Message}");
+                    }
                 }
 
                 updateStatusTaskCts.Dispose();
-                proc.Dispose();
 
-                if (filterWheelMediator.GetInfo().Connected) {
-                    await filterWheelMediator.ChangeFilter(originalFilter, ct, progress);
+                if (ownsProcess) {
+                    proc?.Dispose();
                 }
 
-                if (guiderMediator.GetInfo().Connected && stoppedGuiding) {
-                    await guiderMediator.StartGuiding(false, progress, ct);
+                // The user's token may already be cancelled at this point, so cleanup must not use it.
+                if (originalFilter != null && filterWheelMediator.GetInfo().Connected) {
+                    await filterWheelMediator.ChangeFilter(originalFilter, CancellationToken.None, progress);
+                }
+
+                if (stoppedGuiding && guiderMediator.GetInfo().Connected) {
+                    await guiderMediator.StartGuiding(false, progress, CancellationToken.None);
                 }
             }
 
@@ -343,7 +355,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                 i.Add("Invalid location for APPM settings file");
             }
 
-            if (i != Issues) {
+            if (!i.SequenceEqual(Issues)) {
                 Issues = i;
                 RaisePropertyChanged(nameof(Issues));
             }
@@ -351,30 +363,35 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
             return i.Count == 0;
         }
 
-        private Process RunAPPM() {
-            Process[] proc = Process.GetProcessesByName("ApPointMapper");
+        private Process RunAPPM(out bool ownsProcess) {
+            Process[] procs = Process.GetProcessesByName("ApPointMapper");
 
-            if (proc.Length > 0) {
-                Logger.Info($"ApPointMapper.exe is already running as PID {proc[0].Id}");
-                return proc[0];
+            try {
+                if (procs.Length > 0) {
+                    Logger.Info($"ApPointMapper.exe is already running as PID {procs[0].Id}");
+                    ownsProcess = false;
+                    return procs[0];
+                }
+            } finally {
+                for (int i = 1; i < procs.Length; i++) {
+                    procs[i].Dispose();
+                }
             }
 
-            var args = new List<string>();
+            var startInfo = new ProcessStartInfo(options.APPMExePath);
 
             if (DoNotExit) {
-                args.Add("-dontexit");
+                startInfo.ArgumentList.Add("-dontexit");
             }
 
             if (File.Exists(options.APPMSettingsPath)) {
-                args.Add($"-s{options.APPMSettingsPath}");
+                startInfo.ArgumentList.Add($"-s{options.APPMSettingsPath}");
             }
 
-            var appm = new ProcessStartInfo(options.APPMExePath) {
-                Arguments = string.Join(" ", [.. args])
-            };
+            Logger.Info($"Executing: {startInfo.FileName} {string.Join(" ", startInfo.ArgumentList)}");
 
-            Logger.Info($"Executing: {appm.FileName} {appm.Arguments}");
-            return Process.Start(appm);
+            ownsProcess = true;
+            return Process.Start(startInfo);
         }
 
         private DecArcParameters CalculateDecArcParameters(IDeepSkyObject target) {
@@ -457,9 +474,20 @@ namespace DaleGhent.NINA.AstroPhysicsTools.CreateDecArcModel {
                     return;
                 } catch (Exception ex) {
                     Logger.Debug($"Update task failed: {ex.GetType()}, {ex.Message}");
-                    MappingRunState = "Failed";
                     throw;
                 }
+            }
+        }
+
+        // Without this the Execute loops would spin until the user's token trips if the status
+        // poller died, because MappingRunState would never change again.
+        private static void ThrowIfStatusTaskFaulted(Task updateStatusTask) {
+            if (updateStatusTask.IsFaulted) {
+                throw new SequenceEntityFailedException($"Lost contact with the APPM API: {updateStatusTask.Exception?.GetBaseException().Message}");
+            }
+
+            if (updateStatusTask.IsCompleted) {
+                throw new SequenceEntityFailedException("The APPM status update task stopped unexpectedly");
             }
         }
 
