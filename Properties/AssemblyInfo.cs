@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("2.5.0.1")]
-[assembly: AssemblyFileVersion("2.5.0.1")]
+[assembly: AssemblyVersion("3.0.0.0")]
+[assembly: AssemblyFileVersion("3.0.0.0")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("Astro-Physics Tools")]
@@ -17,10 +17,10 @@ using System.Runtime.InteropServices;
 // The following attributes are not required for the plugin per se, but are required by the official manifest meta data
 
 // Your name
-[assembly: AssemblyCompany("Dale Ghent")]
+[assembly: AssemblyCompany("Dale Ghent & Elemental Observatory Systems, LLC")]
 // The product name that this plugin is part of
 [assembly: AssemblyProduct("Astro-Physics Tools")]
-[assembly: AssemblyCopyright("Copyright © 2021-2026 Dale Ghent")]
+[assembly: AssemblyCopyright("Copyright © 2021-2026 Dale Ghent & Elemental Observatory Systems, LLC")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
 [assembly: AssemblyMetadata("MinimumApplicationVersion", "3.2.0.9001")]
@@ -55,22 +55,24 @@ using System.Runtime.InteropServices;
 # Requirements #
 
 * NINA 3.2
-* APCC Pro 1.9.8.20 or later
-* APCC Pro licence that enables the **NINA Camera Support**, **Dec Arc Tracking**, and **ASTAP Plate-solving** features
-* The **Enable Server** setting is **On** in NINA's options (refer to Options > General)
+* APCC Pro 1.9.8.21 or later.
+* APCC Pro licence that enables the **NINA Camera Support**, **Dec Arc Tracking**, and **ASTAP Plate-solving** features.
+* The **SGP Server Emulation** plugin must be installed and enabled. It is available via NINA's plugin manager.
 
 Refer to the **Help > View/Update License Subscription** menu in APCC Pro for details on your installation's licensed features.
 
 # Provided functions #
 
 * Start APCC
-    * Starts APCC and connects NINA to the Astro-Physics ASCOM driver. For APCC versions earlier than 1.9.7.0, APCC's **Auto-Connect** setting must be selected in both the **Mount** and **AP V2 Driver** option areas in the Setup tab.
+    * Starts APCC and connects NINA to the Astro-Physics ASCOM driver.
 * Create All-Sky Model
-    * Automatically runs an all-sky model session based on the configured parameters
+    * Automatically runs an all-sky model session based on the configured parameters.
 * Create Dec Arc Model
-    * Automatically generates a dec arc model based on several parameters for the target that the instruction is subordinate to
+    * Automatically generates a dec arc model based on several parameters for the target that the instruction is subordinate to.
 * Astro-Physics Park
-    * Permits parking the mount in any one of the five pre-defined Astro-Physics park positions regardless of which one is selected as the default park position
+    * Permits parking the mount in any one of the five pre-defined Astro-Physics park positions regardless of which one is selected as the default park position.
+* Astro-Physics Meridian Limit (Trigger)
+    * Uses APCC's configured meridian limits to determine when to perform a meridian flip. This completely replaces the stock NINA meridian flip trigger.
 
 # Getting help #
 

@@ -1,9 +1,15 @@
 ﻿# Astro-Physics Tools
 
-## 2.6.0.0 - 2026-xx.xx
-* Added Astro-Physics Meridan Flip trigger.
-* The Astro-Physics Meridian Flip trigger now uses its own meridian flip engine instead of NINA's. The flip no longer opens a modal window; its stages and countdowns are reported in the application status area. NINA's non-timing meridian flip options (settle time, dome synchronization, recentering, autofocus after flip, and image rotation after flip) are still honored.
-* Added a **Flip Strategy** option to the Astro-Physics Meridian Flip trigger. *Delayed* keeps the existing behavior of tracking to APCC's western meridian limit before flipping. *Early* flips before the target transits the meridian and resumes tracking counterweight-up within APCC's eastern limit, which requires eastern counterweight-up slews to be enabled in APCC.
+## 3.0.0.0 - 2026-09-05
+* Added Astro-Physics Meridian Flip trigger.
+  * The Astro-Physics Meridian Flip trigger now uses its own meridian flip engine instead of NINA's.
+  * This flip trigger does not open a modal window like the stock NINA one does. Its stages and countdowns are reported in the application status area.
+  * Existing NINA meridian flip settings related to meridian flip timing (Pause before meridian, Minutes after meridian, etc.) are ignored.
+  * NINA's meridian flip settings relating to settle time, dome synchronization, recentering, autofocus after flip, and image rotation after flip are still honored.
+* Fixed a few minor handle leaks in the APPM API client.
+* The Create All-Sky/Dec Arc Model were fixed to address a rare race condition that could cause the instructions to hang after APPM completed the modeling run.
+* Minimum supported NINA version is now **3.2**
+* Minimum required APCC version is now **1.9.8.21**
 
 ## 2.5.0.0 - 2026-05-07
 * Added support for the Long Slew Extra Settle Time option.
