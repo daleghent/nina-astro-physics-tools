@@ -22,6 +22,14 @@ using System.Threading.Tasks;
 namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
 
     public class AppmApi {
+
+        // A single HttpClient is shared by all instances. Creating one per request exhausts
+        // ephemeral ports because disposed sockets linger in TIME_WAIT, and the status endpoint
+        // is polled once per second for the entire duration of a mapping run.
+        private static readonly HttpClient httpClient = new() {
+            Timeout = TimeSpan.FromSeconds(30),
+        };
+
         private readonly string host;
         private readonly int port;
         private readonly JsonSerializerSettings serializerSettings;
@@ -36,124 +44,87 @@ namespace DaleGhent.NINA.AstroPhysicsTools.AppmApi {
             };
         }
 
-        public async Task Start(CancellationToken ct) {
-            _ = await HttpRequestAsync("/api/MappingRun/Start", "{\"Action\":\"Start\"}", HttpMethod.Post, ct);
+        public Task Start(CancellationToken ct) {
+            return SendAsync("/api/MappingRun/Start", "{\"Action\":\"Start\"}", HttpMethod.Post, ct);
         }
 
-        public async Task Stop(CancellationToken ct) {
-            _ = await HttpRequestAsync("/api/MappingRun/Stop", "{\"Action\":\"Stop\"}", HttpMethod.Post, ct);
+        public Task Stop(CancellationToken ct) {
+            return SendAsync("/api/MappingRun/Stop", "{\"Action\":\"Stop\"}", HttpMethod.Post, ct);
         }
 
-        public async Task Close(CancellationToken ct) {
-            _ = await HttpRequestAsync("/api/Application/Close", "{}", HttpMethod.Post, ct);
+        public Task Close(CancellationToken ct) {
+            return SendAsync("/api/Application/Close", "{}", HttpMethod.Post, ct);
         }
 
-        public async Task<AppmMappingRunStatusResult> Status(CancellationToken ct) {
-            AppmMappingRunStatusResult response = null;
-            var result = await HttpRequestAsync("/api/MappingRun/Status", null, HttpMethod.Get, ct);
-
-            if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMappingRunStatusResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
-            }
-
-            result.Dispose();
-            return response;
+        public Task<AppmMappingRunStatusResult> Status(CancellationToken ct) {
+            return RequestJsonAsync<AppmMappingRunStatusResult>("/api/MappingRun/Status", null, HttpMethod.Get, ct);
         }
 
-        public async Task<AppmPointCountResult> PointCount(CancellationToken ct) {
-            AppmPointCountResult response = null;
-            var result = await HttpRequestAsync("/api/MappingPoints/PointCount", null, HttpMethod.Get, ct);
-
-            if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmPointCountResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
-            }
-
-            result.Dispose();
-            return response;
+        public Task<AppmPointCountResult> PointCount(CancellationToken ct) {
+            return RequestJsonAsync<AppmPointCountResult>("/api/MappingPoints/PointCount", null, HttpMethod.Get, ct);
         }
 
-        public async Task<AppmMappingPointsResult> MappingPoints(CancellationToken ct) {
-            AppmMappingPointsResult response = null;
-            var result = await HttpRequestAsync("/api/MappingPoints", null, HttpMethod.Get, ct);
-
-            if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMappingPointsResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
-            }
-
-            result.Dispose();
-            return response;
+        public Task<AppmMappingPointsResult> MappingPoints(CancellationToken ct) {
+            return RequestJsonAsync<AppmMappingPointsResult>("/api/MappingPoints", null, HttpMethod.Get, ct);
         }
 
-        public async Task<AppmMeasurementConfigurationResult> GetConfiguration(CancellationToken ct) {
-            AppmMeasurementConfigurationResult response = null;
-            var result = await HttpRequestAsync("/api/MappingPoints/Configuration", null, HttpMethod.Get, ct);
-
-            if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
-            }
-
-            result.Dispose();
-            return response;
+        public Task<AppmMeasurementConfigurationResult> GetConfiguration(CancellationToken ct) {
+            return RequestJsonAsync<AppmMeasurementConfigurationResult>("/api/MappingPoints/Configuration", null, HttpMethod.Get, ct);
         }
 
-        public async Task<AppmMeasurementConfigurationResult> SetConfiguration(AppmMeasurementConfigurationRequest config, CancellationToken ct) {
-            AppmMeasurementConfigurationResult response = null;
-
+        public Task<AppmMeasurementConfigurationResult> SetConfiguration(AppmMeasurementConfigurationRequest config, CancellationToken ct) {
             string configSer = JsonConvert.SerializeObject(config, serializerSettings);
-            var result = await HttpRequestAsync("/api/MappingPoints/Configuration", configSer, HttpMethod.Put, ct);
-
-            if (result != null) {
-                response = JsonConvert.DeserializeObject<AppmMeasurementConfigurationResult>(result.Content.ReadAsStringAsync(ct).Result, serializerSettings);
-            }
-
-            result.Dispose();
-            return response;
+            return RequestJsonAsync<AppmMeasurementConfigurationResult>("/api/MappingPoints/Configuration", configSer, HttpMethod.Put, ct);
         }
 
         public async Task<AppmMappingRunStatusResult> WaitForApiInit(CancellationToken ct) {
-            var appm = new AppmApi();
-            AppmMappingRunStatusResult status = null;
+            while (true) {
+                ct.ThrowIfCancellationRequested();
 
-            while (!ct.IsCancellationRequested) {
                 try {
-                    status = await appm.Status(ct);
-                    break;
+                    var status = await Status(ct);
+                    Logger.Debug("APPM is up");
+                    return status;
                 } catch (HttpRequestException) {
                     Logger.Debug($"APPM not yet answering on API; trying again...");
                     await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 }
             }
-
-            Logger.Debug("APPM is up");
-            return status;
         }
 
-        private async Task<HttpResponseMessage> HttpRequestAsync(string url, string body, HttpMethod method, CancellationToken ct) {
+        private async Task<T> RequestJsonAsync<T>(string url, string body, HttpMethod method, CancellationToken ct) {
+            var content = await SendAsync(url, body, method, ct);
+            return JsonConvert.DeserializeObject<T>(content, serializerSettings);
+        }
+
+        private async Task<string> SendAsync(string url, string body, HttpMethod method, CancellationToken ct) {
             var uri = new Uri($"http://{this.host}:{this.port}{url}");
 
             if (!uri.IsWellFormedOriginalString()) {
                 throw new SequenceEntityFailedException($"Invalid or malformed URL: {uri}");
             }
 
-            var request = new HttpRequestMessage(method, uri);
+            using var request = new HttpRequestMessage(method, uri);
 
             if (!string.IsNullOrEmpty(body)) {
                 request.Content = new StringContent(body, Encoding.UTF8, "application/json");
             }
 
             Logger.Trace($"Request URL: {request.Method} {request.RequestUri}");
-            if (request.Method != HttpMethod.Get && request.Method != HttpMethod.Head) {
-                Logger.Trace($"Request body:{Environment.NewLine}{request.Content?.ReadAsStringAsync(ct).Result}");
+
+            if (!string.IsNullOrEmpty(body)) {
+                Logger.Trace($"Request body:{Environment.NewLine}{body}");
             }
 
-            var client = new HttpClient();
-            var response = await client.SendAsync(request, ct);
-            client.Dispose();
+            using var response = await httpClient.SendAsync(request, ct);
+            var responseBody = await response.Content.ReadAsStringAsync(ct);
 
             Logger.Trace($"Response status code: {response.StatusCode}");
-            Logger.Trace($"Response body:{Environment.NewLine}{response.Content?.ReadAsStringAsync(ct).Result}");
+            Logger.Trace($"Response body:{Environment.NewLine}{responseBody}");
 
-            return response;
+            response.EnsureSuccessStatusCode();
+
+            return responseBody;
         }
     }
 }
