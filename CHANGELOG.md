@@ -1,7 +1,7 @@
 ﻿# Astro-Physics Tools
 
 ## 3.0.1.0	- 2026-09-23
-* Fixed an issue where Astro-Physics Meridian Flip forced a calibration resuming guiding following a meridian flip.
+* Fixed an issue where Astro-Physics Meridian Flip forced a calibration when resuming guiding following a meridian flip.
 
 ## 3.0.0.0 - 2026-09-05
 * Added Astro-Physics Meridian Flip trigger.
