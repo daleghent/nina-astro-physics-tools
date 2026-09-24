@@ -172,7 +172,7 @@ namespace DaleGhent.NINA.AstroPhysicsTools.ApMeridianLimitTrigger {
             Logger.Info($"{name} - Resuming guiding after the meridian flip");
 
             try {
-                if (!await guiderMediator.StartGuiding(profileService.ActiveProfile.GuiderSettings.AutoRetryStartGuiding, progress, token)) {
+                if (!await guiderMediator.StartGuiding(false, progress, token)) {
                     var message = "Guiding could not be resumed after the meridian flip";
                     Logger.Warning($"{name} - {message}");
                     Notification.ShowWarning(message);
